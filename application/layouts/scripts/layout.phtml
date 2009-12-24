@@ -100,8 +100,18 @@
             <a href="<?php echo $this->url(array('controller'=>'index', 'action' => null),'default')?>">ES Search 2</a>
         </div>
 
-        <?php echo $this->layout()->content ?>
+        <div style="margin: 5px 0 20px;">
+            <div class="line"></div>
+        </div>
 
+        <div id="content">
+            <?php echo $this->layout()->content ?>
+        </div>
+
+        <div style="margin: 5px 0 20px;">
+            <div class="line"></div>
+        </div>
+        
         <div id="footer">
             <div>
                 <a href="<?php echo $this->url(array('controller'=>'info','action' => 'about'))?>"> About </a> - 

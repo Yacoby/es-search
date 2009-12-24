@@ -5,6 +5,10 @@ body{
     font-size: 90%;
 }
 
+#content{
+    margin:25px;
+}
+
 #modInfo{
     margin-left: 420px;
 }
