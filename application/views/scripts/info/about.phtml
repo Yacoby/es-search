@@ -1,1 +1,57 @@
-About page here
+<h3>About</h3>
+
+<p>
+    Version 1 grew from a small PHP script using a MySQL database and became
+    progressively larger until it became impossible to maintain.
+    Due to the fact that I couldn't search for words under 4 letters in length
+    using MySQLs full text search (the host didn't allow it), I
+    wrote a small and simple search filter to weight results. As you can imagine
+    it was failry inefficiant and so kept running into issues with the amount of
+    load it was putting on the server. (So my account kept getting shutdown).
+</p>
+
+<p>
+    Version 2 was a total rewrite, designed from scratch to be faster.
+    It still used PHP and MySQL but for the searching it used a PHP port of
+    <a href="http://en.wikipedia.org/wiki/Lucene" target="_blank">Lucene</a>
+    found in the 
+    <a href="http://framework.zend.com/" target="_blank">Zend Framework</a> to
+    allow me to overcome the issue of the 4 letter minimum on search terms in MySQL<br />
+    For the most part pages are parsed using the
+    <a href="http://simplehtmldom.sourceforge.net/" target="_blank">Simple HTML DOM</a> library.
+    There is one specific case where the 1mb of HTML caused the script to run out
+    of memory so regex was used. The code is also designed in such a way that would
+    allow for the searching to be preformed on another server, or even a group of
+    servers if required without any major alteration to the original code.
+    I am considering looking at using Java and the
+    <a href="http://en.wikipedia.org/wiki/Google_App_Engine" target="_blank">
+        Google App Engine</a> if possible.
+</p>
+
+<p>
+    Version 2.1 is the result of a code review of version 2, along with various
+    bug fixes. The most major one changing the relationship of Mods to URLs from
+    'many to many' to 'one to many', as the many to many relationship didn't cope
+    with mods names being changed. Also in the works is improved error checking as
+    well as improvements to the general design to make it more robust.
+    It has had a major GUI overhaul using a lot of JavaScript (not required,
+    but useful) and some of the database is now exposed via the
+    <a href="http://en.wikipedia.org/wiki/JSON-RPC" target="_blank">JSON-RPC</a>
+    protocol.
+</p>
+
+<p>
+    Future Plans include adding a spellchecker, which if my server has the space
+    could be a really interesting thing to do. I don't have the searches to do it quite
+    like google does, however I have enough data to be able to build a elder scrolls
+    orientated one. Suggesting URLs is also on the todo list, however due to the
+    design of the URL validation, I am waiting for my server to support PHP 5.3
+    before I implement it. (It requires late static binding on abstract static
+    methods for those interested).
+</p>
+
+
+<p>
+    The most recent version (newer than the online versions) can be found hosted
+    at Google Code under the AGPL3 licence. Feel free to pitch in with code/design.
+</p>
