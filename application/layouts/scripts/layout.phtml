@@ -52,6 +52,7 @@
         ?>
 
 
+        <!-- TODO Merge into css -->
         <style type="text/css">
 
             ul#icons li {
@@ -96,12 +97,16 @@
 
 
         <div id="header">
-            <a href="<?php echo $this->url(array(),'default')?>">ES Search 2</a>
+            <a href="<?php echo $this->url(array('controller'=>'index', 'action' => null),'default')?>">ES Search 2</a>
         </div>
 
         <?php echo $this->layout()->content ?>
 
         <div id="footer">
+            <div>
+                <a href="<?php echo $this->url(array('controller'=>'info','action' => 'about'))?>"> About </a> - 
+                <a href="<?php echo $this->url(array('controller'=>'info','action' => 'credits'))?>"> Credits </a>
+            </div>
             <div id="cpy">Design Copyright &copy; Jacob Essex 2009. Mod details and descriptions are owned by its author(s)</div>
             <div id="time">Page generated on the <?php echo date("jS") ?> at <?php echo date('g:i a') ?> (GMT)</div>
         </div>

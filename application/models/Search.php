@@ -1,4 +1,5 @@
-<?php /* l-b
+<?php
+/* l-b
  * This file is part of ES Search.
  * 
  * Copyright (c) 2009 Jacob Essex
@@ -15,13 +16,7 @@
  * 
  * You should have received a copy of the GNU Affero General Public License
  * along with ES Search. If not, see <http://www.gnu.org/licenses/>.
- * l-b */ ?>
-
-<?php
-//require "ModData/UnifiedModDatabase.php";
-//require "ModData/Databases/MySQL.php";
-//require "ModData/Databases/Lucene.php";
-
+ * l-b */
 
 
 class Default_Model_Search {

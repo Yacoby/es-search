@@ -1,4 +1,5 @@
-<?php /* l-b
+<?php
+/* l-b
  * This file is part of ES Search.
  * 
  * Copyright (c) 2009 Jacob Essex
@@ -15,9 +16,8 @@
  * 
  * You should have received a copy of the GNU Affero General Public License
  * along with ES Search. If not, see <http://www.gnu.org/licenses/>.
- * l-b */ ?>
+ * l-b */
 
-<?php
 /**
  * This should setup the application to the point where it can load its
  * bootstrap file. This is bascially a few constants
@@ -41,8 +41,8 @@ set_include_path(implode(PATH_SEPARATOR, array(
 //Setup app wide constants
 define('APPLICATION_PATH', realpath(dirname(__FILE__) . '/application'));
 define('CONFIG_PATH', realpath(dirname(__FILE__) . '/config'));
-define('APPLICATION_ENV', 'production');
-//define('APPLICATION_ENV', 'development');
+//define('APPLICATION_ENV', 'production');
+define('APPLICATION_ENV', 'development');
 
 
 /*
