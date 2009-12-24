@@ -20,7 +20,10 @@
 require "../AppLoader.php";
 
 require 'Search/PageCache.php';
-Search_PageCache::getInstance()->start();
+
+if ( APPLICATION_ENV != 'development' ){
+    Search_PageCache::getInstance()->start();
+}
 
 $application = createApplication();
 $application->run();
