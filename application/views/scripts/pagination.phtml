@@ -1,0 +1,81 @@
+<?
+function addPage($p) {
+    $requestUri = Zend_Controller_Front::getInstance()->getRequest()->getRequestUri();
+    $prms = Zend_Controller_Front::getInstance()->getRequest()->getParams();
+    $uprms = Zend_Controller_Front::getInstance()->getRequest()->getUserParams();
+
+    foreach ( $uprms as $k => $v ) {
+        if ( isset($prms[$k]) ) {
+            unset($prms[$k]);
+        }
+    }
+    unset($uprms);
+
+    $prms['page'] = $p;
+    $s = http_build_query($prms);
+
+    return '?'.$s;
+}
+?>
+
+
+
+<?php //TODO FIX THIS MESS ?>
+<?php
+if ($this->pageCount): ?>
+<div class="paginationControl">
+    <ul id="icons" class="ui-widget ui-helper-clearfix">
+
+        <li class="ui-state-default ui-corner-all" title="First Page">
+                        <?php if (isset($this->previous)): ?>
+            <a class="ui-icon ui-icon-seek-first" href="<?php echo addPage(1); ?>"></a>
+            <?php else: ?>
+            <span class="ui-icon ui-icon-seek-first"></span>
+            <?php endif; ?>
+        </li>
+
+        <li class="ui-state-default ui-corner-all" title="Previous Page">
+            <?php if (isset($this->previous)): ?>
+            <a class="ui-icon ui-icon-seek-prev" href="<?php echo addPage($this->previous); ?>">
+            </a>
+
+                <?php else: ?>
+            <span class="ui-icon ui-icon-seek-prev"></span>
+                <?php endif ?>
+        </li>
+
+
+            <?php foreach ($this->pagesInRange as $page): ?>
+        <li class="ui-state-default ui-corner-all">
+                    <?php if ($page != $this->current): ?>
+            <a class="ui-icon ui-icon-text" href="<?php echo addPage($page); ?>"><?php echo $page; ?></a>
+                    <?php else: ?>
+            <span class="ui-icon ui-icon-text"><u><?php echo $page; ?></u></span>
+                    <?php endif;?>
+
+        </li>
+            <?php endforeach; ?>
+
+
+
+        <li class="ui-state-default ui-corner-all" title="Next Page">
+            <?php if (isset($this->next)): ?>
+            <a class="ui-icon ui-icon-seek-next" href="<?php echo addPage($this->next); ?>">
+            </a>
+            <?php else: ?>
+                        <span class="ui-icon ui-icon-seek-next"></span>
+            <?php endif; ?>
+        </li>
+
+                <li class="ui-state-default ui-corner-all" title="Last Page">
+                        <?php if (isset($this->next)): ?>
+            <a class="ui-icon ui-icon-seek-end" href="<?php echo addPage($this->last); ?>"></a>
+            <?php else: ?>
+            <span class="ui-icon ui-icon-seek-end"></span>
+            <?php endif; ?>
+        </li>
+
+    </ul>
+</div>
+<?php endif; ?>
+

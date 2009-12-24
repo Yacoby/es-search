@@ -1,0 +1,93 @@
+<?php /* l-b
+ * This file is part of ES Search.
+ * 
+ * Copyright (c) 2009 Jacob Essex
+ * 
+ * Foobar is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * ES Search is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Affero General Public License
+ * along with ES Search. If not, see <http://www.gnu.org/licenses/>.
+ * l-b */ ?>
+
+<?php
+set_include_path(implode(PATH_SEPARATOR, array(
+    realpath(dirname(__FILE__) . '/../library'),
+    get_include_path(),
+)));
+
+//require_once ('Parser/Parser.php');
+
+/**
+ *
+ * @param string $dirName
+ * @return bool
+ */
+function delDirectory($dirName) {
+    if ( !is_dir($dirName) ) {
+        return false;
+    }
+
+    $h = opendir($dirName);
+    if ( !$h ) {
+        return false;
+    }
+
+    while($file = readdir($h)) {
+        if ($file != "." && $file != "..") {
+            if (!is_dir($dirName."/".$file)) {
+                unlink($dirName."/".$file);
+            }else {
+                delDirectory($dirName.'/'.$file);
+            }
+        }
+    }
+
+    closedir($h);
+    rmdir($dirName);
+    return true;
+}
+
+function resetLucene() {
+    $dataPath = APPLICATION_PATH.'/../data';
+
+    //SearchIndex::_release();
+    delDirectory($dataPath.'/lucene_testing/OB');
+    delDirectory($dataPath.'/lucene_testing/MW');
+}
+
+
+/**
+ * @todo fix the requirment for sleep
+ */
+function resetDatabse() {
+    $scriptPath = APPLICATION_PATH.'/../scripts';
+
+    $sqlQuery = file_get_contents($scriptPath . '/schema.sql');
+
+    $db = Zend_Db_Table_Abstract::getDefaultAdapter();
+
+    $db->exec($sqlQuery);
+    $db->closeConnection();
+    $db->getConnection();
+    sleep(2); //bad, but it prevents errors
+
+    $si = new Search_SiteInformation();
+    $si->ensureParsersCreated();
+    $si->ensureByteLimitsCorrect();
+    $si->copyInitialPages();
+}
+
+function resetAll() {
+    resetLucene();
+    resetDatabse();
+}
+
+?>

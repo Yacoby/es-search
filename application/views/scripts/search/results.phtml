@@ -1,0 +1,129 @@
+<script type="text/javascript">
+    $(function() {
+        //support linking to an open accordion
+        var loc = new String(window.location);
+        var i = loc.lastIndexOf('#');
+        if ( i != -1 ){
+            var id = loc.substr(i+1);
+            var elem = $('#'+id);
+            if ( elem.length > 0 ){
+                elem.click();
+            }else{
+                $('#dialog').text('\
+                   The selected mod id ('+id+') cannot be found on this page.\
+                   Do you want to search for it?'
+            );
+                $('#dialog').dialog({
+                    autoOpen: true,
+                    width: 600,
+                    buttons: {
+                        "Search for Mod": function() {
+                            var wl = window.location;
+                            var newURL = wl.protocol + "//" + wl.host + wl.pathname;
+                            window.location = newURL
+                                + '?general=ModID:'+id
+                                +'&game='+$.getUrlParam('game')
+                                +'#'+id;
+                            $(this).dialog("close");
+                        },
+                        "Cancel": function() {
+                            $(this).dialog("close");
+                        }
+                    }
+                });
+
+            }
+        }
+    });
+</script>
+<div id="resultSearch">
+    <?php
+    //TODO sort so can switch between forms
+    $this->form->setAction($this->url(array('controller' => 'search'), 'search', true));
+    echo $this->form;
+
+    if ( $this->form instanceof Default_Form_Index ) {
+        ?>
+    <a href="<?php echo $this->url(array('controller' => 'search'),'default',true) ?>">Advanced</a>
+        <?
+    }
+    ?>
+</div>
+
+<div style="margin: 5px 0 20px;">
+    <div class="line"></div>
+</div>
+
+
+<div class="">
+
+
+    <div class="results">
+        <?php foreach($this->paginator as $mod){
+
+        //make the name seo friendly
+        $name = $mod->Name;
+        $name = preg_replace('/[^a-zA-Z0-9 ]/', '', $name);
+        $name = str_replace(' ', '-', $name);
+
+        $goto = array(
+        'controller'=>'mod',
+        'action' => 'details',
+        'id' => $mod->ModID,
+        'name' => $name
+        );
+
+        ?>
+
+        <div class="mod">
+            <span class="name">
+                <a id="<?php echo $mod->ModID; ?>"
+                   class="modLink"
+                   href="<?php echo $this->url($goto, 'mod', true)?>">
+                       <?php echo $mod->Name?>
+                </a>
+            </span> - <span class="author"><?php echo $mod->Author ?></span>
+        </div>
+        <?php } ?>
+
+
+        <? if ( $this->paginator->count() == 0 ): ?>
+        <div class="ui-widget">
+            <div class="ui-state-error ui-corner-all" style="padding: 0 .7em;">
+                <p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>
+                    <strong></strong>No results found!</p>
+            </div>
+        </div>
+
+        <?php endif; ?>
+
+
+        <?php
+        $this->paginator->setPageRange(5);
+        echo $this->paginationControl($this->paginator, 'Sliding', 'pagination.phtml');
+        ?>
+
+
+    </div>
+
+
+
+    <div id="modInfo">
+        <div id="accordion"></div>
+        <div id="link"></div>
+    </div>
+
+    <p style="clear:both;"></p>
+
+</div>
+
+
+
+
+<div style="margin: 20px 0 20px;">
+    <div class="line"></div>
+</div>
+
+
+<!--TODO Add via javascript-->
+<div id="dialog" title="Cannot find selected mod"></div>

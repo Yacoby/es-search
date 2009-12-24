@@ -1,0 +1,63 @@
+<?php /* l-b
+ * This file is part of ES Search.
+ * 
+ * Copyright (c) 2009 Jacob Essex
+ * 
+ * Foobar is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * ES Search is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Affero General Public License
+ * along with ES Search. If not, see <http://www.gnu.org/licenses/>.
+ * l-b */ ?>
+
+<?php
+
+/**
+ * Contains startup code relevant to all application types (json-rpc server,
+ * application and cronjobs)
+ */
+class Search_Bootstrap_Abstract extends Zend_Application_Bootstrap_Bootstrap {
+
+    /**
+     * @var Zend_Log
+     */
+    protected $_logger = null;
+
+    
+    protected function _initLocale() {
+        setlocale(LC_ALL, 'en_US.utf-8');
+    }
+
+    protected function _initLogger() {
+        $this->_logger = new Search_Logger();
+
+        $columnMapping = array(
+                'Level' => 'priority',
+                'Message' => 'message'
+        );
+
+        $this->bootstrap('db');
+        assert($this->getResource('db'));
+
+        $writer = new Zend_Log_Writer_Db(
+                $this->getResource('db'),
+                'ErrorLog', $columnMapping
+        );
+
+        $this->_logger->addWriter($writer);
+    }
+
+    /**
+     * Includes the file that defines the js and css version numbers
+     */
+    protected function _initUrlClass() {
+        require 'Search/URL.php';
+    }
+}

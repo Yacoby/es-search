@@ -1,0 +1,61 @@
+<script type="text/javascript">
+    $(function() {
+        $("#tabs").tabs();
+    });
+</script>
+
+<!-- //TODO Canocanl URL stuff -->
+
+<span id="modTitle"><?php echo $this->Name; ?></span>
+-
+<span id="modAuthor"><?php echo $this->Author; ?></span>
+
+<div id="modLocations">
+    <div id="tabs">
+        <ul>
+            <?php
+            $count = 0;
+            foreach ( $this->Locations as $location ) {
+                ?>
+            <li>
+                <a href="#tabs-<?php echo $count++; ?>">
+                        <?php echo $location->getURL()->getHost()?>
+                </a>
+            </li>
+                <?php
+            }
+            ?>
+        </ul>
+
+
+        <?php
+        $count = 0;
+        foreach ( $this->Locations as $location ) {
+            ?>
+        <div id="tabs-<?php echo $count++; ?>">
+            <p>
+                <strong>Download Link</strong> :
+                <a href="<?php echo $location->getURL(); ?>" target="_blank">
+                        <?php echo $this->Name; ?>
+                </a>
+                <br />
+
+                <strong>Version</strong> :
+                    <?php echo $location->getVersion(); ?>
+                <br />
+
+                <strong>Category</strong> :
+                    <?php echo $location->getCategory(); ?>
+                <br />
+
+                <strong>Description:</strong><br />
+                    <?php echo str_replace("\n", "<br />", $location->getDescription()) ?>
+            </p>
+        </div>
+
+            <?php
+        }
+        ?>
+
+    </div>
+</div>

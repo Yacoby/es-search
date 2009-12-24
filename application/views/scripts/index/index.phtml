@@ -1,0 +1,51 @@
+<script type="text/javascript">
+    $(function() {
+        //set the html for the button
+        $("#advancedButton").show()
+            .data('other', 'Simple')
+            .html('Advanced');
+
+        //cache for speed
+        var af = $('#advancedForm');
+        var bf = $('#basicForm');
+
+        //ensure the advanced form is hidden (unneeded)
+        af.hide();
+
+        //center the advanced form table
+        $('#advancedForm table').attr('style', 'margin:auto');
+
+        $('#advancedButton').click(function(){
+            af.toggle('blind', {}, 500);
+            bf.toggle('blind', {}, 500);
+
+            //swap the data for the link names over
+            var t = $(this).data('other');
+            $(this).data('other', $(this).html());
+            $(this).html(t);
+        });
+    });
+</script>
+
+<div id="indexSearch">
+    <?php
+    $this->basicForm->setAction($this->url(array('controller' => 'search'), 'search', true));
+    $this->searchForm->setAction($this->url(array('controller' => 'search'), 'search', true));
+    ?>
+
+    <div id="basicForm">
+        <?php echo $this->basicForm; ?>
+    </div>
+    <div style="display:none;" id="advancedForm">
+        <?php echo $this->searchForm ?>
+    </div>
+
+    <a href='#' id="advancedButton"></a>
+    
+</div>
+
+<div id="text">
+    <div id="intro">
+        ES Search is a search engine that searches various Morrowind and Oblivion mod sites.
+    </div>
+</div>

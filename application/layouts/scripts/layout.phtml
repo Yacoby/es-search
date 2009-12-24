@@ -1,0 +1,112 @@
+<?php echo $this->doctype() ?>
+<html xmlns="http://www.w3.org/1999/xhtml"> 
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
+        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/jquery-ui.min.js"></script>
+
+
+        <?php
+        $baseURL = Zend_Controller_Front::getInstance()->getBaseUrl();
+        echo $this->includeJs(
+        $baseURL.'/res/',
+        array(
+        'js/js.c.js'
+        ),
+        array(
+        'js_dev/jquery.zend.jsonrpc.js',
+        'js_dev/json2.js',
+        'js_dev/urlparam.js',
+        'js_dev/results.js',
+        'js_dev/error.js',
+        'js_dev/icons.js'
+        ),
+        JS_VERSION
+        );
+
+
+        echo $this->includeCss(
+        $baseURL.'/res/',
+        array(
+        'css/css.c.css'
+        ),
+        array(
+        'css_dev/jquery-ui-1.7.2.custom.css',
+        'css_dev/global.css'
+        ),
+        CSS_VERSION
+        );
+
+
+
+
+        if ( isset($this->title) ) { //Set from within the controller
+            $this->headTitle($this->title);
+        }
+
+        $this->headTitle('ES Search 2');
+        $this->headTitle()->setSeparator(' | ');
+
+        echo $this->headTitle()
+        ?>
+
+
+        <style type="text/css">
+
+            ul#icons li {
+                cursor:default;
+                float:left;
+                list-style-type:none;
+                margin:2px;
+                padding:4px 0;
+            }
+
+            ul#icons .ui-icon {
+                float:left;
+                margin:0 4px;
+            }
+
+            ul#icons .ui-icon-text {
+                text-indent:0px;
+                background-image:none;
+                text-align: center;
+                line-height: 16px;
+            }
+
+            ul#icons li a{
+                background-image: url(res/images/ui-icons_454545_256x240.png);
+                font-weight: bold;
+            }
+
+        </style>
+
+    </head>
+
+    <body>
+        <noscript>
+            <div id="noscriptWarning">
+                ES Search works best with JavaScript enabled
+            </div>
+            <div id="noscriptPadding">
+                &nbsp;
+            </div>
+
+        </noscript>
+
+
+        <div id="header">
+            <a href="<?php echo $this->url(array(),'default')?>">ES Search 2</a>
+        </div>
+
+        <?php echo $this->layout()->content ?>
+
+        <div id="footer">
+            <div id="cpy">Desgin Copyright &copy; Jacob Essex 2009. Mod details and descriptions are owned by its author(s)</div>
+            <div id="time">Page generated on the <?php echo date("jS") ?> at <?php echo date('g:i a') ?> (GMT)</div>
+        </div>
+
+
+    </body>
+
+</html>
