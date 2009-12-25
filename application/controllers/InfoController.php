@@ -18,11 +18,17 @@
  * along with ES Search. If not, see <http://www.gnu.org/licenses/>.
  * l-b */
 
-class InfoController extends Zend_Controller_Action{
-    public function creditsAction(){
+class InfoController extends Zend_Controller_Action {
+    public function creditsAction() {
         $this->view->title = "Credits";
     }
-    public function aboutAction(){
+    public function aboutAction() {
         $this->view->title = "About";
+    }
+    public function bugAction() {
+        $this->view->title = "Report Bug";
+    }
+    public function featureAction() {
+        $this->view->title = "Request Feature";
     }
 }

@@ -115,12 +115,14 @@
         </div>
 
         <div id="footer">
+            
             <div>
                 <a href="<?php echo $this->url(array('controller'=>'info','action' => 'about'))?>"> About </a> - 
                 <a href="<?php echo $this->url(array('controller'=>'info','action' => 'credits'))?>"> Credits </a> -
-                <a href="http://code.google.com/p/es-search/issues/entry">Report Bug</a> -
-                <a href="http://code.google.com/p/es-search/issues/entry">Request Feature</a>
+                <a href="<?php echo $this->url(array('controller'=>'info','action' => 'bug'))?>"> Report Bug </a> -
+                <a href="<?php echo $this->url(array('controller'=>'info','action' => 'feature'))?>"> Request Feature </a>
             </div>
+
             <div id="cpy">Design Copyright &copy; Jacob Essex 2009. Mod details and descriptions are owned by its author(s)</div>
             <div id="time">Page generated on the <?php echo date("jS") ?> at <?php echo date('g:i a') ?> (GMT)</div>
         </div>
