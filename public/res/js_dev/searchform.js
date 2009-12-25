@@ -52,6 +52,10 @@ $(function() {
             af.html(tf.html());
             af.show();
             tf.hide();
+
+            if ( $.cookie('SelectedGame') ){
+                $('#game').val($.cookie('SelectedGame'));
+            }
         });
 
         $.cookie('CurrentSearchType', $(this).html());
@@ -61,5 +65,13 @@ $(function() {
         $(this).data('other', $(this).html());
         $(this).html(t);
     });
+});
 
+$(function(){
+    $('#game').live('change', function(){
+        $.cookie('SelectedGame', $(this).val());
+    });
+    if ( $.cookie('SelectedGame') ){
+        $('#game').val($.cookie('SelectedGame'));
+    }
 });
