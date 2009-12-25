@@ -44,7 +44,7 @@ $(function() {
                 This indicates an unknown error has occured when trying to get\
                 the mod details. Men with bananas have been dispatched to\
                 restore normality'
-            );
+                );
             return;
         }
 
@@ -80,7 +80,7 @@ $(function() {
                 Monkey 2............. Done<br />\
                 Monkey 3............. Done<br />\
                 Monkey 4.........'
-            );
+                );
             server = jQuery.Zend.jsonrpc({
                 url: 'json-rpc/ModInformation.php'
             });
@@ -93,4 +93,47 @@ $(function() {
     });
 
 
+});
+
+
+$(function() {
+    if ( $('.results').length === 0 ){
+        return;
+    }
+
+    //support linking to an open accordion
+    var loc = new String(window.location);
+    var i = loc.lastIndexOf('#');
+    if ( i != -1 ){
+        var id = loc.substr(i+1);
+        var elem = $('#'+id);
+        if ( elem.length > 0 ){
+            elem.click();
+        }else{
+            $(document.body).append('<div id="dialog" title="Cannot find selected mod"></div>');
+            $('#dialog').text('\
+                    The selected mod id ('+id+') cannot be found on this page.\
+                    Do you want to search for it?'
+                )
+            .dialog({
+                autoOpen: true,
+                width: 600,
+                buttons: {
+                    "Search for Mod": function() {
+                        var wl = window.location;
+                        var newURL = wl.protocol + "//" + wl.host + wl.pathname;
+                        window.location = newURL
+                        + '?general=ModID:'+id
+                        +'&game='+$.getUrlParam('game')
+                        +'#'+id;
+                        $(this).dialog("close");
+                    },
+                    "Cancel": function() {
+                        $(this).dialog("close");
+                    }
+                }
+            });
+
+        }
+    }
 });
