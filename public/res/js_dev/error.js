@@ -18,11 +18,12 @@
  * l-b */
 
 
-function errorMessageBox(msg){
-    jQuery(document.body).append('<div title="Error" id="tmp-error"></div>');
+function errorMessageBox(msg, title){
+    title = title !== null ? title : 'Error'
+    jQuery(document.body).append('<div title="'+title+'" id="tmp-error"></div>');
     $('#tmp-error')
-        .html(msg)
-        .dialog({
+    .html(msg)
+    .dialog({
         autoOpen: true,
         width: 450,
         buttons: {
