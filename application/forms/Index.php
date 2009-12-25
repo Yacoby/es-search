@@ -33,7 +33,11 @@ class Default_Form_Index extends Zend_Form {
 
         $e = $this->createElement('select', 'game')
                 ->addMultiOption('MW', 'Morrowind')
-                ->addMultiOption('OB', 'Oblivion');
+                ->addMultiOption('OB', 'Oblivion')
+                ->setRequired(true);
+        if ( isset($_COOKIE['SelectedGame']) ) {
+            $e->setValue($_COOKIE['SelectedGame']);
+        }
         $this->addElement($e);
 
         $e = $this->createElement('submit', 'act')

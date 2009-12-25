@@ -23,7 +23,6 @@ $(function() {
         return;
     }
 
-
     //set the html for the button
     $("#formSwapLink").show()
     .data('other', $('#activeForm').attr('name'))
@@ -44,7 +43,10 @@ $(function() {
         tf.html(bf.attr('value'));
 
         $('#tempForm table').attr('style', 'margin:auto');
-
+        
+        if ( $.cookie('SelectedGame') ){
+            $('#tempForm #game').val($.cookie('SelectedGame'));
+        }
 
         af.toggle('blind', {}, 500);
         tf.toggle('blind', {}, 500, function(){
@@ -53,6 +55,8 @@ $(function() {
             af.show();
             tf.hide();
 
+            //needs to be here as well for some reason as it reverts when swapping
+            //html
             if ( $.cookie('SelectedGame') ){
                 $('#game').val($.cookie('SelectedGame'));
             }
@@ -71,7 +75,4 @@ $(function(){
     $('#game').live('change', function(){
         $.cookie('SelectedGame', $(this).val());
     });
-    if ( $.cookie('SelectedGame') ){
-        $('#game').val($.cookie('SelectedGame'));
-    }
 });

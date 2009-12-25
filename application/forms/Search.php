@@ -47,7 +47,11 @@ class Default_Form_Search extends Zend_Form {
                 ->addMultiOption('OB', 'Oblivion')
                 ->setLabel('Game:')
                 ->setRequired(true);
+        if ( isset($_COOKIE['SelectedGame']) ) {
+            $e->setValue($_COOKIE['SelectedGame']);
+        }
         $this->addElement($e);
+        
 
         $e = $this->createElement('submit', 'act')
                 ->setLabel('Search')
@@ -55,7 +59,7 @@ class Default_Form_Search extends Zend_Form {
         $this->addElement($e);
 
         $this->setMethod('get');
-        
+
         $this->setDefaulDec();
     }
 
