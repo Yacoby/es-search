@@ -22,13 +22,14 @@
 class SearchController extends Zend_Controller_Action {
 
     private function setTitle($request) {
-        $searchString = $request->getParam('general', null);
+        $searchString = stripslashes($request->getParam('general', null));
 
         if ( !$searchString ) {
             $searchString = array();
             foreach ( array('name', 'author', 'description') as $k ) {
                 if ( $request->getParam($k, null) != null ) {
-                    $searchString[] = $request->getParam($k, '');
+                    $searchString[] = stripslashes($request->getParam($k, ''));
+
                 }
             }
 
@@ -39,29 +40,24 @@ class SearchController extends Zend_Controller_Action {
     }
 
     public function resultsAction() {
-        $this->view->paginator = Zend_Paginator::factory(array()); //default paginator
-        $this->view->searchForm = new Default_Form_Combined(); //default form
-
+        $this->view->paginator = Zend_Paginator::factory(array());
+        $this->view->searchForm = new Default_Form_Combined();
+        
         $request = $this->getRequest();
         if ($request->isGet()) {
             $this->setTitle($request);
-        
-            //possible forms
-            $forms    = array(
-                    new Default_Form_Index(),
-                    new Default_Form_Search(),
-            );
 
             //look through possible forms
-            foreach ($forms as $f) {
-                if ( $f->isValid($request->getParams())) {
+            foreach ($this->view->searchForm->getSubForms() as $f) {
+                if ( $f->isValid(array_map('stripslashes', $request->getParams())) ) {
+                
+                    $this->view->searchForm->setActiveSubForm($f->getName());
 
                     $page = isset($_GET['page']) ? $_GET['page'] : 1;
 
                     if ( !is_numeric($page) || $page < 1 ) {
                         throw new Exception('Invalid page');
                     }
-
 
                     $si = new Default_Model_Search($f->getValues(), 15*($page-1), 15);
 
@@ -73,7 +69,6 @@ class SearchController extends Zend_Controller_Action {
                     $paginator->setCurrentPageNumber($page);
 
                     $this->view->paginator = $paginator;
-                    //$this->view->form = $f;
 
                     break;
                 }

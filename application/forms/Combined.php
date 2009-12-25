@@ -24,6 +24,26 @@
  */
 class Default_Form_Combined extends Zend_Form {
 
+    private $_active;
+
+    public function  __construct() {
+        if ( isset($_COOKIE['CurrentSearchType']) ) {
+            if ( in_array($_COOKIE['CurrentSearchType'], array('Simple', 'Advanced')) ) {
+                $this->_active = (string)$_COOKIE['CurrentSearchType'];
+            }
+        }
+        $this->_active = 'Simple';
+
+
+        $this->addSubForm(new Default_Form_Index(), 'Simple');
+        $this->addSubForm(new Default_Form_Search(), 'Advanced');
+    }
+
+    public function setActiveSubForm($name){
+        assert(in_array($name, array('Simple', 'Advanced')));
+        $this->_active = $name;
+    }
+
     /**
      * Gets the name of the active sub form. This is based on a cookie or
      * if the cookies doesn't exist, it defaults to 'Simple'.
@@ -34,12 +54,7 @@ class Default_Form_Combined extends Zend_Form {
      * @return string the active subforms name.
      */
     protected function getActiveSubFormName() {
-        if ( isset($_COOKIE['CurrentSearchType']) ) {
-            if ( in_array($_COOKIE['CurrentSearchType'], array('Simple', 'Advanced')) ) {
-                return (string)$_COOKIE['CurrentSearchType'];
-            }
-        }
-        return 'Simple';
+        return $this->_active;
     }
 
     /**
@@ -74,9 +89,6 @@ class Default_Form_Combined extends Zend_Form {
     }
 
     public function init() {
-        $this->addSubForm(new Default_Form_Index(), 'Simple');
-        $this->addSubForm(new Default_Form_Search(), 'Advanced');
-
     }
 
     public function render(Zend_View_Interface $view = null) {
@@ -107,7 +119,7 @@ class Default_Form_Combined extends Zend_Form {
      * Unlike Zend_Form::setAction, this propagates all actions to subforms.
      */
     public function setAction($action) {
-        foreach ( $this->getSubForms() as $sf ){
+        foreach ( $this->getSubForms() as $sf ) {
             $sf->setAttrib('action', (string) $action);
         }
     }

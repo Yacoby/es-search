@@ -18,6 +18,8 @@
         }
         unset($uprms);
 
+        $prms = array_map('stripslashes', $prms);
+
         $prms['page'] = (int)$page;
         return '?'.http_build_query($prms);
     }
