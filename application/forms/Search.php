@@ -78,7 +78,7 @@ class Default_Form_Search extends Zend_Form {
                 'Errors',
                 array(
                         'decorator' => array('td' => 'HtmlTag'),
-                        'options' => array('tag' => 'td')
+                        'options'   => array('tag' => 'td')
                 ),
                 array(
                         'label',
@@ -86,7 +86,7 @@ class Default_Form_Search extends Zend_Form {
                 ),
                 array(
                         'decorator' => array('tr' => 'HtmlTag'),
-                        'options' => array('tag' => 'tr')
+                        'options'   => array('tag' => 'tr')
                 ),
         ));
 

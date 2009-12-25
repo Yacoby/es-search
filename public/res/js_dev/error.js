@@ -19,7 +19,7 @@
 
 
 function errorMessageBox(msg, title){
-    title = title !== null ? title : 'Error'
+    title = title != null ? title : 'Error'
     jQuery(document.body).append('<div title="'+title+'" id="tmp-error"></div>');
     $('#tmp-error')
     .html(msg)

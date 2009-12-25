@@ -18,35 +18,51 @@
  * along with ES Search. If not, see <http://www.gnu.org/licenses/>.
  * l-b */
 
-
-//require 'Tables/Mods.php';
-//require 'Tables/ModLocation.php';
-
 class ModLocation{
+    /**
+     *
+     * @var array
+     */
     private $_data;
-    public function __construct($data){
+    
+    public function __construct(array $data){
         $this->_data = $data;
     }
     public function getURL(){
+        assert(array_key_exists('URL', $this->_data));
         return new URL($this->_data['URL']);
     }
     public function getCategory(){
+        assert(array_key_exists('Category', $this->_data));
         return $this->_data['Category'] ? $this->_data['Category'] : 'Unknown';
     }
     public function getDescription(){
+        assert(array_key_exists('Description', $this->_data));
         return $this->_data['Description'];
     }
     public function getVersion(){
+        assert(array_key_exists('Version', $this->_data));
         return $this->_data['Version'] ? $this->_data['Version'] : 'Unknown';
     }
     public function getHost(){
+        assert(array_key_exists('URL', $this->_data));
         return $this->getURL()->getHost();
     }
 }
 
 class Default_Model_Mod {
+    /**
+     *
+     * @var Zend_Db_Rowset_Abstract
+     */
     private $_mod;
+    /**
+     * An array of ModLocation based on the id of $_mod
+     *
+     * @var array
+     */
     private $_location = array();
+
     public function __construct($mid) {
         if ( !is_numeric($mid) ){
             throw new Exception("Invlalid mod");
@@ -61,7 +77,7 @@ class Default_Model_Mod {
 
         $locations = $this->_mod->findDependentRowset('Search_Table_ModLocation');
         foreach ($locations as $l){
-            $this->_location[] = new ModLocation($l);
+            $this->_location[] = new ModLocation($l->toArray());
         }
     }
 
@@ -75,6 +91,11 @@ class Default_Model_Mod {
         return $this->_mod['Game'];
     }
 
+    /**
+     * Gets the game as an expanded string, for example OB expands to Oblivion
+     *
+     * @return string
+     */
     public function getGameString(){
         $a = array(
             'MW' => 'Morrowind',
