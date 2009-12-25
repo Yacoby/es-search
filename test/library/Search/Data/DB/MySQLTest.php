@@ -15,9 +15,7 @@
  * 
  * You should have received a copy of the GNU Affero General Public License
  * along with ES Search. If not, see <http://www.gnu.org/licenses/>.
- * l-b */ ?>
-
-<?php
+ * l-b */
 
 /**
  *

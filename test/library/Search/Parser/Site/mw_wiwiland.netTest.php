@@ -15,16 +15,9 @@
  * 
  * You should have received a copy of the GNU Affero General Public License
  * along with ES Search. If not, see <http://www.gnu.org/licenses/>.
- * l-b */ ?>
+ * l-b */
 
-<?php
-//gets the wrong value. converts something wrong somewhere
-//http://morromods.wiwiland.net/spip.php?article996
 
-//and here:
-//http://morromods.wiwiland.net/spip.php?article994
-
-//strange chars get mixed in
 require_once "PageHelper.php";
 
 class Morrowind_WiwlandTest extends PageTest {

@@ -15,9 +15,8 @@
  * 
  * You should have received a copy of the GNU Affero General Public License
  * along with ES Search. If not, see <http://www.gnu.org/licenses/>.
- * l-b */ ?>
+ * l-b */
 
-<?php
 
 /**
  * This isn't tested much as it is a basic wrapper arround Search_Table_Website

@@ -15,9 +15,8 @@
  * 
  * You should have received a copy of the GNU Affero General Public License
  * along with ES Search. If not, see <http://www.gnu.org/licenses/>.
- * l-b */ ?>
+ * l-b */
 
-<?php
 set_include_path(implode(PATH_SEPARATOR, array(
     realpath(dirname(__FILE__) . '/../library'),
     get_include_path(),
