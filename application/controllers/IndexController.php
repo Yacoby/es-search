@@ -20,11 +20,7 @@
 
 class IndexController extends Zend_Controller_Action{
     public function indexAction(){
-        $this->view->basicForm = new Default_Form_Index();
-        $this->view->basicForm->init();
-
-        $this->view->searchForm = new Default_Form_Search();
+        $this->view->searchForm = new Default_Form_Combined();
         $this->view->searchForm->init();
-
     }
 }

@@ -25,24 +25,26 @@
 class Default_Form_Index extends Zend_Form {
 
     public function init() {
-        $general = $this->createElement('text', 'general');
-        $general->addValidator('stringLength', false, array(0, 32))
-            ->setRequired(true)->setLabel("Search:");
-        $this->addElement($general);
+        $e = $this->createElement('text', 'general')
+                ->addValidator('stringLength', false, array(0, 32))
+                ->setRequired(true)
+                ->setLabel("Search:");
+        $this->addElement($e);
 
-        $s = new Zend_Form_Element_Select('game');
-        $s->addMultiOption('MW', 'Morrowind');
-        $s->addMultiOption('OB', 'Oblivion');
-        $this->addElement($s);
+        $e = $this->createElement('select', 'game')
+                ->addMultiOption('MW', 'Morrowind')
+                ->addMultiOption('OB', 'Oblivion');
+        $this->addElement($e);
+
+        $e = $this->createElement('submit', 'act')
+                ->setLabel('Search')
+                ->setIgnore(true);
+        $this->addElement($e);
+
 
         $this->setMethod('get');
-        $this->addElement('submit', 'act', array(
-            'ignore'   => true,
-            'label'    => 'Search',
-        ));
 
         $this->setDecorators(array('FormElements','Form'));
-
         $this->setElementDecorators(array('ViewHelper', 'Errors'));
 
     }

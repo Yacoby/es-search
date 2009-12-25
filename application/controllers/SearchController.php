@@ -23,34 +23,29 @@ class SearchController extends Zend_Controller_Action {
 
     private function setTitle($request) {
         $searchString = $request->getParam('general', null);
+
         if ( !$searchString ) {
             $searchString = array();
-            if ( $request->getParam('name', null) != null ) {
-                $searchString[] = $request->getParam('name', '');
-            }
-
-            if ( $request->getParam('author', null) != null ) {
-                $searchString[] = $request->getParam('author');
-            }
-
-            if ( $request->getParam('description', null) != null ) {
-                $searchString[] = $request->getParam('description');
+            foreach ( array('name', 'author', 'description') as $k ) {
+                if ( $request->getParam($k, null) != null ) {
+                    $searchString[] = $request->getParam($k, '');
+                }
             }
 
             $searchString = implode(' & ', $searchString);
         }
+
         $this->view->title = $searchString;
     }
 
     public function resultsAction() {
         $this->view->paginator = Zend_Paginator::factory(array()); //default paginator
-        $this->view->form = new Default_Form_Search(); //default form
+        $this->view->searchForm = new Default_Form_Combined(); //default form
 
         $request = $this->getRequest();
         if ($request->isGet()) {
             $this->setTitle($request);
-
-
+        
             //possible forms
             $forms    = array(
                     new Default_Form_Index(),
@@ -78,7 +73,7 @@ class SearchController extends Zend_Controller_Action {
                     $paginator->setCurrentPageNumber($page);
 
                     $this->view->paginator = $paginator;
-                    $this->view->form = $f;
+                    //$this->view->form = $f;
 
                     break;
                 }

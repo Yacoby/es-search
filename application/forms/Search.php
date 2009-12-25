@@ -26,14 +26,14 @@
  */
 class Default_Form_Search extends Zend_Form {
 
-    private $_submit;
-/**
- * @return void
- */
-    public function addTextElem($name, $lab) {
-        $e = $this->createElement('text', $name);
-        $e->addValidator('stringLength', false, array(0, 32))
-            ->setRequired(false)->setLabel($lab);
+    /**
+     * @return void
+     */
+    protected function addTextElem($name, $lab) {
+        $e = $this->createElement('text', $name)
+                ->addValidator('stringLength', false, array(0, 32))
+                ->setRequired(false)
+                ->setLabel($lab);
         $this->addElement($e);
     }
 
@@ -42,46 +42,48 @@ class Default_Form_Search extends Zend_Form {
         $this->addTextElem('author', 'Author:');
         $this->addTextElem('description', 'Description:');
 
-        $s = new Zend_Form_Element_Select('game');
-        $s->addMultiOption('MW', 'Morrowind');
-        $s->addMultiOption('OB', 'Oblivion');
-        $s->setLabel('Game:');
-        $s->setRequired(true);
-        $this->addElement($s);
+        $e = $this->createElement('select', 'game')
+                ->addMultiOption('MW', 'Morrowind')
+                ->addMultiOption('OB', 'Oblivion')
+                ->setLabel('Game:')
+                ->setRequired(true);
+        $this->addElement($e);
+
+        $e = $this->createElement('submit', 'act')
+                ->setLabel('Search')
+                ->setIgnore(true);
+        $this->addElement($e);
 
         $this->setMethod('get');
-        $this->_submit = $this->addElement('submit', 'act', array(
-            'ignore'   => true,
-            'label'    => 'Search',
-        ));
-
+        
         $this->setDefaulDec();
-        //$this->setAction($this->url(array('controller' => 'search'), 'search', true));
-
-
     }
 
     public function setDefaulDec() {
         $this->setDecorators(array(
-            'FormElements',
-            array('HtmlTag', array('tag' => 'table')),
-            'Form'
+                'FormElements',
+                array(
+                        'HtmlTag',
+                        array('tag' => 'table')
+                ),
+                'Form'
         ));
+
         $this->setElementDecorators(array(
-            'ViewHelper',
-            'Errors',
-            array(
-                'decorator' => array('td' => 'HtmlTag'),
-                'options' => array('tag' => 'td')
-            ),
-            array(
-                'label',
-                array('tag' => 'td')
-            ),
-            array(
-                'decorator' => array('tr' => 'HtmlTag'),
-                'options' => array('tag' => 'tr')
-            ),
+                'ViewHelper',
+                'Errors',
+                array(
+                        'decorator' => array('td' => 'HtmlTag'),
+                        'options' => array('tag' => 'td')
+                ),
+                array(
+                        'label',
+                        array('tag' => 'td')
+                ),
+                array(
+                        'decorator' => array('tr' => 'HtmlTag'),
+                        'options' => array('tag' => 'tr')
+                ),
         ));
 
     }

@@ -20,7 +20,9 @@
         'js_dev/urlparam.js',
         'js_dev/results.js',
         'js_dev/error.js',
-        'js_dev/icons.js'
+        'js_dev/icons.js',
+        'js_dev/cookie.js',
+        'js_dev/searchform.js'
         ),
         JS_VERSION
         );
@@ -111,11 +113,13 @@
         <div style="margin: 5px 0 20px;">
             <div class="line"></div>
         </div>
-        
+
         <div id="footer">
             <div>
                 <a href="<?php echo $this->url(array('controller'=>'info','action' => 'about'))?>"> About </a> - 
-                <a href="<?php echo $this->url(array('controller'=>'info','action' => 'credits'))?>"> Credits </a>
+                <a href="<?php echo $this->url(array('controller'=>'info','action' => 'credits'))?>"> Credits </a> -
+                <a href="http://code.google.com/p/es-search/issues/entry">Report Bug</a> -
+                <a href="http://code.google.com/p/es-search/issues/entry">Request Feature</a>
             </div>
             <div id="cpy">Design Copyright &copy; Jacob Essex 2009. Mod details and descriptions are owned by its author(s)</div>
             <div id="time">Page generated on the <?php echo date("jS") ?> at <?php echo date('g:i a') ?> (GMT)</div>

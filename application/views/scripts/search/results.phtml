@@ -38,16 +38,12 @@
 </script>
 <div id="resultSearch">
     <?php
-    //TODO sort so can switch between forms
-    $this->form->setAction($this->url(array('controller' => 'search'), 'search', true));
-    echo $this->form;
-
-    if ( $this->form instanceof Default_Form_Index ) {
-        ?>
-    <a href="<?php echo $this->url(array('controller' => 'search'),'default',true) ?>">Advanced</a>
-        <?
-    }
+    $this->searchForm->setAction(
+            $this->url(array('controller' => 'search'), 'search', true)
+    );
     ?>
+
+    <?php echo $this->searchForm ?>
 </div>
 
 
