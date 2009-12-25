@@ -22,8 +22,6 @@
  * Extends the zend logging class so it can be used as a static. This must be
  * constructed  before it can be used
  *
- * @todo when PHP 5.3 hits extend with __callStatic
- *
  */
 class Search_Logger extends Zend_Log {
 

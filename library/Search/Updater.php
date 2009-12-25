@@ -213,25 +213,15 @@ class Search_Updater {
 
     }
 
-    /**
-     * @todo array_merge plz?
-     */
     private function modUpdate($mod, URL $url) {
-        $notReq = array(
-                'Version',
-                'Category',
-                'Description'
+        $defualts = array(
+                'Version'       => '',
+                'Category'      => '',
+                'Description'   => '',
+                'URL'           => $url
         );
-        foreach ( $notReq as $nr ) {
-            if ( !isset($mod[$nr]) ) {
-                $mod[$nr] = "";
-            }
-        };
-
-        if ( !isset($mod['URL']) ) {
-            $mod['URL'] = $url;
-        }
-
+        $mod = array_merge($defualts, $mod);
+        
         //update details
         $this->_modDb->addMod($mod);
     }
