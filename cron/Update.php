@@ -18,22 +18,8 @@
  * along with ES Search. If not, see <http://www.gnu.org/licenses/>.
  * l-b */
 
-/**
- * updates the mod
- */
-
 require '../AppLoader.php';
 createApplication(realpath(dirname(__FILE__).'/Bootstrap/Bootstrap.php'));
-
-
-
-//error function
-function onError($errno, $errstr, $errfile, $errline){
-    Search_Logger::err($errstr);
-    return true;
-}
-set_error_handler('onError', E_ALL);
-
 
 try{
     $ud = new Search_Updater();
@@ -41,7 +27,6 @@ try{
     if ( !$ud->attemptUpdatePage() ) {
         $ud->generalUpdate();
     }
-
 
 }catch(Exception $e){
         Search_Logger::err($e);
