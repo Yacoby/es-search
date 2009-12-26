@@ -12,6 +12,12 @@ body{
 #modInfo{
     margin-left: 420px;
 }
+
+
+#indexSearch table{
+    margin:auto;
+}
+
 .results{
     float:left;
     width:400px;

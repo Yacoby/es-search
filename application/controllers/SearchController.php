@@ -71,6 +71,17 @@ class SearchController extends Zend_Controller_Action {
                     $this->view->paginator = $paginator;
 
                     break;
+                }else{
+                    /*
+                     * This is a bad fix for an issue. After trying isvalid, the forms
+                     * then show errors. As we want to avoid it on forms we aren't using
+                     * we must create a new form if it isn't valid.
+                     *
+                     * This has one huge downside that I need to look at, what happens
+                     * if neither form is valid?
+                     */
+                    $cname = get_class($f);
+                    $this->view->searchForm->addSubForm(new $cname, $f->getName());
                 }
             }
         }

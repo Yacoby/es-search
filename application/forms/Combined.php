@@ -27,14 +27,14 @@ class Default_Form_Combined extends Zend_Form {
     private $_active;
 
     public function  __construct() {
+        $this->_active = 'Simple';
+        
         if ( isset($_COOKIE['CurrentSearchType']) ) {
             if ( in_array($_COOKIE['CurrentSearchType'], array('Simple', 'Advanced')) ) {
                 $this->_active = (string)$_COOKIE['CurrentSearchType'];
             }
         }
-        $this->_active = 'Simple';
-
-
+        
         $this->addSubForm(new Default_Form_Index(), 'Simple');
         $this->addSubForm(new Default_Form_Search(), 'Advanced');
     }
@@ -101,18 +101,6 @@ class Default_Form_Combined extends Zend_Form {
                 . "name='{$this->getInactiveSubFormName()}' "
                 . "value='{$this->getInactiveSubForm()->render()}'</input>"
                 . "<a href='#' id='formSwapLink'></a>";
-    }
-
-    public function __toString() {
-        try {
-            $return = $this->render();
-            return $return;
-        } catch (Exception $e) {
-            $message = "Exception caught by form: " . $e->getMessage()
-                    . "\nStack Trace:\n" . $e->getTraceAsString();
-            trigger_error($message, E_USER_WARNING);
-            return '';
-        }
     }
 
     /**

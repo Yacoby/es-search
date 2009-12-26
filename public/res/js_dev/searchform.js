@@ -34,16 +34,9 @@ $(function() {
 
     var tf = $('#tempForm').hide();
 
-    //center the advanced form table
-    //TODO FIX IN CSS
-    $('#activeForm table').attr('style', 'margin:auto');
-    $('#inactiveForm table').attr('style', 'margin:auto');
-
     $('#formSwapLink').click(function(){
         tf.html(bf.attr('value'));
 
-        $('#tempForm table').attr('style', 'margin:auto');
-        
         if ( $.cookie('SelectedGame') ){
             $('#tempForm #game').val($.cookie('SelectedGame'));
         }
@@ -55,8 +48,7 @@ $(function() {
             af.show();
             tf.hide();
 
-            //needs to be here as well for some reason as it reverts when swapping
-            //html
+            //needs to be here as well as it reverts when swapping html
             if ( $.cookie('SelectedGame') ){
                 $('#game').val($.cookie('SelectedGame'));
             }
