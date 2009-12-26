@@ -28,12 +28,13 @@ class Search_Data_DB_Lucene extends Search_Data_SearchDatabase {
     /**
      * @var array Zend_Search_Lucene_Interface
      */
-    private $_db = array();
-    private $_hasModified = false;
-    private $_rebuild = false;
+    private $_db            = array();
+    private $_hasModified   = false;
+    private $_rebuild       = false;
 
     /**
-     * Gets a single database. Should be used for searching
+     * Gets a single database. Should be used for searching. SHOULD NOT BE USED
+     * WHEN ADDDING DATA
      *
      * @param string $game
      * @return Zend_Search_Lucene_Interface
@@ -84,7 +85,7 @@ class Search_Data_DB_Lucene extends Search_Data_SearchDatabase {
         }
         $this->_db[$game] = $this->_openDatabase($game);
 
-        if ( $this->_rebuild ){
+        if ( $this->_rebuild ) {
             $this->_db[$game]->setMaxBufferedDocs(50);
             $this->_db[$game]->setMergeFactor(50);
         }
@@ -138,40 +139,40 @@ class Search_Data_DB_Lucene extends Search_Data_SearchDatabase {
         }
     }
 
-
     /**
-     * @return SearchResult
+     * @return Search_Data_SearchResults
      */
     public function searchAdvanced($game, $name, $author, $description, $lowerBound, $length) {
-        $queryStr = array();
+        $input = array(
+                $name           => 'Name',
+                $author         => 'Author',
+                $description    => 'Description'
+        );
 
-        if ( $name != null ) {
-            $queryStr[] =  "( Name:(".$name.") )";
+        $query = array();
+        foreach ( $input as $value => $indexName) {
+            if ( $value != null ) {
+                $query[] = "( {$indexName}:({$value}) )";
+            }
         }
 
-        if ( $author != null ) {
-            $queryStr[] =  "( Author:(".$author.") )";
-        }
-
-        if ( $description != null ) {
-            $queryStr[] =  "( Description:(".$description.") )";
-        }
-
-        $queryStr = implode(' AND ', $queryStr);
-
-        $db = $this->getSingleDatabase($game);
-        return $this->doSearch($db, $queryStr, $lowerBound, $length);
+        return $this->doSearch(
+                $this->getSingleDatabase($game),
+                implode(' AND ', $query),
+                $lowerBound,
+                $length
+        );
     }
 
     /**
-     * @return SearchResult
+     * @return Search_Data_SearchResults
      */
     public function search($game, $general, $lowerBound, $length) {
         $db = $this->getSingleDatabase($game);
         return $this->doSearch($db, $general, $lowerBound, $length);
     }
     /**
-     * @return SearchResult
+     * @return Search_Data_SearchResults
      */
     private function doSearch(Zend_Search_Lucene_Interface $db, $queryStr, $lowerBound, $length) {
         $query = null;
@@ -189,7 +190,7 @@ class Search_Data_DB_Lucene extends Search_Data_SearchDatabase {
         );
     }
     /**
-     * @return SearchResults
+     * @return Search_Data_SearchResults
      */
     private static function queryHitToResults(array $qh, $total) {
         $results = array();
@@ -261,9 +262,9 @@ class Search_Data_DB_Lucene extends Search_Data_SearchDatabase {
     /**
      * Must be done before any indexes are opened. Used for batch indexing
      *
-     * @param <type> $v
+     * @param bool $v
      */
-    public function setRebuildMode($v = true){
+    public function setRebuildMode($v = true) {
         $this->_rebuild = $v;
     }
 }

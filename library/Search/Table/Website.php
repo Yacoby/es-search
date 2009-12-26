@@ -22,7 +22,7 @@
  * Allows access to website data. It also keeps website limits updated
  */
 class Search_Table_Website extends Zend_Db_Table_Abstract {
-    protected $_name = 'Website';
+    protected $_name    = 'Website';
     protected $_primary = 'HostName';
 
     /**
@@ -61,7 +61,9 @@ class Search_Table_Website extends Zend_Db_Table_Abstract {
                 $data['ByteLimit']
         );
 
-        $where = $this->getAdapter()->quoteInto('HostName=?',$data['HostName']);
+        $where = $this->getAdapter()
+                ->quoteInto('HostName=?',$data['HostName']);
+        
         $this->update($ud, $where);
     }
 
@@ -102,9 +104,9 @@ class Search_Table_Website extends Zend_Db_Table_Abstract {
      */
     public function addSite($host, $nextUpdate = 1) {
         $params = array(
-                'HostName' => $host,
-                'NextUpdate' => $nextUpdate,
-                'BytesLastUpdated' => time()
+                'HostName'          => $host,
+                'NextUpdate'        => (int)$nextUpdate,
+                'BytesLastUpdated'  => time()
         );
         $this->insert($params);
 
@@ -185,7 +187,7 @@ class Search_Table_Website extends Zend_Db_Table_Abstract {
         }
 
         $args = array(
-                'BytesUsed' => (int)($results->getRow(0)->BytesUsed + $bytes)
+                'BytesUsed' => (int)($results->getRow(0)->BytesUsed + (int)$bytes)
         );
 
         $where = $this->getAdapter()->quoteInto('HostName=?',$host);
@@ -193,6 +195,13 @@ class Search_Table_Website extends Zend_Db_Table_Abstract {
 
     }
 
+    /**
+     *
+     * @param int $lastUpdateTime The time (unix time stamp) the bytes were last updated
+     * @param int $current The current byte usage
+     * @param int $limit The byte limit
+     * @return array the new limits
+     */
     static private function getUpdatedDetails($lastUpdateTime, $current, $limit) {
         assert(is_numeric($lastUpdateTime));
         assert(is_numeric($current));
@@ -203,8 +212,9 @@ class Search_Table_Website extends Zend_Db_Table_Abstract {
         $changeF = floor($change); //only deal in whole numbers, so floor this to get an int
         $changeRem = $change - $changeF; //get the amount left over
         $current -= $changeF; //increase the pages remining by the int
-        if ( $current < 0 ) //but make sure we don't let it run over the max
+        if ( $current < 0 ) { //but make sure we don't let it run over the max
             $current = 0;
+        }
         //work out how many seconds the amount left over is, and remove it from the time, so we can deal deal with it next time.
         //this ensures that we don't end up losing/gaining pages.
         assert($perSec!=0);
@@ -224,6 +234,7 @@ class Search_Table_Website extends Zend_Db_Table_Abstract {
     public function getSiteNeedingUpdate() {
         $select = $this->select()
                 ->where('NextUpdate < '.time())
+                ->where('Enabled = 1')
                 ->order('NextUpdate ASC')
                 ->limit(1);
         return $this->fetchRow($select);

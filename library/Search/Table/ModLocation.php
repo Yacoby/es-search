@@ -19,7 +19,7 @@
  * l-b */
 
 class Search_Table_ModLocation extends Zend_Db_Table_Abstract {
-    protected $_name = 'ModLocation';
+    protected $_name    = 'ModLocation';
     protected $_primary = array('ModID', 'URL');
 
     protected $_referenceMap    = array(
@@ -40,9 +40,10 @@ class Search_Table_ModLocation extends Zend_Db_Table_Abstract {
      * @return int or -1 if the mod id doesn't exist
      */
     public function getIdByUrl(URL $url) {
-        $select = $this->select('ModID')
+        $select = $this->select()
+                ->from($this, 'ModID')
                 ->where('URL=?', $url->toString());
-                //->where('Game=?', $game);
+        //->where('Game=?', $game);
         $r = $this->fetchRow($select);
 
         return $r ? $r->ModID : -1;
@@ -55,10 +56,11 @@ class Search_Table_ModLocation extends Zend_Db_Table_Abstract {
         return $this->fetchAll($select);
     }
 
-    public function getLocationCount($mid){
-        $select = $this->select('COUNT(*) AS Num')
-                ->where('ModID=?', array((int)$mid));
-
+    public function getLocationCount($mid) {
+        $select = $this->select()
+                ->from($this, 'COUNT(*) AS Num')
+                ->where('ModID=?', (int)$mid);
+        
         return $this->fetchRow($select)->Num;
     }
     public function getLocation($mid, URL $url) {

@@ -62,5 +62,6 @@ CREATE TABLE IF NOT EXISTS Website (
   BytesUsed int(10) unsigned NOT NULL default '0',
   BytesLastUpdated int(10) unsigned NOT NULL default '0' COMMENT 'Time',
   NextUpdate int(11) NOT NULL default '0',
+  Enabled TINYINT NOT NULL default '1',
   PRIMARY KEY  (HostName)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;

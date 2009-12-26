@@ -39,6 +39,9 @@ class SearchController extends Zend_Controller_Action {
         $this->view->title = $searchString;
     }
 
+    /**
+     * @todo consider what would happen if neither form was valid
+     */
     public function resultsAction() {
         $this->view->paginator = Zend_Paginator::factory(array());
         $this->view->searchForm = new Default_Form_Combined();

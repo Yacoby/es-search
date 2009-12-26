@@ -34,14 +34,15 @@ class Search_Table_VisitedPage extends Zend_Db_Table_Abstract {
     public function getPageNeedingVisit() {
         $cols = array('HostName', 'URL', 'LastVisited', 'NeedRevisit');
         $select = $this->select()
-            ->setIntegrityCheck(false)
-            ->from($this->_name, $cols)
-            ->joinInner('Website', 'VisitedPage.HostName = Website.HostName')
-            ->where('NeedRevisit > 0')
-            ->where('BytesUsed < ByteLimit')
-            ->where('NeedRevisit < '.time())
-            ->order('NeedRevisit ASC')
-            ->limit(1);
+                ->setIntegrityCheck(false)
+                ->from($this->_name, $cols)
+                ->joinInner('Website', 'VisitedPage.HostName = Website.HostName')
+                ->where('NeedRevisit > 0')
+                ->where('BytesUsed < ByteLimit')
+                ->where('NeedRevisit < '.time())
+                ->where('Enabled = 1')
+                ->order('NeedRevisit ASC')
+                ->limit(1);
         return $this->fetchRow($select);
     }
 
@@ -54,13 +55,14 @@ class Search_Table_VisitedPage extends Zend_Db_Table_Abstract {
      */
     public function getNumPagesNeedingVisit() {
         $select = $this->select()
-            ->setIntegrityCheck(false)
-            ->from($this->_name, 'COUNT(VisitedPage.HostName) as RowCount')
-            ->joinInner('Website', 'VisitedPage.HostName = Website.HostName',array())
-            ->where('NeedRevisit > 0')
-            ->where('BytesUsed < ByteLimit')
-            ->where('NeedRevisit < '.time())
-            ->order('NeedRevisit ASC');
+                ->setIntegrityCheck(false)
+                ->from($this->_name, 'COUNT(VisitedPage.HostName) as RowCount')
+                ->joinInner('Website', 'VisitedPage.HostName = Website.HostName',array())
+                ->where('NeedRevisit > 0')
+                ->where('BytesUsed < ByteLimit')
+                ->where('NeedRevisit < '.time())
+                ->where('Enabled = 1')
+                ->order('NeedRevisit ASC');
         return $this->fetchRow($select)->RowCount;
     }
 
@@ -73,8 +75,8 @@ class Search_Table_VisitedPage extends Zend_Db_Table_Abstract {
     public function setPageVisited(URL $url) {
         assert($url->isValid());
         $data = array(
-            'LastVisited' => time(),
-            'NeedRevisit' => 0
+                'LastVisited' => time(),
+                'NeedRevisit' => 0
         );
         $where = $this->getAdapter()->quoteInto("URL=?", $url->toString());
         $this->update($data, $where);
@@ -94,7 +96,8 @@ class Search_Table_VisitedPage extends Zend_Db_Table_Abstract {
      */
     public function getPage(URL $url) {
         assert($url->isValid());
-        $select = $this->select()->where('URL=?', $url->toString());
+        $select = $this->select()
+                ->where('URL=?', $url->toString());
         return $this->fetchRow($select);
     }
 
@@ -108,12 +111,11 @@ class Search_Table_VisitedPage extends Zend_Db_Table_Abstract {
         assert($url->isValid());
         assert(!$this->hasPage($url));
 
-        $days = (int)$days;
         $data = array(
-            "HostName"      => $url->getHost(),
-            "URL"           => $url->toString(),
-            "LastVisited"   => 0,
-            "NeedRevisit"   => time()+($days*60*60*24)
+                "HostName"      => $url->getHost(),
+                "URL"           => $url->toString(),
+                "LastVisited"   => 0,
+                "NeedRevisit"   => time()+(((int)$days)*60*60*24)
         );
         $this->insert($data);
     }
@@ -129,11 +131,9 @@ class Search_Table_VisitedPage extends Zend_Db_Table_Abstract {
         assert($url->isValid());
         assert($this->hasPage($url));
 
-        $days = (int)$days;
-        
-        $newUpdateTime = time() + ($days*60*60*24);
+        $newUpdateTime = time() + (((int)$days)*60*60*24);
         $data = array(
-            'NeedRevisit' => $newUpdateTime
+                'NeedRevisit' => $newUpdateTime
         );
         $where = $this->getAdapter()->quoteInto("URL=?", $url->toString());
         $this->update($data, $where);

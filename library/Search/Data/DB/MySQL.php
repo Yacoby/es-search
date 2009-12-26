@@ -97,11 +97,11 @@ class Search_Data_DB_MySQL extends Search_Data_StoreDatabase {
 
         //array of required keys
         $required = array(
-            'Name', 'Author', 'Description', 'URL'
+                'Name', 'Author', 'Description', 'URL'
         );
         //that are then checked
-        foreach ( $required as $value ){
-            if ( !isset($details[$value]) ){
+        foreach ( $required as $value ) {
+            if ( !isset($details[$value]) ) {
                 throw new Exception('The key, '.$value.' was not found in $details');
             }
         }
@@ -154,6 +154,11 @@ class Search_Data_DB_MySQL extends Search_Data_StoreDatabase {
         return $this->_mods->getMod($mid) != null;
     }
 
+    public function removeMod($game, $mid) {
+        self::checkNumeric($mid);
+        return $this->_mods->removeMod($mid);
+    }
+
 
     public function hasLocation($mid, URL $url) {
         self::checkNumeric($mid);
@@ -171,7 +176,7 @@ class Search_Data_DB_MySQL extends Search_Data_StoreDatabase {
         return $this->_locations->getLocations($mid)->toArray();
     }
 
-    public function getLocationCount($mid){
+    public function getLocationCount($mid) {
         assert(is_numeric($mid));
         return $this->_locations->getLocationCount($mid);
     }

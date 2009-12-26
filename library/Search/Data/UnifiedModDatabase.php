@@ -26,13 +26,13 @@ class Search_Data_UnifiedModDatabase {
 
     /**
      *
-     * @var SearchDatabase
+     * @var Search_Data_SearchDatabase
      */
     private $_search = null;
 
     /**
      *
-     * @var StoreDatabase
+     * @var Search_Data_StoreDatabase
      */
     private $_store = null;
 
@@ -210,8 +210,6 @@ class Search_Data_UnifiedModDatabase {
             $description,
             $lowerBound,
             $count) {
-
-
         return $this->searchFunction(
                 __FUNCTION__,
                 $game,
