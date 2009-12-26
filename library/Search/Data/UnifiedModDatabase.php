@@ -63,7 +63,7 @@ class Search_Data_UnifiedModDatabase {
         //echo "Adding/Updating Mod: ".$modDetails['Name']."<br />\n";
 
 
-        $mid = $this->getMid($modDetails);
+        $mid = $this->findMid($modDetails);
 
         $game = $modDetails['Game'];
         unset($modDetails['Game']);
@@ -97,11 +97,8 @@ class Search_Data_UnifiedModDatabase {
      * will alter the database to ensure that the mod fits including removing mods
      *
      * @param array $modDetails
-     *
-     * @todo rename fuction to reflect what it does
-     * @todo contains duplicated code
      */
-    private function getMid($modDetails) {
+    private function findMid($modDetails) {
         $url = new URL($modDetails['URL']);
 
         //check for a mod id with this exact URL
@@ -133,14 +130,7 @@ class Search_Data_UnifiedModDatabase {
         //nameMid == -1, urlMid not.
         //Remove this location, create a new mod with the new details
         if ( $urlMid !== -1 && $nameMid === -1 ) {
-
-            //remove mod location
-            $this->_store->removeLocation($urlMid, $url);
-
-            if (  $this->_store->getLocationCount($urlMid) == 0 ) {
-                $this->removeMod($modDetails['Game'], $urlMid);
-            }
-
+            $this->_removeLocation($urlMid, $modDetails['Game'], $url);
             return $this->_store->getNewID();
         }
 
@@ -149,14 +139,7 @@ class Search_Data_UnifiedModDatabase {
         if ( $urlMid !== -1 &&
                 $nameMid !== -1 &&
                 $url !== $nameMid ) {
-
-            //remove mod location $urlMid
-            $this->_store->removeLocation($urlMid, $url);
-
-            if (  $this->_store->getLocationCount($urlMid) == 0 ) {
-                $this->removeMod($modDetails['Game'], $urlMid);
-            }
-
+            $this->_removeLocation($urlMid, $modDetails['Game'], $url);
             return $nameMid;
         }
 
@@ -167,6 +150,22 @@ class Search_Data_UnifiedModDatabase {
 
         throw new Exception('Not all cases result in a return value');
 
+    }
+
+    /**
+     * Removes a location and if there are no locations, the mod
+     *
+     * @param int $mid
+     * @param URL $url
+     *
+     * @todo doesn't reflect what it does
+     */
+    private function _removeLocation($mid, $game, URL $url) {
+        $this->_store->removeLocation((int)$mid, $url);
+
+        if (  $this->_store->getLocationCount((int)$mid) == 0 ) {
+            $this->removeMod($game, $mid);
+        }
     }
 
     /**

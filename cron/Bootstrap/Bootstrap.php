@@ -24,7 +24,7 @@
 class Bootstrap extends Search_Bootstrap_Abstract {
 
     protected function _initTimeLimit() {
-        set_time_limit(45);
+        set_time_limit(110);
     }
 
     protected function _initErrorReporting() {
