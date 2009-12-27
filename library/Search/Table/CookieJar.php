@@ -37,7 +37,7 @@ class Search_Table_CookieJar extends Zend_Db_Table_Abstract {
      * @todo domain matching doesn't match RFC 2965
      */
     public function getCookies($domain) {
-        $select = $this->select('*')
+        $select = $this->select()
                 ->where('Domain LIKE ?', '%'.$domain)
                 ->where('Expires>?', time());
 

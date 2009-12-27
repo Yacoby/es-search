@@ -32,13 +32,13 @@ class Search_Table_Mods extends Zend_Db_Table_Abstract {
      */
     public function getNextID() {
         $select = $this->select()
-            ->from($this->_name,'ModID')
-            ->limit(1)
-            ->order('ModID DESC');
+                ->from($this->_name,'ModID')
+                ->limit(1)
+                ->order('ModID DESC');
         $row = $this->fetchRow($select);
         return $row ? ( $row->ModID + 1) : 0;
     }
-    
+
     /**
      * Gets the id of an exact match or -1 if there is no match
      *
@@ -48,11 +48,12 @@ class Search_Table_Mods extends Zend_Db_Table_Abstract {
      * @return int
      */
     public function getID($game, $name, $author) {
-        $select = $this->select('ModID')
-            ->where('Name=?', $name)
-            ->where('Author=?', $author)
-            ->where('Game=?', $game)
-            ->limit(1);
+        $select = $this->select()
+                ->from($this, 'ModID')
+                ->where('Name=?', $name)
+                ->where('Author=?', $author)
+                ->where('Game=?', $game)
+                ->limit(1);
         $row = $this->fetchRow($select);
         return  $row ? $row->ModID : -1;
     }
@@ -78,10 +79,10 @@ class Search_Table_Mods extends Zend_Db_Table_Abstract {
     public function addMod($mid, $game, $name, $author) {
         $mid = (int) $mid;
         $mod = array(
-            'ModID'     => $mid,
-            'Name'      => $name,
-            'Author'    => $author,
-            'Game'      => $game,
+                'ModID'     => $mid,
+                'Name'      => $name,
+                'Author'    => $author,
+                'Game'      => $game,
         );
         $this->insert($mod);
     }
@@ -97,9 +98,9 @@ class Search_Table_Mods extends Zend_Db_Table_Abstract {
     public function updateMod($mid, $game, $name, $author) {
         $mid = (int)$mid;
         $mod = array(
-            'Name'      => $name,
-            'Author'    => $author,
-            'Game'      => $game,
+                'Name'      => $name,
+                'Author'    => $author,
+                'Game'      => $game,
         );
         $where = $this->getAdapter()->quoteInto('ModID=?', $mid);
         $this->update($mod, $where);
@@ -116,7 +117,7 @@ class Search_Table_Mods extends Zend_Db_Table_Abstract {
 
     public function count() {
         $select = $this->select()
-            ->from($this,'COUNT(*) AS num');
+                ->from($this,'COUNT(*) AS num');
         return $this->fetchRow($select)->num;
     }
 
