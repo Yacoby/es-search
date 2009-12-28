@@ -43,7 +43,7 @@ $tbl = new Search_Table_Mods();
 $loc = new Search_Table_ModLocation();
 
 
-$s = $loc->select('*');
+$s = $loc->select();
 $results = $loc->fetchAll($s);
 
 echo "Creating location data<br />\n";
@@ -57,7 +57,7 @@ foreach ( $results as $result ) {
 echo "Created location data<br />\n";
 
 
-$s = $tbl->select('*')->order('ModID');
+$s = $tbl->select()->order('ModID');
 $results = $tbl->fetchAll($s);
 
 $i = 0;
