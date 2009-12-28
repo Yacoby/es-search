@@ -200,7 +200,7 @@ class Search_Updater {
         if ( $page->isValidModPage() ) {
             //  update mod(s)
             foreach ( $page->mods() as $mod ) {
-                echo "Updating Mod ", $mod['Name'], "<br />\n";
+                echo "Updating Mod ", $mod['Name'], "<br />\n", $mod['Author'], "<br />\n";
                 $this->modUpdate($mod, $page->getURL());
             }
         }
