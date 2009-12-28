@@ -134,8 +134,7 @@ class Search_Data_DB_Lucene extends Search_Data_SearchDatabase {
         if ( $this->_hasModified == true ) {
             foreach ( $this->_db as $db ) {
                 $db->commit();
-                //removed to prevent optomization every time, it kills performance
-                //$db->optimize();
+                $db->optimize();
             }
         }
     }
