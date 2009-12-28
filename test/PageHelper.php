@@ -102,8 +102,7 @@ class PageTest extends PHPUnit_Framework_TestCase {
         $this->assertTrue($p->isValidModPage());
 
         $mods = $p->mods();
-        //var_dump($mods);
-
+        
         $this->assertEquals($numMods, count($mods));
 
         $mod = $mods[0];
