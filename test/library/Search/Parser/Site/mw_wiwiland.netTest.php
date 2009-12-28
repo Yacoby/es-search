@@ -36,8 +36,7 @@ class Morrowind_WiwlandTest extends PageTest {
     function testMod1() {
         $mod = array(
             'Name' => 'Adventurer Wakim\'s',
-            'Author' => 'Ethaniel',
-            //'Description' => 'Un savant mélange des mods Wakim’s Game Improvments et The Adventurers',
+            'Author' => 'Ethaniel'
         );
         $this->helpTestModPage(
             new URL('http://morromods.wiwiland.net/spip.php?article181'),
@@ -46,6 +45,7 @@ class Morrowind_WiwlandTest extends PageTest {
         );
 
     }
+    /*
     function testMod2() {
         $mod = array(
             'Name' => 'Atronach Magie',
@@ -57,6 +57,7 @@ class Morrowind_WiwlandTest extends PageTest {
             $mod
         );
     }
+     */
 
     function testMod3() {
         $mod = array(
@@ -82,6 +83,18 @@ class Morrowind_WiwlandTest extends PageTest {
         );
     }
  */
+
+        function testMod5() {
+        $mod = array(
+            'Name' => 'Chute d\'eau',
+            'Author' => 'de Heremod Production - Camémbérisé par Zunder',
+        );
+        $this->helpTestModPage(
+            new URL('http://morromods.wiwiland.net/spip.php?article643'),
+            1,
+            $mod
+        );
+    }
 
     function testModURLs() {
         $valid = array(

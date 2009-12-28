@@ -89,7 +89,7 @@ class Oblivion_WiwlandTest extends PageTest {
 
     function testMod5() {
         $mod = array(
-                'Name' => 'Exnem EyeCandy - Nouvelles Armures feminines',
+                'Name' => 'Exnem EyeCandy - Nouvelles Armures féminines',
         );
 
         $this->helpTestModPage(
@@ -103,7 +103,7 @@ class Oblivion_WiwlandTest extends PageTest {
     function testMod6() {
 
         $mod = array(
-                'Name' => 'Amulette du Necromancien et Heaume de Verdesang',
+                'Name' => 'Amulette du Nécromancien et Heaume de Verdesang',
         );
 
         $this->helpTestModPage(
@@ -115,7 +115,7 @@ class Oblivion_WiwlandTest extends PageTest {
 
     function testMod7() {
         $mod = array(
-                'Name' => 'Races Mazkens & Aureals',
+                'Name' => 'Races Mazkens & Auréals',
         );
 
         $this->helpTestModPage(

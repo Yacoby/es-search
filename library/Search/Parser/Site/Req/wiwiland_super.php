@@ -51,16 +51,20 @@ abstract class Wiwland_Super extends Search_Parser_Site {
 }
 
 abstract class Super_Wiwland_page extends Search_Parser_Page {
-    protected $_sub;
+    protected $_sub, $_conv = array();
+
 
     function __construct(URL $url, Search_Parser_Dom $html, $sub) {
         parent::__construct($url,$html);
         $this->_sub = $sub;
+
+        for( $i = 32; $i <= 255; $i++ ) {
+            $this->_conv[chr($i)] = utf8_encode(chr($i));
+        }
     }
 
     protected function doIsValidModPage($url) {
         $pages = array(
-                //"http://".$this->_sub."\\.wiwiland\\.net/spip\\.php\\?article\\d+",
                 "http://morromods\\.wiwiland\\.net/spip\\.php\\?article\\d+",
                 "http://oblimods\\.wiwiland\\.net/spip\\.php\\?article\\d+",
         );
@@ -80,20 +84,18 @@ abstract class Super_Wiwland_page extends Search_Parser_Page {
      *
      *
      * @param string $str html input
-     * @return string an ascii string
+     * @return string an latin-1 string
      */
     private function decode($str) {
 
         $str = str_replace('&#8217;', '\'', $str); //doesn't covert this
         $str = str_replace('&nbsp;', ' ', $str); //and nbsp != sp
-
-        return iconv(
-                'ISO-8859-1',
-                'ASCII//TRANSLIT//IGNORE',
-                //utf8_decode(
-                html_entity_decode($str, ENT_QUOTES, 'UTF-8')
-                //        )
-        );
+        $str = html_entity_decode($str, ENT_QUOTES, 'UTF-8');
+        
+        foreach( $this->_conv as $key => $val ) {
+            $str = str_replace($key, $val, $str);
+        }
+        return $str;
     }
 
     abstract function getGame();
@@ -111,11 +113,13 @@ abstract class Super_Wiwland_page extends Search_Parser_Page {
         if ( !isset($r->plaintext) ) {
             return null;
         }
-        //strip the Par from the front of the string
-        //$r = $r->plaintext;
-        $r = $this->decode($r->plaintext);//html_entity_decode($r, ENT_QUOTES, 'UTF-8');
-        $r = trim(substr($r, strlen('Par')));
-        return $r;
+
+        $r = $this->decode($r->plaintext);
+
+        if ( stripos($r, 'Par') === 0 ) {
+            $r = substr($r, strlen('Par'));
+        }
+        return trim($r);
     }
     function getDescription() {
         $r = $this->_html->find("div[class=texte entry-content]", 0);
@@ -124,18 +128,6 @@ abstract class Super_Wiwland_page extends Search_Parser_Page {
         }
         return self::getDescriptionText($this->decode($r->innertext));
     }
-    /*
-    function getVersion() {
-        $r = $this->_html->find(".surtitre", 0);
-        if ( !isset($r->plaintext) ) {
-            return '';
-        }
-        //it someimtes says v1.5
-        $r = $r->plaintext;
-        $r = ltrim($r, 'Vv');
-        return $r;
-    }
-    */
 }
 
 
