@@ -18,8 +18,8 @@
  * l-b */
 
 set_include_path(implode(PATH_SEPARATOR, array(
-    realpath(dirname(__FILE__) . '/../library'),
-    get_include_path(),
+        realpath(dirname(__FILE__) . '/../library'),
+        get_include_path(),
 )));
 
 //require_once ('Parser/Parser.php');
@@ -71,12 +71,16 @@ function resetDatabse() {
 
     $sqlQuery = file_get_contents($scriptPath . '/schema.sql');
 
-    $db = Zend_Db_Table_Abstract::getDefaultAdapter();
+    $adapter = Zend_Db_Table_Abstract::getDefaultAdapter();
+    $mysqli = $adapter->getConnection();
+    $mysqli->multi_query($sqlQuery);
 
-    $db->exec($sqlQuery);
-    $db->closeConnection();
-    $db->getConnection();
-    sleep(2); //bad, but it prevents errors
+    //cleans all results out of the buffer, so we don't ever get a
+    //'commands out of sync' error
+    while( $mysqli->next_result() ){
+        $mysqli->store_result(); 
+    }
+
 
     $si = new Search_SiteInformation();
     $si->ensureParsersCreated();
