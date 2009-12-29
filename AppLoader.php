@@ -39,6 +39,7 @@ set_include_path(implode(PATH_SEPARATOR, array(
 )));
 
 //Setup app wide constants
+define('ROOT_PATH', realpath(dirname(__FILE__)));
 define('APPLICATION_PATH', realpath(dirname(__FILE__) . '/application'));
 define('CONFIG_PATH', realpath(dirname(__FILE__) . '/config'));
 //define('APPLICATION_ENV', 'production');
