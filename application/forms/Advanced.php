@@ -24,7 +24,7 @@
  * Default search form on the search
  *
  */
-class Default_Form_Search extends Zend_Form {
+class Default_Form_Advanced extends Zend_Form {
 
     /**
      * @return void
@@ -51,7 +51,10 @@ class Default_Form_Search extends Zend_Form {
             $e->setValue($_COOKIE['SelectedGame']);
         }
         $this->addElement($e);
-        
+
+        $e = $this->createElement('hidden', 'page')
+                ->setValue('1');
+        $this->addElement($e);
 
         $e = $this->createElement('submit', 'act')
                 ->setLabel('Search')

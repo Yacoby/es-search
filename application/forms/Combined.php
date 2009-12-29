@@ -35,8 +35,8 @@ class Default_Form_Combined extends Zend_Form {
             }
         }
         
-        $this->addSubForm(new Default_Form_Index(), 'Simple');
-        $this->addSubForm(new Default_Form_Search(), 'Advanced');
+        $this->addSubForm(new Default_Form_Simple(), 'Simple');
+        $this->addSubForm(new Default_Form_Advanced(), 'Advanced');
     }
 
     public function setActiveSubForm($name){

@@ -22,7 +22,7 @@
  * Default search form on the index page
  *
  */
-class Default_Form_Index extends Zend_Form {
+class Default_Form_Simple extends Zend_Form {
 
     public function init() {
         $e = $this->createElement('text', 'general')
@@ -43,6 +43,10 @@ class Default_Form_Index extends Zend_Form {
         $e = $this->createElement('submit', 'act')
                 ->setLabel('Search')
                 ->setIgnore(true);
+        $this->addElement($e);
+
+        $e = $this->createElement('hidden', 'page')
+                ->setValue('1');
         $this->addElement($e);
 
 
