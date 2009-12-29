@@ -1,4 +1,5 @@
-<?php /* l-b
+<?php
+/* l-b
  * This file is part of ES Search.
  * 
  * Copyright (c) 2009 Jacob Essex
@@ -18,51 +19,122 @@
  * l-b */
 
 
-/*
-require_once ("Parser/Parser.php");
 
-class modding_history_pageTest1 extends PHPUnit_Framework_TestCase {
+class modding_history_pageTest extends PageTest {
 
-    private $page;
-    protected function setUp() {
-        $url = new URL('http://modhistory.fliggerty.com/rwdownload/index.php?dlid=3848');
-        $this->page = Search_Parser_Factory::getInstance()->getSiteByURL($url)->getPage($url);
+    function __construct() {
+        parent::__construct(
+                'modding_history',
+                new URL('http://modhistory.fliggerty.com/index.php?dlid=3848')
+        );
     }
 
-    public function testTypeCorrect() {
-        $this->assertTrue($this->page instanceof modding_history_page);
+    function testInstance() {
+        $this->helpTestInstance(new URL('http://modhistory.fliggerty.com/index.php?dlid=2436'));
     }
 
-    public function testGrabMods() {
-        $mods = $this->page->mods();
-        $mod = $mods[0];
+    function testModURLs() {
+        $valid = array(
+                'http://modhistory.fliggerty.com/index.php?dlid=2944',
+        );
 
-        $this->assertEquals('Potion Upgrades', $mod['Name']);
-        $this->assertEquals('Schwaa', $mod['Author']);
-        $this->assertEquals('Alchemical', $mod['Category']);
+        $invalid = array(
+                'http://modhistory.fliggerty.com/index.php?dlid=jd'
+        );
 
-        $this->assertEquals('Changes the potions (meshes and textures) to look much more stylized. The potions will even have bubbles floating inside the bottle.', $mod['Description']);
+        $this->helpTestModUrls($valid, $invalid);
     }
 
-    public function testURLs() {
-        $p = $this->page;
+    function testURLs() {
 
-        $this->assertTrue(
-            $p->isValidModPage(new URL('http://modhistory.fliggerty.com/rwdownload/index.php?dlid=2944'))
-        );
-        $this->assertFalse(
-            $p->isValidModPage(new URL('http://modhistory.fliggerty.com/rwdownload/index.php?dlid=jd'))
-        );
-        $this->assertTrue(
-            $p->isValidPage(new URL('http://modhistory.fliggerty.com/rwdownload/index.php?cid=8'))
-        );
-        $this->assertTrue(
-            $p->isValidPage(new URL('http://modhistory.fliggerty.com/rwdownload/index.php?cid=25&sortvalue=date&order=ASC&limit=30'))
+        $valid = array(
+                'http://modhistory.fliggerty.com/index.php?cid=8',
+                'http://modhistory.fliggerty.com/index.php?cid=25&sortvalue=date&order=ASC&limit=30'
         );
 
+        $invalid = array(
+                'http://modhistory.fliggerty.com/index.php?cid=a8',
+                'http://modhistory.fliggerty.com/index.php?cid=8a',
+                'http://modhistory.fliggerty.com/index.php?cid=25&sortvalue=date&order=ASC&limit=a',
+                'http://modhistory.fliggerty.com/index.php?cid=25&sortvalue=date&order=ASC'
+        );
+
+        $this->helpTestUrls($valid, $invalid);
+    }
+
+    
+    function testLinks() {
+        $links = array(
+                'http://modhistory.fliggerty.com/index.php?cid=9',
+                'http://modhistory.fliggerty.com/index.php?cid=12'
+        );
+        $this->helpRequiredLinks(
+                new URL('http://modhistory.fliggerty.com/index.php?cid=5'),
+                $links
+        );
+    }
+    
+
+
+    function testMod1() {
+        $mod = array(
+                'Name'      => 'Unholy Temple Armor',
+                'Author'    => 'Fliggerty'
+        );
+        $this->helpTestModPage(
+                new URL('http://modhistory.fliggerty.com/index.php?dlid=1740'),
+                1,
+                $mod
+        );
+    }
+
+    function testMod2() {
+        $mod = array(
+                'Name'      => 'All my stuff 3',
+                'Author'    => 'Adam'
+        );
+        $this->helpTestModPage(
+                new URL('http://modhistory.fliggerty.com/index.php?dlid=3916'),
+                1,
+                $mod
+        );
+    }
+
+
+    function testMod3() {
+        $mod = array(
+                'Name' => 'secretcave',
+        );
+        $this->helpTestModPage(
+                new URL('http://modhistory.fliggerty.com/index.php?dlid=3242'),
+                1,
+                $mod
+        );
+    }
+
+
+    function testMod4() {
+        $mod = array(
+                'Name' => 'Martistan Castle',
+        );
+        $this->helpTestModPage(
+                new URL('http://modhistory.fliggerty.com/index.php?dlid=3296'),
+                1,
+                $mod
+        );
+    }
+
+
+    function testMod5() {
+        $mod = array(
+                'Name' => 'MORIA',
+        );
+        $this->helpTestModPage(
+                new URL('http://modhistory.fliggerty.com/index.php?dlid=3277'),
+                1,
+                $mod
+        );
     }
 
 
 }
-*/
-?>

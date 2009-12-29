@@ -21,15 +21,14 @@
 /**
  */
 final class modding_history extends Search_Parser_Site {
-    
-    public static function getHost(){
-        return null;
-        //return 'modhistory.fliggerty.com';
+
+    public static function getHost() {
+        return 'modhistory.fliggerty.com';
     }
 
-/**
- * Maximum Usage Per day
- */
+    /**
+     * Maximum Usage Per day
+     */
     public function getLimitBytes() {
         return 1048578*10;
     }
@@ -39,14 +38,14 @@ final class modding_history extends Search_Parser_Site {
      */
     public function getUpdatePage() {
         return array(
-        "URL" => array(),
-        "UpdateF" => 31
+                "URL" => array(),
+                "UpdateF" => 31
         );
     }
 
     public function getInitialPages() {
         return array(
-            'http://modhistory.fliggerty.com/rwdownload/index.php?cid=5'
+                'http://modhistory.fliggerty.com/index.php?cid=5'
         );
     }
 
@@ -55,13 +54,16 @@ final class modding_history extends Search_Parser_Site {
 final class modding_history_page extends Search_Parser_Page {
 
     protected function doIsValidModPage($url) {
-        return (preg_match("%http://modhistory\\.fliggerty\\.com/rwdownload/index\\.php\\?dlid=\\d+%", $url->toString()) == 1 );
+        return preg_match(
+                '%http://modhistory\.fliggerty\.com/index\.php\?dlid=\d+%',
+                $url->toString()
+                )  == 1;
     }
 
     protected function doIsValidPage($url) {
         $pages = array(
-            "http://modhistory\\.fliggerty\\.com/rwdownload/index\\.php\\?cid=\\d+",
-            "http://modhistory\\.fliggerty\\.com/rwdownload/index\\.php\\?cid=\\d+&sortvalue=date&order=ASC&limit=\\d+"
+                'http://modhistory\.fliggerty\.com/index\.php\?cid=\d+',
+                'http://modhistory\.fliggerty\.com/index\.php\?cid=\d+&sortvalue=date&order=ASC&limit=\d+'
         );
         return $this->isAnyMatch($pages, $url);
     }
@@ -70,13 +72,62 @@ final class modding_history_page extends Search_Parser_Page {
         return $this->useModParseHelper();
     }
 
-    function getGame() {
+    /**
+     *
+     * @return string will always return 'MW'
+     */
+    public function getGame() {
         return "MW";
     }
-    function getName() {
-        return $this->_html->find("div[id=banner] div[id=catname] a", 0)->plaintext;
+
+
+    /**
+     * This function tries to generate a better name from the input by stripping
+     * off common things that mess up. TESSource style IDs for example.
+     *
+     *
+     * @return string|null
+     */
+    public function getName() {
+        $str = $this->_html->find("div[id=banner] div[id=catname] a", 0)->plaintext;
+
+        if ( $str === null ) {
+            return null;
+        }
+
+        //cope with tesnexus style file names
+        //ID3002-2-24-Unholy+Temple+Armor-20040215 => Unholy+Temple+Armor
+        //ID2514-2-26-White+Bonemold+Armor.-20031129 => White+Bonemold+Armor.
+        $str = preg_replace('/ID[\d]+-[\d]+-[\d]+-(.*)-[\d]+/', '$1', $str);
+
+        //remove _ and + from between words
+        //117_Better_Bodies_Texture_Replacer_Muscular => 117 Better Bodies Texture Replacer Muscular
+        $str = preg_replace('/([\w\d])[_|\+]([\w\d])/', '$1 $2', $str);
+
+
+        //remove leading numbers but not if there is a letter in the number and only if there
+        //is a space after
+        //117 Better Bodies Texture Replacer Muscular =>  Better Bodies Texture Replacer Muscular
+        $str = preg_replace('/^[\d]+ /', '', $str);
+
+        //remove trailing numbers if it starts with '  0' (note the space)
+        //nudbretf_0601 => nudbretf_
+        //Clothed Muscles v1.1 => Clothed Muscles v1.1
+
+        $str = preg_replace('/ 0([\d])*$/', '', $str);
+
+        //add spaces before capitals, but only if there is one capital
+        //BB_LeatherAndChain => BB_Leather And Chain
+        $str = preg_replace('/(?<!\ )[A-Z][a-z]/', ' $0', $str);
+
+        return trim($str);
     }
-    function getAuthor() {
+
+    /**
+     *
+     * @return string|null
+     */
+    public function getAuthor() {
         $mr = $this->_html->find('.mainrow');
         foreach ( $mr as $r ) {
             if ( trim($r->find('td',0)->plaintext) == "Author:" ) {
@@ -86,22 +137,35 @@ final class modding_history_page extends Search_Parser_Page {
         return null;
     }
 
-    function getDescription() {
+    /**
+     *
+     *
+     * Note, this will never return null, it will just return ''
+     *
+     * @return string
+     */
+    public function getDescription() {
         $mr = $this->_html->find('.mainrow');
         foreach ( $mr as $r ) {
             if ( count($r->children()) == 1) {
                 return $r->children(0)->plaintext;
             }
         }
-        //optional
-        return " ";
+        return '';
     }
 
-    function getCategory(){
+    /**
+     *
+     *
+     * Note, this will never return null, it will return '' as it is optional
+     *
+     * @return string
+     */
+    public function getCategory() {
         $mr = $this->_html->find('.topbg strong',0);
         if ( $mr == null )
-            return ' ';
-            
+            return '';
+
         $n = count($mr->children());
         return $mr->children($n-2)->plaintext;
 
