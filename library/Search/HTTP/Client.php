@@ -18,9 +18,7 @@
  * along with ES Search. If not, see <http://www.gnu.org/licenses/>.
  * l-b */
 
-class HTTPException extends Exception {
-
-}
+class HTTPException extends Exception {}
 
 /**
  * This class should be used for accessing webpages so features such as caching
@@ -162,7 +160,7 @@ class Search_HTTP_Client {
             $domain = $url->getHost();
 
             foreach ( $this->_jar->getCookies($domain) as $cookie ){
-                $this->_client->getCookieJar()->addCookie($cookie);
+                    $this->_client->getCookieJar()->addCookie($cookie);
             }
 
             $this->_client->setUri($url->toString());
@@ -181,7 +179,8 @@ class Search_HTTP_Client {
             $this->_limits->addRequesedPage($url, strlen($req->getBody()));
 
             $this->_jar->addOrUpdateCookies(
-                    $this->_client->getCookieJar()->getAllCookies(Zend_Http_CookieJar::COOKIE_OBJECT)
+                    $this->_client->getCookieJar()->getAllCookies(Zend_Http_CookieJar::COOKIE_OBJECT),
+                    $domain
             );
 
             if ( $this->_cacheTime > 0 && $cache ) {

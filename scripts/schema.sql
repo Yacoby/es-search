@@ -3,14 +3,8 @@ SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
 DROP TABLE IF EXISTS CookieJar;
 CREATE TABLE IF NOT EXISTS CookieJar (
   `Domain` varchar(255) NOT NULL,
-  `Name` varchar(255) NOT NULL,
-  `Value` text NOT NULL,
-  `Expires` int,
-  `Path` text NOT NULL,
-  `Secure` tinyint NOT NULL,
-  PRIMARY KEY  (`Domain`,`Name`),
-  KEY `Domain` (`Domain`),
-  KEY `Expires` (`Expires`)
+  `Data` BLOB NOT NULL,
+  PRIMARY KEY  (`Domain`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
