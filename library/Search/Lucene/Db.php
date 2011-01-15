@@ -17,7 +17,7 @@ class Search_Lucene_Db{
      * @param Doctrine_Record $mod This record must contain all locations and games
      *                              associated with the mod
      */
-    public static function staticAddMod($mod){
+    public static function staticAddOrUpdateMod($mod){
         //No need to add a mod if there are no locations
         if ( $mod->Locations->count() == 0 ){
             return;
@@ -28,7 +28,7 @@ class Search_Lucene_Db{
         foreach ( $mod->Locations as $location ){
             $descriptionData .= $location->description . ' ';
         }
-        trim($descriptionData);
+        $descriptionData = trim($descriptionData);
 
         foreach ( $mod->Games as $game ){
             $db = new self($game->id);

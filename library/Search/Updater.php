@@ -74,20 +74,27 @@ class Search_Updater extends Search_Observable {
 
     /**
      *
+     * @var Search_Table_Locations
+     */
+    private $_locations;
+
+    /**
+     *
      * @var Search_Table_Pages 
      */
     private $_pages;
 
 
     public function __construct(
-            Search_Table_Sites $ws    = null,
-            Search_Table_Pages $pages = null,
-            Search_Table_Mods $mods   = null
+            Search_Table_Sites $ws         = null,
+            Search_Table_Pages $pages      = null,
+            Search_Table_Mods $mods        = null,
+            Search_Table_Locations $locs   = null
             ) {
-
-        $this->_sites = $ws    ? $ws    : new Search_Table_Sites();
-        $this->_pages = $pages ? $pages : new Search_Table_Pages();
-        $this->_mods  = $mods  ? $mods  : new Search_Table_Mods();
+        $this->_sites     = $ws    ? $ws    : new Search_Table_Sites();
+        $this->_pages     = $pages ? $pages : new Search_Table_Pages();
+        $this->_mods      = $mods  ? $mods  : new Search_Table_Mods();
+        $this->_locations = $locs  ? $locs  : new Search_Table_Locations();
     }
 
     /**
@@ -186,8 +193,12 @@ class Search_Updater extends Search_Observable {
         $page->last_visited = time();
         $page->save();
 
-        $page = $factory->getSiteByURL($url)
-                        ->getPage($url);
+        try{
+            $page = $factory->getSiteByURL($url)
+                            ->getPage($url);
+        }catch(Search_Parser_Exception_ModRemoved $e){
+            $this->_locations->deleteByUrl($url);
+        }
 
         $this->addPageData($page);
 

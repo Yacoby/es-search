@@ -15,6 +15,7 @@ class Location extends BaseLocation
     public function construct(){
         $this->addListener(new Search_Listener_Location_Lucene());
         $this->addListener(new Search_Listener_Location_Version());
+        $this->addListener(new Search_Listener_Location_CascadeUpwards());
     }
 
 }
