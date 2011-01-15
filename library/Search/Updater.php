@@ -18,6 +18,8 @@
  * along with ES Search. If not, see <http://www.gnu.org/licenses/>.
  * l-b */
 
+
+
 /*Find new page on update page
     if mod page
         if has mod
@@ -57,81 +59,76 @@ define('UPDATE_MOD_PAGE', 15);
 define('UPDATE_NORMAL_PAGE', 60);
 
 
-/**
- * @todo Class isn't unit testable
- */
-class Search_Updater {
+class Search_Updater extends Search_Observable {
     /**
      *
-     * @var Search_Table_VisitedPage
+     * @var Search_Table_Sites
      */
-    private $_vp;
+    private $_sites;
 
     /**
      *
-     * @var Search_Table_Website
+     * @var Search_Table_Mods
      */
-    private $_ws;
+    private $_mods;
 
     /**
      *
-     * @var Search_Data_UnifiedModDatabase
+     * @var Search_Table_Pages 
      */
-    private $_modDb;
+    private $_pages;
 
 
     public function __construct(
-            Search_Data_UnifiedModDatabase $mdb = null,
-            Search_Table_VisitedPage $vp = null,
-            Search_Table_Website $ws = null) {
+            Search_Table_Sites $ws    = null,
+            Search_Table_Pages $pages = null,
+            Search_Table_Mods $mods   = null
+            ) {
 
-        if ( !$vp ) {
-            $vp = new Search_Table_VisitedPage();
-        }
-        $this->_vp = $vp;
+        $this->_sites = $ws    ? $ws    : new Search_Table_Sites();
+        $this->_pages = $pages ? $pages : new Search_Table_Pages();
+        $this->_mods  = $mods  ? $mods  : new Search_Table_Mods();
+    }
 
-        if ( !$ws ) {
-            $ws = new Search_Table_Website();
-        }
-        $this->_ws = $ws;
-
-        if ( !$mdb) {
-            $mdb = new Search_Data_UnifiedModDatabase(
-                    new Search_Data_DB_MySQL(),
-                    new Search_Data_DB_Lucene()
-            );
-        }
-        $this->_modDb = $mdb;
+    /**
+     * Gets a site to update, that it is possible to update (e.g. not over any
+     * byte limits)
+     * 
+     * @return string|null The hostname, or null if no site needs to be updated
+     */
+    private function getUpdateSite() {
+        $row = $this->_sites->findOneByUpdateRequired();
+        return $row !== false ? $row->host : null;
     }
 
     /**
      * Trys to update an update page, if it finds to update, it retures true
      *
-     * @return bool If it managed to find an update to an update page
+     * @return bool True if it managed to find a page to update and update it
      */
-    public function attemptUpdatePage() {
+    public function attemptUpdatePage(Search_Parser_Factory $parserFactory) {
         $host = $this->getUpdateSite();
-        if ( $host == null ) {
+        if ( $host === null ) {
             return false;
         }
-
         echo "Updating $host<br />\n";
 
-        $this->setUpdateSite($host);
+        //set updated. This is so that we don't get stuck on errors
+        $this->setSiteUpdated($host);
 
-        //update update page
-        $site = Search_Parser_Factory::getInstance()->getSiteByHost($host);
-        $updateInfo = $site->getUpdatePage();
+        //get update page
+        $site       = $parserFactory->getSiteByHost($host);
+        $pages = $site->getUpdatePages();
 
-        if ( $updateInfo == null ) {
+        if ( $pages === null ) {
             return false;
         }
 
+        //ensure the next time to update is now set with the correct frequency
+        $this->setSiteUpdated($host, $site->getUpdateFrequency());
 
-        //ensure update frequency is now set correctly
-        $this->setUpdateSite($host, $updateInfo['UpdateF']);
-
-        foreach ( $updateInfo['URL'] as $url ) {
+        foreach ( $pages as $url ) {
+            echo $url . "<br>\n";
             $page = $site->getPage($url);
             $this->addPageData($page);
         }
@@ -139,60 +136,61 @@ class Search_Updater {
     }
 
     /**
-     * FOr unit testing
+     * For unit testing
      *
      * @return bool
      */
     public function hasUpdateUpdate() {
-        return $this->getUpdateSite() != null;
+        return $this->getUpdateSite() !== null;
     }
 
-    /**
-     * Gets a site to update
-     * @return string Hostname
-     */
-    private function getUpdateSite() {
-        $row = $this->_ws->getSiteNeedingUpdate();
-        return $row ? $row->HostName : null;
-    }
 
     /**
      * Sets a site as having been updated
      *
      * @param string $host
-     * @param int $days
+     * @param float|int $days The number of days to wait till another update.
+     *                        Default, 1
      */
-    private function setUpdateSite($host, $days = 1) {
+    private function setSiteUpdated($host, $days = 1) {
         if ( !is_numeric($days)) {
             throw new Exception('$days must be numeric');
         }
-        $this->_ws->setSiteUpdated($host, $days);
+        $site = $this->_sites->findOneByHost($host);
+        $site->next_update = time() + 60*60*24*$days;
+        $site->save();
     }
 
 
     /**
-     * Updates a page
+     * Updates a page that needs updating
      *
      * @return bool if an update has occured
      */
-    public function generalUpdate() {
+    public function generalUpdate(Search_Parser_Factory $factory) {
         //  select a page needing updating
-        $page = $this->_vp->getPageNeedingVisit();
-        if ( $page == null ) {
+       
+        $page = $this->_pages->findOneByUpdateRequired();
+
+        if ( $page === false ) {
+            echo 'No Page';
             return false;
         }
-        $url = new URL($page->URL);
-
-        echo "Updating URL: $url<br />\n";
+        $url = new Search_Url($page->Site->base_url . $page->url_suffix);
+        echo $url . "<br>\n";
+        //echo "Updating URL: $url<br />\n";
 
         //flag it as updated before we have a (large) chance for errors to occur
-        $this->_vp->setPageVisited($url);
+        //$this->_vp->setPageVisited($url);
+        $page->revisit      = 0;
+        $page->last_visited = time();
+        $page->save();
 
-        $page = Search_Parser_Factory::getInstance()
-                ->getSiteByURL($url)
-                ->getPage($url);
+        $page = $factory->getSiteByURL($url)
+                        ->getPage($url);
 
         $this->addPageData($page);
+
         return true;
     }
 
@@ -200,43 +198,86 @@ class Search_Updater {
         if ( $page->isValidModPage() ) {
             //  update mod(s)
             foreach ( $page->mods() as $mod ) {
-                echo "Updating Mod ", $mod['Name'], "<br />\n", $mod['Author'], "<br />\n";
-                $this->modUpdate($mod, $page->getURL());
+                //echo "Updating Mod ", $mod['Name'], "<br />\n", $mod['Author'], "<br />\n";
+                $this->addOrUpdateMod($mod, $page->getURL());
             }
         }
         //update all links
         foreach ( $page->links() as $link ) {
-            echo "Adding Link $link<br />\n";
-            $this->updateOrAddLink($link, $page->isValidModPage($link));
+            //echo "Adding Link $link<br />\n";
+            $this->addOrUpdateLink($link, $page->isValidModPage($link));
         }
-
-
     }
 
-    private function modUpdate($mod, URL $url) {
+    /**
+     *
+     * @param array $modArray
+     * @param Search_Url $url
+     */
+    private function addOrUpdateMod(array $modArray, Search_Url $url) {
+        //merge mod with default values
         $defualts = array(
-                'Version'       => '',
-                'Category'      => '',
-                'Description'   => '',
-                'URL'           => $url
+                'Version'     => '',
+                'Category'    => '',
+                'Description' => '',
+                'Url'         => $url
         );
-        $mod = array_merge($defualts, $mod);
+        $modArray = array_merge($defualts, $modArray);
+
+        try{
+            //there is a transaction in this function, so we don't need one here
+            $this->_mods->addOrUpdateModFromArray($this->_sites, $modArray);
         
-        //update details
-        $this->_modDb->addMod($mod);
+        }catch(Doctrine_Validator_Exception $e){
+            echo "Validator Error<br>\n";
+          //  echo $e->errorMessage();
+
+        //    echo $e->getTraceAsString();
+        }
+          
     }
 
-    public function updateOrAddLink(URL $url, $modPage = false) {
-        //If it doesn't exist
-        if ( !$this->_vp->hasPage($url) ) {
-            $this->_vp->addPage($url);//  add
+    private function toUrlSuffix($site, Search_Url $url){
+        $i = stripos((string)$url, $site->base_url);
+        if ( $i === false ){
+            return (string)$url;
+        }
+        return substr((string)$url, $i + strlen($site->base_url));
+    }
+
+    public function addOrUpdateLink(Search_Url $url, $modPage = false) {
+        //I don't like this being here. It adds a large query overhead compared
+        //to if it was taken out of the function. However, consider
+        //the fact that a link from some site may link to another site. It is a
+        //corner case, but it *may* happen.
+        //
+        //plus, this is only called in the updating, so it isn't a huge huge issue
+        //I don't think...
+        $site = $this->_sites->findOneByHost($url->getHost());
+
+        $this->_pages->getConnection()->beginTransaction();
+        
+        $page = $this->_pages->findOneByUrl($url);
+         //If it doesn't exist
+        if ( $page === false ) {
+            $page = $this->_pages->create();
+
+            $page->site_id = $site->id;
+            $page->revisit = time();
+            
+            $page->url_suffix = $this->toUrlSuffix($site, $url);
+
+            $page->save();
+
         }else { //else if it doesn't need updating
-            $pageDetails = $this->_vp->getPage($url);
-            if ( $pageDetails->NeedRevisit == 0 ) {
+            if ( $page->revisit == 0 ){
                 $updateDays = $modPage ? UPDATE_MOD_PAGE : UPDATE_NORMAL_PAGE;
-                $this->_vp->setNeedVisit(new URL($pageDetails->URL), $updateDays);
+                $page->revisit = time() + $updateDays*60*60*24;
+                $page->save();
             }
         }
+
+        $this->_pages->getConnection()->commit();
     }
 
 }

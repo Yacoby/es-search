@@ -31,4 +31,7 @@ class InfoController extends Zend_Controller_Action {
     public function featureAction() {
         $this->view->title = "Request Feature";
     }
+    public function faqAction() {
+        $this->view->title = "FAQ";
+    }
 }

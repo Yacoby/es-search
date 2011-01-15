@@ -20,24 +20,24 @@
 
 
 /**
- * Facade(?) for the WebsiteTable class, but only exposes the limit related data
+ * Facade(?) for Search_Table_ModSites, but only exposes the limit related data
  *
- * Hangover from an older version impelemted to maintain compatibility.
- *
+ * Hangover from an older version impelemted to maintain compatibility. Worth
+ * considering if this should be removed all together
  */
 class Search_HTTP_Limits {
 
     /**
-     *
-     * @var WebsiteTable
+     * @var Search_Table_ModSites
      */
     private $_sites;
 
-    function __construct(Search_Table_Website $website = null) {
-        if ( !$website ) {
-            $website = new Search_Table_Website();
-        }
-        $this->_sites = $website;
+    /**
+     * @param Search_Table_ModSites|null $website The class for handling the
+     *                                            site data
+     */
+    function __construct(Search_Table_Sites $website = null) {
+        $this->_sites = $website ? $website : new Search_Table_Sites();
     }
 
     /**
@@ -50,45 +50,58 @@ class Search_HTTP_Limits {
 
 
     /**
-     * @param URL $url
+     * @param Search_Url $url
      * @return bool
      */
-    public function hasLimits(URL $url) {
+    public function hasLimits(Search_Url $url) {
         assert($url->isValid());
         return $this->_sites->hasSite($url->getHost());
     }
 
     /**
-     * @param URL $url
+     *
+     * @param Search_Url $url
      * @return array
      */
-    public function getLimits(URL $url) {
+    /*
+    public function getLimits(Search_Url $url) {
         assert($url->isValid());
-        return $this->_sites->getLimits($url->getHost());
+
+        $site = $this->_sites->getByHost($url->getHost());
+        return $site->ByteLimit;
     }
+     */
 
     /**
-     * @param URL $url
+     * Checks if there is any bytes left to request a page.
+     * This doesn't check if the page will go over that limit (as we don't know
+     * how big it is) so this will always lead to it slightly overreaching the
+     * limit all the time.
+     *
+     * @param Search_Url $url The url of the page.
      * @return bool
      */
-    public function canGetPage(URL $url) {
+    public function canGetPage(Search_Url $url) {
         assert($url->isValid());
 
-        $byteDetails = $this->getLimits($url);
-        return $byteDetails['BytesUsed'] <  $byteDetails['ByteLimit'];
+        $site = $this->_sites->getByHost($url->getHost());
+        return $site->BytesUsed < $site->ByteLimit;
     }
-
 
 
     /**
      * Updates the database bytes used
      *
-     * @param URL $url
-     * @param int $size
+     * @param Search_Url $url The url of the page
+     * @param int $size The size in bytes of the page.
      */
-    public function addRequesedPage(URL $url, $size) {
+    public function addRequesedPage(Search_Url $url, $size) {
         assert($url->isValid());
-        $this->_sites->increaseUsage($url->getHost(), $size);
+        assert((int)$size == $size);
+
+        $site = $this->_sites->findOneByHost($url->getHost());
+        $site->bytes_used += (int)$size;
+        $site->save();
     }
 
 }

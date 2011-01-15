@@ -19,16 +19,27 @@
  * l-b */
 
 /**
- * Singleton class, Responsible for loading classes.
+ * This is the class that manages the parsers. It will, given a host, provide
+ * the parser class for it
  */
 class Search_Parser_Factory {
+
+    /**
+     * An associative array of host -> class of every defined parser
+     *
+     * @var array
+     */
     private $_sites;
 
     /**
      * Loads all site files
+     *
+     * @param $file
+     *      If set, this is the location of the parsers.
      */
-    private function __construct() {
-        $this->includeAllInDir(dirname(__FILE__).'/Site');
+    public function __construct($files = null) {
+        $files = $files ? $files : dirname(__FILE__).'/Site';
+        $this->includeAllInDir($files);
         $this->_sites = $this->getSitesClasses();
     }
 
@@ -38,15 +49,11 @@ class Search_Parser_Factory {
      * @param string $d The directory to search for files to include
      */
     private function includeAllInDir($d){
-       $h = opendir($d);
-        while ($f = readdir($h)) {
-            if ( is_file($d."/".$f)
-                && $f != '.'
-                && $f != '..' ) {
-                include ($d.'/'.$f);
-            }
+        foreach ( glob($d.'/*.php') as $file ){
+            //this must be require once. If you construct two instances of this
+            //class it is possible to load the same file twice
+            require_once $file;
         }
-        closedir($h);
     }
 
     /**
@@ -62,27 +69,20 @@ class Search_Parser_Factory {
             if ( is_subclass_of($c, 'Search_Parser_Site') ){
                 $host = call_user_func(array($c, 'getHost'));
                 if ( $host !== null ){
-                    $sites[$host] = $c;
+                    $sites[$host] = new $c();
                 }
             }
         }
         return $sites;
     }
 
-    public function _sites(){
-        return $this->_sites;
-    }
-
     /**
-     * @staticvar Search_Parser_Factory $pf
-     * @return Search_Parser_Factory
+     * Gets a list of all sites registered with this factory
+     *
+     * @return array
      */
-    public static function getInstance() {
-        static $pf = null;
-        if ( !$pf ){
-            $pf = new self();
-        }
-        return $pf;
+    public function getSites(){
+        return $this->_sites;
     }
 
     public function hasSite($host) {
@@ -94,17 +94,22 @@ class Search_Parser_Factory {
 
     /**
      *
-     * @param URL $url
+     * @param Search_Url $url
      * @return Site
      */
-    public function getSiteByURL(URL $url) {
+    public function getSiteByURL(Search_Url $url) {
         return $this->getSiteByHost($url->getHost());
     }
+    /**
+     *
+     * @param <type> $host
+     * @return Search_Parser_Site
+     */
     public function getSiteByHost($host){
         if ( $this->hasSite($host) ){
             return new $this->_sites[$host];
         }
-        throw new Exception("Class doesn't exist");
+        throw new Search_Parser_Exception_ClassNotFound("Class doesn't exist");
     }
 
 }

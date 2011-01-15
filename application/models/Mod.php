@@ -20,7 +20,6 @@
 
 class ModLocation{
     /**
-     *
      * @var array
      */
     private $_data;
@@ -28,25 +27,26 @@ class ModLocation{
     public function __construct(array $data){
         $this->_data = $data;
     }
-    public function getURL(){
-        assert(array_key_exists('URL', $this->_data));
-        return new URL($this->_data['URL']);
+    public function getUrl(){
+        assert(array_key_exists('url', $this->_data));
+        return new Search_Url($this->_data['url']);
     }
     public function getCategory(){
-        assert(array_key_exists('Category', $this->_data));
-        return $this->_data['Category'] ? $this->_data['Category'] : 'Unknown';
+        return '?';
+        assert(array_key_exists('category', $this->_data));
+        return $this->_data['category'] ? $this->_data['category'] : 'unknown';
     }
     public function getDescription(){
-        assert(array_key_exists('Description', $this->_data));
-        return $this->_data['Description'];
+        assert(array_key_exists('description', $this->_data));
+        return $this->_data['description'];
     }
     public function getVersion(){
-        assert(array_key_exists('Version', $this->_data));
-        return $this->_data['Version'] ? $this->_data['Version'] : 'Unknown';
+        assert(array_key_exists('version', $this->_data));
+        return $this->_data['version'] ? $this->_data['version'] : 'unknown';
     }
     public function getHost(){
-        assert(array_key_exists('URL', $this->_data));
-        return $this->getURL()->getHost();
+        assert(array_key_exists('url', $this->_data));
+        return $this->getUrl()->getHost();
     }
 }
 
@@ -68,27 +68,32 @@ class Default_Model_Mod {
             throw new Exception("Invlalid mod");
         }
 
-        $mt = new Search_Table_Mods();
-        $this->_mod = $mt->getMod($mid);
+        $this->_mod = Doctrine_Query::create()
+                            ->select('m.*, l.*, g.*')
+                            ->addSelect('CONCAT(s.base_url, s.mod_url_prefix, l.mod_url_suffix) as url')
+                            ->from('Modification m, m.Locations l, l.Site s, m.Games g')
+                            ->where('m.id = ?', $mid)
+                            ->orderBy('l.int_version DESC')
+                            ->fetchOne(array(), Doctrine_Core::HYDRATE_ARRAY);
 
         if ( !$this->_mod ){
             throw new Exception('Mod was not found');
         }
 
-        $locations = $this->_mod->findDependentRowset('Search_Table_ModLocation');
-        foreach ($locations as $l){
-            $this->_location[] = new ModLocation($l->toArray());
+        foreach ( $this->_mod['Locations'] as $location ){
+            $this->_location[] = new ModLocation($location);
         }
+        var_dump($this->_mod);
     }
 
     public function getName() {
-        return $this->_mod['Name'];
+        return $this->_mod['name'];
     }
     public function getAuthor() {
-        return $this->_mod['Author'];
+        return $this->_mod['author'];
     }
     public function getGame() {
-        return $this->_mod['Game'];
+        //return $this->_mod['game'];
     }
 
     /**
@@ -103,6 +108,10 @@ class Default_Model_Mod {
             'UN' => 'Unknown',
         );
         return $a[$this->getGame()];
+    }
+
+        public function getLocation($index){
+        return $this->_location[$index];
     }
     
     public function getLocations(){

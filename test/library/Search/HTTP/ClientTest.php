@@ -22,16 +22,15 @@ class Search_HTTP_ClientTest extends PHPUnit_Framework_TestCase {
      * @var    Search_HTTP_Client
      */
     protected $_client;
-    protected $_rawClient, $_limits;
+    protected $_rawClient, $_limits, $_jar;
 
     protected function setUp() {
         $this->_rawClient = $this->getMock('Zend_Http_Client');
-        $this->_limits  = $this->getMock('Search_HTTP_Limits');
+        $this->_limits    = $this->getMock('Search_HTTP_Limits', array(),
+                                           array(), '', false);
+        $this->_jar       = $this->getMock('Search_Table_CookieJar',
+                                           array(), array(), '', false);
 
-        $this->_client = new Search_HTTP_Client(
-                $this->_rawClient,
-                $this->_limits
-        );
     }
 
 
@@ -41,26 +40,47 @@ class Search_HTTP_ClientTest extends PHPUnit_Framework_TestCase {
                 ->method('hasLimits')
                 ->will($this->returnValue(true));
 
-        $url = new URL('http://example.com');
+        $url = new Search_Url('http://example.com');
         $this->_limits->expects($this->once())
                 ->method('canGetPage')
                 ->with($this->equalTo($url))
                 ->will($this->returnValue(true));
 
-        $this->assertTrue($this->_client->canGetWebpage($url));
+        $client = new Search_HTTP_Client(
+                $this->_rawClient,
+                $this->_limits,
+                $this->_jar
+        );
+
+        $this->assertTrue($client->canGetWebpage($url));
     }
 
 
     public function testGetWebpage() {
+        $url = new Search_Url('http://example.com');
         /*
-         * $r = $this->object->getWebpage(new URL("http://yacoby.silgrad.com/MW/index.htm"));
-
-        $this->assertEquals(200, $r->getStatus());
-        $b = $r->getBody();
-        $v = stripos($b, "<title>Yacoby's Morrowind</title>");
-        $this->assertTrue($v!==false);
-         * 
+        $this->_limits->expects($this->once())
+                ->method('canGetPage')
+                ->with($this->equalTo($url))
+                ->will($this->returnValue(true));
          */
+
+        $this->_jar->expects($this->once())
+                ->method('getCookies')
+                ->will($this->returnValue(array()));
+
+
+        $client = new Search_HTTP_Client(
+                null,
+                $this->_limits,
+                $this->_jar
+        );
+
+        $result = $client->request($url)->withCache(false)->exec();
+        $this->assertEquals(200, $result->getStatus());
+
+        $index = stripos($result->getBody(), "RFC");
+        $this->assertTrue($index!==false);
     }
 
 

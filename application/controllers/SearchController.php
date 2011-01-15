@@ -21,96 +21,118 @@
 
 class SearchController extends Zend_Controller_Action {
 
-    private function setTitle($request) {
-        $searchString = stripslashes($request->getParam('general', null));
+	private function setTitle($request) {
+		$params = $request->getParams();
+		if ( get_magic_quotes_gpc() ) {
+			$params = array_map('stripslashes', $params);
+		}
+		
+		$searchString = isset($params['general']) ? $params['general'] : null;
 
-        if ( !$searchString ) {
-            $searchString = array();
-            foreach ( array('name', 'author', 'description') as $k ) {
-                if ( $request->getParam($k, null) != null ) {
-                    $searchString[] = stripslashes($request->getParam($k, ''));
+		if ( !$searchString ) {
+			$searchString = array();
+			foreach ( array('name', 'author', 'description') as $k ) {
+				if ( isset($params[$k]) ) {
+					$searchString[] = $params[$k];
+				}
+			}
 
-                }
-            }
+			$searchString = implode(' & ', $searchString);
+		}
 
-            $searchString = implode(' & ', $searchString);
-        }
+		$searchString .= ' : Page ' . (isset($_GET['page']) ? $_GET['page'] : 1);
+		$this->view->title = $searchString;
+	}
 
-        $this->view->title = $searchString;
-    }
+	/**
+	 * Should google index this page?
+	 */
+	private function setGoogleIndex() {
+		$page = isset($_GET['page']) ? $_GET['page'] : 1;
+		if ( $page > 1 ) {
+			$this->view->index = false;
+		}
+	}
 
-    /**
-     * @todo consider what would happen if neither form was valid
-     */
-    public function resultsAction() {
-        $this->view->paginator = Zend_Paginator::factory(array());
-        $this->view->searchForm = new Default_Form_Combined();
-        
-        $request = $this->getRequest();
-        if ($request->isGet()) {
-            $this->setTitle($request);
+	/**
+	 * @todo consider what would happen if neither form was valid
+	 */
+	public function resultsAction() {
+		$this->setGoogleIndex();
 
-            //look through possible forms
-            foreach ($this->view->searchForm->getSubForms() as $f) {
-                if ( $f->isValid(array_map('stripslashes', $request->getParams())) ) {
-                
-                    $this->view->searchForm->setActiveSubForm($f->getName());
+		$this->view->paginator = Zend_Paginator::factory(array());
+		$this->view->searchForm = new Default_Form_Combined();
 
-                    $page = isset($_GET['page']) ? $_GET['page'] : 1;
+		$request = $this->getRequest();
+		if ($request->isGet()) {
+			$this->setTitle($request);
 
-                    if ( !is_numeric($page) || $page < 1 ) {
-                        throw new Exception('Invalid page');
-                    }
+			$params = $request->getParams();
+			if ( get_magic_quotes_gpc() ) {
+				$params = array_map('stripslashes', $params);
+			}
+			//look through possible forms
+			foreach ($this->view->searchForm->getSubForms() as $f) {
+				if ( $f->isValid($params) ) {
 
-                    $si = new Default_Model_Search($f->getValues(), 15*($page-1), 15);
+					$this->view->searchForm->setActiveSubForm($f->getName());
 
-                    $paginator = new Zend_Paginator(
-                            new SearchResults_Paginator($si)
-                    );
-                    $paginator->setItemCountPerPage(15);
+					$page = isset($_GET['page']) ? $_GET['page'] : 1;
 
-                    $paginator->setCurrentPageNumber($page);
+					if ( !is_numeric($page) || $page < 1 ) {
+						throw new Exception('Invalid page');
+					}
 
-                    $this->view->paginator = $paginator;
+					$si = new Default_Model_Search($f->getValues(), 15*($page-1), 15);
 
-                    break;
-                }else{
-                    /*
+					$paginator = new Zend_Paginator(
+						new SearchResults_Paginator($si)
+					);
+					//TODO magic number. Maybe have it in a session...
+					$paginator->setItemCountPerPage(10);
+
+					$paginator->setCurrentPageNumber($page);
+
+					$this->view->paginator = $paginator;
+
+					break;
+				}else {
+					/*
                      * This is a bad fix for an issue. After trying isvalid, the forms
                      * then show errors. As we want to avoid it on forms we aren't using
                      * we must create a new form if it isn't valid.
                      *
                      * This has one huge downside that I need to look at, what happens
                      * if neither form is valid?
-                     */
-                    $cname = get_class($f);
-                    $this->view->searchForm->addSubForm(new $cname, $f->getName());
-                }
-            }
-        }
-    }
+					*/
+					$cname = get_class($f);
+					$this->view->searchForm->addSubForm(new $cname, $f->getName());
+				}
+			}
+		}
+	}
 
 }
 
 class SearchResults_Paginator implements Zend_Paginator_Adapter_Interface {
 
-    /**
-     * @var Default_Model_Search
-     */
-    private $_search;
-    /**
-     * @var SearchResults
-     */
-    private $_results;
-    public function __construct(Default_Model_Search $s) {
-        $this->_search = $s;
-        $this->_results = $this->_search->getResults();
-    }
+	/**
+	 * @var Default_Model_Search
+	 */
+	private $_search;
+	/**
+	 * @var SearchResults
+	 */
+	private $_results;
+	public function __construct(Default_Model_Search $s) {
+		$this->_search = $s;
+		$this->_results = $this->_search->getResults();
+	}
 
-    public function count() {
-        return $this->_results->count();
-    }
-    public function getItems($offset, $itemCountPerPage) {
-        return $this->_results->results();
-    }
+	public function count() {
+		return count($this->_results);
+	}
+	public function getItems($offset, $itemCountPerPage) {
+		return $this->_results;
+	}
 }

@@ -1,0 +1,14 @@
+<h3>FAQ</h3>
+
+<p><b>If a mod has multiple download locations, which link is used on the results page?</b><br />
+    The mod with the highest version is used.  If there are mutiple mods with the
+    highest version it is to all intents and purposes random.
+</p>
+
+<p><b>How are versions compared?</b><br />
+    The highest version number is selected by using converting the version to lower
+    case and then using
+    <a href="http://php.net/manual/en/function.version-compare.php" target="_blank">
+        version_compare</a>. If it can't match the version or there is no version
+        found it is treated as the lowest possible version.
+</p>

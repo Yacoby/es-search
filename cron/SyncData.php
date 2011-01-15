@@ -27,7 +27,6 @@ require '../AppLoader.php';
 
 createApplication(realpath(dirname(__FILE__).'/Bootstrap/Bootstrap.php'));
 
-$si = new Search_SiteInformation();
-$si->ensureParsersCreated();
-$si->ensureByteLimitsCorrect();
-$si->copyInitialPages();
+$factory = new Search_Parser_Factory();
+$si = new Search_Sync($factory);
+$si->syncAll();

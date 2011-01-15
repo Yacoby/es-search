@@ -41,6 +41,110 @@ class Search_Parser_Site {
     public static function getHost() {
         return null;
     }
+	/**
+	 * If the domain differs from standard in some way, e.g. using http this
+	 * should be overwridden and return a constant string with the correct domain
+	 * otherwise this just adds a http:// to the host. As the host is constant
+	 * this can be assumed to be constant.
+	 *
+	 * This was going to be static, be due to the lack of late static binding
+	 * in PHP 5.2.x, it is not.
+	 *
+	 * @return string
+	 */
+	public function getDomain(){
+		$host = $this->getHost();
+		if ( $host === null ){
+			throw new Exception('Host was null so couldn\'t compute domain');
+		}
+		return "http://{$host}";
+	}
+	/**
+	 * This should be overridden by inheriting classes to return the GET prefix
+	 * common to all mods. The return value should be constant. This doesn't
+	 * refer to the pages that the mods come from but the pages that the user
+	 * is directed to.
+	 *
+	 * @return string
+	 */
+	public static function getModUrlPrefix(){
+		return null;
+	}
+
+	/**
+	 * This returns the frequency that the update pages are parsed in days. There
+	 * is no guaretee that it will be parsed exactly in this time periord, but it
+	 * should be very close. (Minutes rather than hours)
+	 *
+	 * @return int|float
+	 */
+	public function getUpdateFrequency(){
+		$up = $this->_getUpdateDetails();
+		assert(isset($up['UpdateFrequency']));
+		return $up['UpdateFrequency'];
+	}
+	/**
+	 * Gets the pages that should be checked every now and again that lists the
+	 * updated mods. This is guarenteed to be parsed about once every UpdateFrequency
+	 * so doesn't have to refer to an update page as such. This shouldn't be overwridden
+	 * but the values returned in this should be defined in _getUpdateDetails()
+	 *
+	 * @return array
+	 */
+	public function getUpdatePages(){
+		$up = $this->_getUpdateDetails();
+		return $this->convertUrlSuffixes($up['Urls']);
+	}
+	/**
+	 * Gets the pages that should be used as a seed for finding the mods that
+	 * have already been added so won't be found in the update pages.
+	 * 
+	 * These could be parsed more than once, and the current implementation re-adds
+	 * them every month or so.
+	 * 
+	 * @return array
+	 */
+	public function getInitialPages(){
+		//return $this->convertUrlSuffixes($this->_getInitialPages());
+		return $this->convertUrlSuffixes($this->_getInitialPages());
+	}
+	/**
+	 * Takes an array of url suffixes, merges them with the domain, wraps them
+	 * in a Search_Url and returns the new array
+	 *
+	 * @param array $suffixes
+	 * @return array
+	 */
+	private function convertUrlSuffixes(array $suffixes){
+		$urls = array();
+		foreach ( $suffixes as $urlSuffix ){
+			$urls[] = new Search_Url($this->getDomain().$urlSuffix);
+		}
+		return $urls;
+	}
+
+
+	/**
+	 * This should return an array of all the suffixes of the seed pages to parse
+	 * If there are no seed pages it should return an empty array
+	 *
+	 * @return array
+	 */
+	protected function _getInitialPages(){
+        throw new Search_Parser_Exception_Unimplemented('Fucntion '.__FUNCTION__.' not implemented');
+	}
+
+	/**
+	 * This should return a array with the following indexes. 'Urls', which should
+	 * hold a list of string suffixes indicating the pages that hold mod updates.
+	 * The 'UpdateFrequency' index should hold an numerical value indicating
+	 * the number of days between parsing the page. 
+	 * 
+	 * @return array
+	 */
+	protected function _getUpdateDetails(){
+        throw new Search_Parser_Exception_Unimplemented('Fucntion '.__FUNCTION__.' not implemented');
+	}
 
     /**
      * Checks if the site needs to be logged into before data can be retrived.
@@ -56,7 +160,7 @@ class Search_Parser_Site {
      * downloaded
      *
      * @param Search_Parser_Page $p
-     * @return <type>
+     * @return bool
      */
     protected function isLoggedIn(Search_Parser_Page $p) {
         return $p->isLoggedIn();
@@ -83,60 +187,62 @@ class Search_Parser_Site {
      * @todo need better name
      * @return Search_Parser_Page
      */
-    private function getPageImp(Search_HTTP_Client $i, $cls, URL $url, $cache = true) {
-        $result = $i->getWebpage($url, 'GET', $cache);
-        //echo $result;
+    private function getPageImp(Search_HTTP_Client $i, $cls, Search_Url $url, $cache = true) {
+        $result = $i->request($url)
+                    ->method('GET')
+                    ->cacheOutput($cache)
+                    ->exec();
 
         if ( $result->getStatus() != 200 ) {
-            throw new Exception("Site status must be 200");
+            throw new Exception("Site status must be 200 and wasn't when requesting {$url}");
         }
 
         $body = new Search_Parser_Dom($result->getBody());
         $obj = new $cls($url, $body);
-        //$body->clear();
-        //unset($body);
-        return $obj;
 
+        return $obj;
     }
 
     /**
      * Gets the page object for the given site
      *
-     * @param URL $url
+     * @param Search_Url $url
      * @return Page
      */
-    public function getPage(URL $url) {
+    public function getPage(Search_Url $url, $client = null) {
         $cls = $this->getPageClass();
         assert(class_exists($cls));
 
-        $i = new Search_HTTP_Client();
+        $i = $client ? $client : new Search_HTTP_Client();
 
         $obj = $this->getPageImp($i, $cls, $url);
+
+        if ( !$obj->isValidPageBody($obj) ) {
+            throw new Search_Parser_Exception_InvalidPage(
+            "The mod page at {$url} was found to be invalid"
+            );
+        }
 
         if ( $this->needsLogin($obj) && !$this->isLoggedIn($obj) ) {
             $this->login($i);
             $obj = $this->getPageImp($i, $cls, $url, false);
 
             if ( !$this->isLoggedIn($obj) ) {
-                throw new Exception('Failed to log in');
+                throw new Search_Parser_Exception_Login(
+                "Failed to log in when requesting {$url}"
+                );
             }
         }
-        $obj->parsePage();
+        $obj->parsePage($i);
 
         return $obj;
     }
 
     public function getPageClass() {
-        return get_class($this)."_page";
+        return get_class($this).'_page';
     }
 
-    public function getUpdatePage() {
-        return null;
-    }
     public function getLimitBytes() {
-        throw new Exception("Function not implemented");
-    }
-    public function getInitialPages() {
-        return array();
+        throw new Search_Parser_Exception_Unimplemented('Fucntion '.__FUNCTION__.' not implemented');
     }
 }

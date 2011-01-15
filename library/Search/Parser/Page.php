@@ -40,7 +40,7 @@ class Search_Parser_Page {
     protected $_links = array();
 
     /**
-     * @var URL
+     * @var Search_Url
      */
     protected $_url;
     /**
@@ -51,23 +51,29 @@ class Search_Parser_Page {
     protected $_isLoggedIn = false;
 
     /**
-     * @param URL $url
+	 * The Search_Parser_Dom object passsed to this object becomes owned by this
+	 * object and shouldn't be used after it has been passesed. This is
+	 * due the fact that the PHP gc works by refrence counting.
+	 *
+	 * The page is not parsed in this function as if it fails it throws, which
+	 * means it is impossible to check if we need to login
+	 *
+     * @param Search_Url $url
      * @param Search_Parser_Dom $html
      */
-    public function __construct(URL $url, Search_Parser_Dom $html) {
+    public function __construct(Search_Url $url, Search_Parser_Dom $html) {
         $this->_url = $url;
         $this->_html = $html;
 
         assert($url->isValid());
 
-        //The call to parse the page was here, however it was removed as
-        //it throws if it fails, so we can't check if it is in logged in or not
-
         $this->_isLoggedIn = $this->getLoginStateFromHTML();
-        
     }
 
     /**
+	 * Clears the dom objects, this means that the dom object doesn't exist after
+	 * this., even if it refrenced elsewhere
+	 *
      * PHP sucks, as its garbage collector is refrence based it doesn't clear html
      * dom objects. This is basically something I shouldn't have to do
      */
@@ -78,13 +84,21 @@ class Search_Parser_Page {
         }
     }
 
+
     /**
-     *
+     * Gets the array of links found by the parser that match isValidModPage and
+	 * isValidPage
+	 *
      * @return array
      */
     public function links() {
         return $this->_links;
     }
+	/**
+	 * Gets all mods found
+	 *
+	 * @return array
+	 */
     public function mods() {
         return $this->_mods;
     }
@@ -96,15 +110,18 @@ class Search_Parser_Page {
      * @return array
      */
     public function mod($index) {
+        assert ((int)$index == $index);
         assert(array_key_exists($index, $this->_mods));
         return $this->_mods[$index];
     }
 
     /**
      * Gets the logged in status from the html page. If the site requries being
-     * logged in, the site should overrite this function
+     * logged in, the site should overwrite this function
+	 *
+	 * @todo rename to something like _getIsLoggedInFromHTML
      *
-     * @return bool
+     * @return bool true if logged in
      */
     protected function getLoginStateFromHTML() {
         return false;
@@ -115,19 +132,24 @@ class Search_Parser_Page {
     }
 
     /**
-     * @return URL The url specified by the page
+     * @return Search_Url The url specified by the page
      */
     public function getURL() {
         return $this->_url;
     }
 
-    public function parsePage() {
+	/**
+	 * Parses the page
+	 * 
+	 * @return bool sucsess 
+	 */
+    public function parsePage($client) {
         if ( !$this->_html ) {
             return false;
         }
 
         if ( $this->isValidModPage() ) {
-            $this->doParseModPage();
+            $this->doParseModPage($client);
         }
         $this->getPageLinks();
 
@@ -139,19 +161,15 @@ class Search_Parser_Page {
      */
     protected function getPageLinks() {
         foreach( $this->_html->find('a') as $a ) {
-            $url = new URL(html_entity_decode($a->href), $this->_url);
+            $url = new Search_Url(html_entity_decode($a->href), $this->_url);
             $url = $this->stripFromLinks($url);
 
-            if ( !$url->isValid() ) {
+            if ( !$url->isValid() || $url->toString() == $this->_url->toString() ) {
                 continue;
             }
-            if ( $url->toString() == $this->_url->toString() ) {
-                continue;
-            }
-
 
             if ( $this->isValidModPage($url) || $this->isValidPage($url) ) {
-                $this->_links[] = ($url);
+                $this->_links[] = $url;
             }
         }
     }
@@ -160,10 +178,10 @@ class Search_Parser_Page {
      * This is called from getPageLinks. It can be overridden to allow the url
      * to be modified before being considered for searching
      *
-     * @param URL $url
-     * @return URL the new url
+     * @param Search_Url $url
+     * @return Search_Url the new url
      */
-    public function stripFromLinks(URL $url) {
+    public function stripFromLinks(Search_Url $url) {
         return $url;
     }
 
@@ -171,10 +189,10 @@ class Search_Parser_Page {
      * Matches a set of pcre regex excluding the start and end chars (%)
      *
      * @param array $pages
-     * @param URL $url
+     * @param Search_Url $url
      * @return bool
      */
-    protected function isAnyMatch(array $pages, URL $url) {
+    protected function isAnyMatch(array $pages, Search_Url $url) {
         foreach ( $pages as $p) {
             if ( preg_match('%^'.$p.'$%', $url) ) {
                 return true;
@@ -185,17 +203,17 @@ class Search_Parser_Page {
 
     /**
      * Classses inheriting from this class should override this function with
-     * a function for parsing the page.
+     * a function for parsing the page unless they want to use the helper
      */
-    protected function doParseModPage() {
-        throw new Exception('Fucntion not implemented');
+    protected function doParseModPage($client) {
+        return $this->useModParseHelper($client);
     }
 
     /**
      * Function designed to make the site class implementations clearer
      * by allowing parsing diffrent things to be split up into diffrent functions
      */
-    protected function useModParseHelper() {
+    protected function useModParseHelper($client) {
         $prop = array(
                 "Game",
                 "Name",
@@ -213,10 +231,10 @@ class Search_Parser_Page {
         foreach ( $prop as $p) {
             $method = "get".$p;
             if ( method_exists(get_class($this), $method) ) {
-                $result = $this->{$method}();
+                $result = $this->{$method}($client);
                 if ( $result === null ) {
-                    throw new Exception(
-                    "Failed to parse: {$p} when parsing {$this->_url}"
+                    throw new Search_Parser_Exception_ModPage(
+                    "Failed to parse {$p} when parsing {$this->_url}"
                     );
                 }
                 $mod[$p] = trim($result);
@@ -227,40 +245,54 @@ class Search_Parser_Page {
     }
 
     /**
+     * This function is used before parsing and logging in to check that the page is
+     * at least roughly valid. A basic check should be done to see if the page at least
+	 * looks correct.
+	 *
+	 * This was implemented due to tesnexus not returning
+	 * 404 when the mod didn't exist, just a plain page saying 'this mod isn't valid'
+	 *
+	 * @return bool
+     */
+    public function isValidPageBody(){
+        return true;
+    }
+
+    /**
      * Checks if the given url is a valid mod page. If the url is not given or
      * is null it checks if the current page is a valid mod page.
      *
-     * This function can be called as a static function, but if it is, the
-     * argument must not be null
-     *
-     * @param URL $url
+     * @param Search_Url $url
      * @return boolean
      */
     public function isValidModPage($url = null) {
         if ( $url === null ) {
-            assert($this->_url instanceof URL);
+            assert($this->_url instanceof Search_Url);
             return $this->doIsValidModPage($this->_url);
         }
-        assert($url instanceof URL);
+        assert($url instanceof Search_Url);
         return $this->doIsValidModPage($url);
     }
-
+	/*
+     * Classses inheriting from this class should override this function with
+     * a function for checking if the url is valid
+	 */
     protected function doIsValidModPage($url) {
-        throw new Exception('Fucntion not implemented');
+        throw new Search_Parser_Exception_Unimplemented('Fucntion '.__FUNCTION__.' not implemented');
     }
 
     /**
      * Is the mod page valid for searching for mods
      *
-     * @param URL $url
+     * @param Search_Url $url
      * @return boolean
      */
     public function isValidPage($url = null) {
         if ( $url === null ) {
-            assert($this->_url instanceof URL);
+            assert($this->_url instanceof Search_Url);
             return $this->doIsValidPage($this->_url);
         }
-        assert($url instanceof URL);
+        assert($url instanceof Search_Url);
         return $this->doIsValidPage($url);
     }
 
@@ -268,11 +300,11 @@ class Search_Parser_Page {
      * Classses inheriting from this class should override this function with
      * a function for checking if the url is valid
      *
-     * @param URL $url
+     * @param Search_Url $url
      * @return bool true if the $url is a valid page
      */
     protected function doIsValidPage($url) {
-        throw new Exception('Fucntion not implemented');
+        throw new Search_Parser_Exception_Unimplemented('Fucntion '.__FUNCTION__.' not implemented');
     }
 
     /**

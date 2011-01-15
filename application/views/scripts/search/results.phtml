@@ -1,51 +1,70 @@
+<div id="recentSearch">
+    Recent Searches:
+    <ul>
+        <li>Search 1</li>
+        <li>Search 2</li>
+        <li>Search 3</li>
+    </ul>
+</div>
+
 <div id="resultSearch">
     <?php
     $this->searchForm->setAction(
-            $this->url(array('controller' => 'search'), 'search', true)
+            $this->url(array('controller' => 'search'),'search', true)
     );
     ?>
 
     <?php echo $this->searchForm ?>
 </div>
 
-
-
 <div>
-
     <div class="results">
+                <?php  echo $this->paginator->count(); ?>
         <?php foreach($this->paginator as $mod) {
 
-            //make the name seo friendly
-            $name = $mod->Name;
-            $name = preg_replace('/[^a-zA-Z0-9 ]/', '', $name);
-            $name = str_replace(' ', '-', $name);
-
-            $goto = array(
-                    'controller'=>'mod',
-                    'action' => 'details',
-                    'id' => $mod->ModID,
-                    'name' => $name
+            $modLink = array(
+                    'controller' => 'mod',
+                    'action'     => 'details',
+                    'id'         => $mod['id'],
+                    'name'       => $this->seoString($mod['name'])
             );
-
             ?>
 
         <div class="mod">
             <span class="name">
-                <a id="<?php echo $mod->ModID; ?>"
+                <a id="<?php echo $mod['id']; ?>"
                    class="modLink"
-                   href="<?php echo $this->url($goto, 'mod', true)?>">
-                           <?php echo $mod->Name?>
+                   href="<?php echo $mod['Url'] //Locations[0]['Url'] ?>">
+                           <?php echo $mod['name'] ?>
                 </a>
-            </span> - <span class="author"><?php echo $mod->Author ?></span>
+            </span> - <span class="author"><?php echo $mod['author'] ?></span>
+
+            <div class="sum">
+                <?php echo $this->trimDescription($mod['Locations'][0]['description']) ?>
+            </div>
+            <span class="url">
+                    <?php echo $this->trimUrl($mod['Url']) ?>
+            </span>
+            - <span class="ex">Score: <?php  echo round($mod['score'],2) ?></span>
+            - <a href="<?php  echo $this->url($modLink, 'mod', true) ?>">
+                Details
+                <?php if ( false /*count($mod->Locations) > 1 */ ): ?>
+                    (<?php echo count($mod['location_count']) - 1 ?>
+                    other download <?php echo $this->plural('location',count($mod->Locations)-1>1)?>)
+                <?php endif; ?>
+            </a>
+
         </div>
             <?php } ?>
 
 
-        <? if ( $this->paginator->count() == 0 ): ?>
+
+
+        <?php if ( $this->paginator->count() == 0 ): ?>
         <div class="ui-widget">
             <div class="ui-state-error ui-corner-all" style="padding: 0 .7em;">
                 <p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>
-                    <strong></strong>No results found!</p>
+                    No results found!</p>
             </div>
         </div>
 
@@ -59,14 +78,5 @@
 
 
     </div>
-
-
-
-    <div id="modInfo">
-        <div id="accordion"></div>
-        <div id="link"></div>
-    </div>
-
-    <p style="clear:both;"></p>
 
 </div>

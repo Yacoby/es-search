@@ -31,6 +31,10 @@ class Bootstrap extends Search_Bootstrap_Abstract {
         error_reporting(E_ALL|E_NOTICE);
         ini_set("display_errors", 1);
     }
+
+    protected function _initMemLimit(){
+        ini_set('memory_limit', '64M');
+    }
     
 
     protected function _initStreamLogger() {

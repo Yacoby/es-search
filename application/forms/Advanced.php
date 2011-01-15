@@ -31,9 +31,9 @@ class Default_Form_Advanced extends Zend_Form {
      */
     protected function addTextElem($name, $lab) {
         $e = $this->createElement('text', $name)
-                ->addValidator('stringLength', false, array(0, 32))
-                ->setRequired(false)
-                ->setLabel($lab);
+                  ->addValidator('stringLength', false, array(0, 32))
+                  ->setRequired(false)
+                  ->setLabel($lab);
         $this->addElement($e);
     }
 
@@ -43,10 +43,10 @@ class Default_Form_Advanced extends Zend_Form {
         $this->addTextElem('description', 'Description:');
 
         $e = $this->createElement('select', 'game')
-                ->addMultiOption('MW', 'Morrowind')
-                ->addMultiOption('OB', 'Oblivion')
-                ->setLabel('Game:')
-                ->setRequired(true);
+                  ->addMultiOption('3', 'Morrowind')
+                  ->addMultiOption('4', 'Oblivion')
+                  ->setLabel('Game:')
+                  ->setRequired(true);
         if ( isset($_COOKIE['SelectedGame']) ) {
             $e->setValue($_COOKIE['SelectedGame']);
         }

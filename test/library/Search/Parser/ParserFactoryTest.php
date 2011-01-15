@@ -27,11 +27,6 @@ class Search_Parser_FactoryTest extends PHPUnit_Framework_TestCase {
     public function setUp() {}
 
 
-    public function testSingleton() {
-        $pf1 = Search_Parser_Factory::getInstance();
-        $pf2 = Search_Parser_Factory::getInstance();
-        $this->assertEquals($pf1, $pf2);
-    }
 
 }
 

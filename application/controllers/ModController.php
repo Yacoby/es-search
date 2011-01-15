@@ -37,16 +37,16 @@ class ModController extends Zend_Controller_Action {
             throw new Exception("Wrong mod id");
         }
 
-
         $mod = new Default_Model_Mod($id);
 
         $urlReqName = $request->getParam('name', '');
         $urlActName = $this->nameToUrlName($mod->getName());
 
+
         if ( $urlActName != $urlReqName ) {
 
             $goto = array(
-                    'controller'    =>'mod',
+                    'controller'    => 'mod',
                     'action'        => 'details',
                     'id'            => $id,
                     'name'          => $urlActName
@@ -57,9 +57,6 @@ class ModController extends Zend_Controller_Action {
                     ->gotoRoute($goto, 'mod')
                     ->redirectAndExit();
         }
-
-
-
 
         $this->view->Name = $this->view->title = $mod->getName();
         $this->view->Author = $mod->getAuthor();

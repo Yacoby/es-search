@@ -17,63 +17,24 @@
  * along with ES Search. If not, see <http://www.gnu.org/licenses/>.
  * l-b */
 
- error_reporting(E_ALL);
+ error_reporting(E_ALL | E_STRICT);
  ini_set("display_errors", 1);
  ini_set('memory_limit','128M');
 
-
-set_include_path(implode(PATH_SEPARATOR, array(
-    realpath(dirname(__FILE__) . '/../library'),
-    get_include_path(),
-)));
-
-set_include_path(implode(PATH_SEPARATOR, array(
-        realpath(dirname(__FILE__) . '/../../php'),
-        get_include_path(),
-)));
-
+define('APPLICATION_ENV', 'testing');
 //used to define a db resource
-//require "DatabaseResource.php";
 require "Funcs.php";
 require "PageHelper.php";
-require "Search/URL.php";
+date_default_timezone_set("GMT");
 
-define('APPLICATION_PATH', realpath(dirname(__FILE__) . '/../application'));
-define('APPLICATION_ENV', 'testing');
-
-
-require_once 'Zend/Loader/Autoloader.php';
-$autoloader = Zend_Loader_Autoloader::getInstance();
-spl_autoload_unregister(array($autoloader, 'autoload'));
-
-Zend_Loader_Autoloader::resetInstance();
-$autoloader = Zend_Loader_Autoloader::getInstance();
-$autoloader->registerNamespace('PHPUnit_');
-$autoloader->registerNamespace('Search_');
 
 /* -----------------------------------------------------------
  *  Create resources
  *----------------------------------------------------------- */
 
-$application = new Zend_Application(
-    APPLICATION_ENV,
-    APPLICATION_PATH . '/../config/application.ini'
-);
-$bootstrap = $application->getBootstrap();
-$bootstrap->bootstrap('db');
-
-$dbAdapter = $bootstrap->getResource('db');
+$application = createApplication();
 
 
-//store the db resource
-//new DatabaseResource($dbAdapter);
-Zend_Db_Table_Abstract::setDefaultAdapter($dbAdapter);
-
-/* -----------------------------------------------------------
- *  Reset all state
- *----------------------------------------------------------- */
-resetLucene();
-resetDatabse();
 
 
 ?>

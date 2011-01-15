@@ -24,6 +24,9 @@
  * application and cronjobs)
  */
 class Search_Bootstrap_Abstract extends Zend_Application_Bootstrap_Bootstrap {
+    protected function _initMemLimit(){
+        ini_set('memory_limit', '64M');
+    }
 
     /**
      * @var Zend_Log
@@ -35,6 +38,23 @@ class Search_Bootstrap_Abstract extends Zend_Application_Bootstrap_Bootstrap {
         setlocale(LC_ALL, 'en_US.utf-8');
     }
 
+    public function _initDb(){
+        assert ($this->hasOption('doctrine'));
+        $options = $this->getOption('doctrine');
+        $host = $options['host'];
+        $user = $options['username'];
+        $pass = $options['password'];
+        $dbnm = $options['dbname'];
+        Doctrine_Manager::connection("mysql://{$user}:{$pass}@{$host}/{$dbnm}");
+
+
+    }
+
+    public function _initValidation(){
+        $manager = Doctrine_Manager::getInstance();
+        $manager->setAttribute(Doctrine_Core::ATTR_VALIDATE, Doctrine_Core::VALIDATE_ALL);
+    }
+
     protected function _initLogger() {
         $this->_logger = new Search_Logger();
 
@@ -43,6 +63,7 @@ class Search_Bootstrap_Abstract extends Zend_Application_Bootstrap_Bootstrap {
                 'Message' => 'message'
         );
 
+        /*
         $this->bootstrap('db');
         assert($this->getResource('db'));
 
@@ -52,12 +73,6 @@ class Search_Bootstrap_Abstract extends Zend_Application_Bootstrap_Bootstrap {
         );
 
         $this->_logger->addWriter($writer);
-    }
-
-    /**
-     * Includes the file that defines the js and css version numbers
-     */
-    protected function _initUrlClass() {
-        require 'Search/URL.php';
+         */
     }
 }

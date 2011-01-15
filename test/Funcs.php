@@ -17,12 +17,9 @@
  * along with ES Search. If not, see <http://www.gnu.org/licenses/>.
  * l-b */
 
-set_include_path(implode(PATH_SEPARATOR, array(
-        realpath(dirname(__FILE__) . '/../library'),
-        get_include_path(),
-)));
 
-//require_once ('Parser/Parser.php');
+
+require '../AppLoader.php';
 
 /**
  *
@@ -69,6 +66,7 @@ function resetLucene() {
 function resetDatabse() {
     $scriptPath = APPLICATION_PATH.'/../scripts';
 
+    /*
     $sqlQuery = file_get_contents($scriptPath . '/schema.sql');
 
     $adapter = Zend_Db_Table_Abstract::getDefaultAdapter();
@@ -81,11 +79,11 @@ function resetDatabse() {
         $mysqli->store_result(); 
     }
 
-
-    $si = new Search_SiteInformation();
+    $si = new Search_SiteInformation(Search_Parser_Factory::getInstance());
     $si->ensureParsersCreated();
     $si->ensureByteLimitsCorrect();
     $si->copyInitialPages();
+     */
 }
 
 function resetAll() {

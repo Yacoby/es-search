@@ -61,4 +61,5 @@ $cache = Zend_Cache::factory(
 $cache->start();
 
 $application = createApplication();
+
 $application->run();

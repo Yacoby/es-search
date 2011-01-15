@@ -1,0 +1,224 @@
+# ##############################################################################
+CookieJar:
+    columns:
+        domain:
+            type: string(255)
+            primary: true
+        data:
+            type: blob
+
+# ##############################################################################
+ErrorLog:
+    columns:
+        id:
+            type: integer
+            primary: true
+            autoincrement: true
+        level:
+            type: integer
+        message:
+            type: string
+
+# ##############################################################################
+Site:
+    columns:
+        id:
+            type: integer
+
+            autoincrement: true
+
+        #this is to allow looking up sites by host name
+        host:
+            primary: true
+            type: string(255)
+            notblank: true
+        
+        #this is the string for the base of the url. This should be common
+        #to every
+        #for example: http://yacoby.silgrad.com
+        base_url:
+            type: string
+            notblank: true
+            notnull: true
+
+        #this is as much as the GET string as possible that is common to every mod
+        #i.e. /mod.php?id=
+        mod_url_prefix:
+            type: string
+            notblank: true
+            notnull: true
+
+        #The limit in bytes per day that can be used
+        #by the parser. This doesn't include headers
+        byte_limit:
+            type: integer
+            default: 0
+
+        #The number of bytes currently used
+        bytes_used:
+            type: integer
+            default: 0
+            notnull: true
+
+        #the time the bytes were last updated
+        #as it doesn't reset the bytes used at midnight
+        #but rather the bytes used are reduced per at a set amount each second
+        bytes_last_updated:
+            type: integer
+            default: 0
+
+        next_update:
+            type: integer
+            default: 0
+            notnull: true
+
+        #quick way to disable parsing of a site
+        enabled:
+            type: boolean
+            default: true
+            notnull: true
+
+    indexes:
+        id:
+            fields: [id]
+
+# #############################################################################
+Category:
+    columns:
+        id:
+            type: integer
+            primary: true
+            autoincrement: true
+        name:
+            type: string
+            notnull: false
+
+# This ensures that the ModLocations default category points to something
+#INSERT INTO ModCategory (CategoryId, CategoryName) VALUES (0, 'Unknown');
+# #############################################################################
+Modification:
+    columns:
+        id:
+            type: integer
+            primary: true
+            autoincrement: true
+        name:
+            type: string
+            notblank: true
+        author:
+            type: string
+            notblank: true
+        
+#        game_id:
+#            type: integer
+#            default: 0
+# #############################################################################
+Game:
+    columns:
+        id:
+            type: integer
+            primary: true
+
+            #game is not auto increment, as the games release is the id.
+            #So morrowind would be 3, Ob woudl be 4
+            #autoincrement: true
+        short_name:
+            type: string(4)
+            notblank: true
+        name:
+            type: string
+            notblank: true
+
+    relations:
+        Modification:
+            foreignAlias: Games 
+            class: Modification
+            refClass: GameMods
+# #############################################################################
+
+GameMods:
+    columns:
+        game_id:
+            type: integer
+            primary: true
+        modification_id:
+            type: integer
+            primary: true
+    relations:
+        Modification:
+            foreignAlias: GameMods
+        Game:
+            foreignAlias: GameMods
+# #############################################################################
+Location:
+    columns:
+        modification_id:
+            type: integer
+            primary: true
+
+        mod_url_suffix:
+            type: string(255)
+            notblank: true
+            primary: true
+
+        description:
+            type: string
+
+        version:
+            type: string
+
+        int_version:
+            type: integer
+        
+
+        site_id: integer
+        category_id: integer
+    relations:
+        Modification:
+            foreignAlias: Locations
+            onDelete: CASCADE
+        Site:
+            foreignAlias: Locations
+        Category:
+            foreignAlias: Locations
+# #############################################################################
+Page:
+    columns:
+        site_id:
+            type: integer
+            primary: true
+
+        #this is the whole url path, excluding the value of baseUrl from the
+        #related site. NOTE: By iteslf, this is not primary
+        url_suffix:
+            type: string(255)
+            primary: true
+            notnull: true
+            notblank: true
+            
+        last_visited:
+            type: integer
+            notnull: true
+            default: 0
+            
+        revisit: integer
+    indexes:
+        url_suffix:
+            fields: [url_suffix]
+
+    relations:
+        Site:
+            foreignAlias: Pages
+
+#-- DROP TABLE IF EXISTS SearchIndexChanges;
+#-- CREATE TABLE IF NOT EXISTS SearchIndexChanges(
+#--	UpdateId INT NOT NULL,
+#--	IndexId INT NOT NULL,
+#--	IndexVersion INT NOT NULL,
+#--	`Action` ENUM('ADD', 'REMOVE') NOT NULL,
+#--	ModId INT COMMENT 'NULL if the mod doesn\'t exist',
+#--	PRIMARY KEY (UpdateId),
+#--    FOREIGN KEY (IndexId) REFERENCES `SearchIndex`(IndexId) ON DELETE CASCADE,
+#--    FOREIGN KEY (IndexVersion) REFERENCES `SearchIndexVersion`(IndexVersion) ON DELETE CASCADE,
+#--    FOREIGN KEY (ModId) REFERENCES `Mod`(ModId) ON DELETE SET NULL
+#-- ) ENGINE=INNODB DEFAULT CHARSET=latin1;

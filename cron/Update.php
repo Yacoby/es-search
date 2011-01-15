@@ -19,13 +19,14 @@
  * l-b */
 
 require '../AppLoader.php';
-createApplication(realpath(dirname(__FILE__).'/Bootstrap/Bootstrap.php'));
+$app = createApplication(realpath(dirname(__FILE__).'/Bootstrap/Bootstrap.php'));
 
 try{
     $ud = new Search_Updater();
 
-    if ( !$ud->attemptUpdatePage() ) {
-        $ud->generalUpdate();
+    $factory = new Search_Parser_Factory();
+    if ( !$ud->attemptUpdatePage($factory) ) {
+        $ud->generalUpdate($factory);
     }
 
 }catch(Exception $e){

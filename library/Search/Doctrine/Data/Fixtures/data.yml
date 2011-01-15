@@ -1,0 +1,16 @@
+#Default values for games. 
+
+Game:
+    Morrowind:
+        id: 3
+        name: Morrowind
+        short_name: mw
+    Oblivion:
+        name: Oblivion
+        short_name: ob
+        id: 4
+
+    Skyrim:
+        name: Skyrim
+        short_name: sk
+        id: 5

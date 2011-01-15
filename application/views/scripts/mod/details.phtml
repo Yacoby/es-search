@@ -17,7 +17,7 @@
                 ?>
             <li>
                 <a href="#tabs-<?php echo $count++; ?>">
-                        <?php echo $location->getURL()->getHost()?>
+                        <?php echo $location->getUrl()->getHost()?>
                 </a>
             </li>
                 <?php
@@ -33,7 +33,7 @@
         <div id="tabs-<?php echo $count++; ?>">
             <p>
                 <strong>Download Link</strong> :
-                <a href="<?php echo $location->getURL(); ?>" target="_blank">
+                <a href="<?php //echo $location->getURL(); ?>" target="_blank">
                         <?php echo $this->Name; ?>
                 </a>
                 <br />

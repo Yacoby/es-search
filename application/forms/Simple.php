@@ -32,8 +32,8 @@ class Default_Form_Simple extends Zend_Form {
         $this->addElement($e);
 
         $e = $this->createElement('select', 'game')
-                ->addMultiOption('MW', 'Morrowind')
-                ->addMultiOption('OB', 'Oblivion')
+                ->addMultiOption('3', 'Morrowind')
+                ->addMultiOption('4', 'Oblivion')
                 ->setRequired(true);
         if ( isset($_COOKIE['SelectedGame']) ) {
             $e->setValue($_COOKIE['SelectedGame']);

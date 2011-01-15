@@ -36,8 +36,8 @@ class SiteValidator {
 
     public function hasHostDefined() {
         return $this->_reflect->hasMethod('getHost') &&
-                $this->_reflect->getMethod('getHost')->isStatic() &&
-                $this->_reflect->getMethod('getHost')->isPublic();
+               $this->_reflect->getMethod('getHost')->isStatic() &&
+               $this->_reflect->getMethod('getHost')->isPublic();
     }
 
     public function isFinal() {
@@ -54,8 +54,25 @@ class PageTest extends PHPUnit_Framework_TestCase {
 
     private $_type;
     private $_url;
+    private $_factory;
 
-    public function __construct($type, URL $url) {
+    protected $_client;
+
+
+    public function __construct($type, Search_Url $url) {
+        $this->_factory = new Search_Parser_Factory();
+
+        $limits = $this->getMock('Search_HTTP_Limits', array(), array(), '', false);
+        $limits->expects($this->any())
+                ->method('hasLimits')
+                ->will($this->returnValue(true));
+        $limits->expects($this->any())
+                ->method('canGetPage')
+                ->will($this->returnValue(true));
+        $this->_client = new Search_HTTP_Client(null,
+                                                $limits,
+                                                Search_HTTP_CookieJar_Memory::getInstance());
+
         $this->_type = $type;
         $this->_url = $url;
 
@@ -65,46 +82,46 @@ class PageTest extends PHPUnit_Framework_TestCase {
         }
     }
 
-    public function helpTestInstance(URL $url) {
-        $p = Search_Parser_Factory::getInstance()->getSiteByURL($url)->getPage($url);
+    public function helpTestInstance(Search_Url $url) {
+        $p = $this->_factory->getSiteByURL($url)->getPage($url, $this->_client);
         $this->assertTrue($p instanceof $this->_type || $p instanceof $this->_type."_page" );
     }
 
     public function helpTestModUrls(array $valid, array $invalid) {
-        $p = Search_Parser_Factory::getInstance()->
-                getSiteByURL($this->_url)->
-                getPage($this->_url);
+        $p = $this->_factory
+                ->getSiteByURL($this->_url)
+                ->getPage($this->_url, $this->_client);
 
 
         foreach ( $valid as $v ) {
-            $this->assertTrue($p->isValidModPage(new URL($v)));
+            $this->assertTrue($p->isValidModPage(new Search_Url($v)));
         }
         foreach ( $invalid as $v ) {
-            $this->assertFalse($p->isValidModPage(new URL($v)));
+            $this->assertFalse($p->isValidModPage(new Search_Url($v)));
         }
     }
 
     public function helpTestUrls(array $valid, array $invalid) {
-        $p = Search_Parser_Factory::getInstance()->getSiteByURL($this->_url)->getPage($this->_url);
+        $p = $this->_factory
+                ->getSiteByURL($this->_url)
+                ->getPage($this->_url, $this->_client);
 
         foreach ( $valid as $v ) {
-            $this->assertTrue($p->isValidPage(new URL($v)));
+            $this->assertTrue($p->isValidPage(new Search_Url($v)));
         }
         foreach ( $invalid as $v ) {
-            $this->assertFalse($p->isValidPage(new URL($v)));
+            $this->assertFalse($p->isValidPage(new Search_Url($v)));
         }
     }
 
-    public function helpTestModPage(URL $url, $numMods, array $details) {
-        $p = Search_Parser_Factory::getInstance()
+    public function helpTestModPage(Search_Url $url, $numMods, array $details) {
+        $p = $this->_factory
                 ->getSiteByURL($url)
-                ->getPage($url);
+                ->getPage($url, $this->_client);
         $this->assertTrue($p->isValidModPage());
 
         $mods = $p->mods();
-        
         $this->assertEquals($numMods, count($mods));
-
         $mod = $mods[0];
 
         foreach ( $details as $key => $val ) {
@@ -112,8 +129,16 @@ class PageTest extends PHPUnit_Framework_TestCase {
         }
     }
 
-    public function helpRequiredLinks(URL $url, array $links) {
-        $p = Search_Parser_Factory::getInstance()->getSiteByURL($url)->getPage($url);
+    /**
+     * Checks if the url contains/has the given links.
+     *
+     * @param Search_Url $url
+     * @param array $links
+     */
+    public function helpRequiredLinks(Search_Url $url, array $links) {
+        $p = $this->_factory
+                ->getSiteByURL($url)
+                ->getPage($url, $this->_client);
         foreach ( $links as $l1 ) {
             $found = false;
             foreach ($p->links() as $l2) {

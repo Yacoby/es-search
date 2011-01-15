@@ -20,29 +20,53 @@
 
 
 class Default_Model_Search {
-    /**
-     *
-     * @var ModData
-     */
-    private $_md;
+    public static function sortCallback($a, $b){
+        return $a['score'] < $b['score'];
+    }
 
-    /**
-     * @var SearchResults
-     */
     private $_result;
-    public function __construct(array $vals, $lowerBound, $count) {
-        $this->_md = new Search_Data_UnifiedModDatabase(
-                new Search_Data_DB_MySQL(),
-                new Search_Data_DB_Lucene()
-        );
 
-        $this->_result = $this->search($vals, $lowerBound, $count);
-        assert($this->_result instanceof Search_Data_SearchResults);
+    public function __construct(array $vals, $lowerBound, $count) {
+        $this->_db = new Search_Lucene_Db((int)$vals['game']);
+        $searchResults = $this->search($vals, $lowerBound, $count);
+
+        $modIds = array();
+        $idScoreMap = array();
+        foreach( $searchResults->results() as $result ){
+            $modIds[] = $result->mod_id;
+            $idScoreMap[$result->mod_id] = $result->score;
+        }
+
+        if ( $searchResults->count() == 0  ){
+            $this->_result = array();
+        }else{
+
+            $mods = Doctrine_Query::create()
+                        ->select('m.*, l.*')
+                        ->addSelect('CONCAT(s.base_url, s.mod_url_prefix, l.mod_url_suffix) as Url')
+                        //->addSelect('COUNT(l.version)')
+                        ->from('Modification m')
+                        ->leftJoin('m.Locations l')
+                        ->leftJoin('l.Site s')
+                        ->whereIn('m.id', $modIds)
+                        ->andWhere('l.int_version IN
+                            (SELECT MAX(int_version)
+                                    FROM Location WHERE m.id = modification_id)')
+                        ->fetchArray();
+
+            foreach ( $mods as &$mod ){
+                $mod['score'] = $idScoreMap[$mod['id']];
+            }
+
+            uasort($mods, array($this, 'sortCallback'));
+
+            $this->_result = $mods;
+        }
     }
 
     /**
      *
-     * @return SearchResults
+     * @return array
      */
     public function getResults() {
         return $this->_result;
@@ -50,30 +74,20 @@ class Default_Model_Search {
 
     private function search($vals, $lowerBound, $count) {
         if ( array_key_exists('general', $vals) ) {
-            return $this->genSearch(
-                    $vals['game'],
+            return $this->_db->searchSimple(
                     $vals['general'],
                     $lowerBound,
                     $count
             );
         }
 
-        return $this->advancedSearch(
-                $vals['game'],
+        return $this->_db->searchAdvanced(
                 $vals['name'],
                 $vals['author'],
                 $vals['description'],
                 $lowerBound,
                 $count
         );
-    }
-
-    private function genSearch($game, $gen, $lb, $c) {
-        return $this->_md->search($game, $gen, $lb, $c);
-    }
-
-    private function advancedSearch($game, $name, $author, $descript, $lb, $c) {
-        return $this->_md->searchAdvanced($game, $name, $author, $descript, $lb, $c);
     }
 
 }

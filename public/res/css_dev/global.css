@@ -4,13 +4,33 @@ body{
     margin: 0 auto;
     font-size: 90%;
 }
+.url{
+    color:green;
+    font-style:normal;
+}
+
+.url a{
+    text-decoration:none;
+}
+
+.sum{
+    max-width:42em;
+}
+.ex{
+    color:#7777CC;
+}
+em{
+    font-weight:bold;font-style:normal
+}
+
+.mod{
+    padding: 10px 0 10px 0;
+}
+
+
 
 #content{
     margin:25px;
-}
-
-#modInfo{
-    margin-left: 420px;
 }
 
 
@@ -18,10 +38,23 @@ body{
     margin:auto;
 }
 
+#recentSearch{
+    float:right;
+    font-size: 85%;
+}
+#recentSearch ul{
+    list-style:none;
+}
+
+/*
+#modInfo{
+    margin-left: 420px;
+}
 .results{
     float:left;
     width:400px;
 }
+*/
 
 .line{
     border-bottom: 1px solid #AAAAAA;

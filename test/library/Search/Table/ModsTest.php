@@ -1,56 +1,91 @@
-<?php /* l-b
- * This file is part of ES Search.
- * 
- * Copyright (c) 2009 Jacob Essex
- * 
- * Foobar is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- * 
- * ES Search is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- * 
- * You should have received a copy of the GNU Affero General Public License
- * along with ES Search. If not, see <http://www.gnu.org/licenses/>.
- * l-b */
+<?php
 
-
-class ModTableTest extends PHPUnit_Framework_TestCase {
-
-    public function setUp(){
-        resetDatabse();
+class Search_Table_ModsTest extends PHPUnit_Framework_TestCase {
+    /**
+     *
+     * @var Search_Table_Mods
+     */
+    private $_mods;
+    /**
+     *
+     * @var Search_Table_Locations
+     */
+    private $_locations;
+    
+    public function setUp() {
+        $this->_mods      = new Search_Table_Mods();
+        $this->_locations = new Search_Table_Locations();
     }
 
-    public function testGetNewID() {
-        $tbl = new Search_Table_Mods();
-        $this->assertEquals($tbl->getNextID(), 0);
+    //fails as no connection
+    public function tearDown() {
+        //order is important due to db constraints
+        $this->_locations->createQuery()
+                ->delete()
+                ->execute();
 
-        $tbl->addMod(0, 'MW', 'Name', 'Author');
-        $this->assertEquals($tbl->getNextID(), 1);
+        $this->_mods->createQuery()
+                ->delete()
+                ->execute();
+
     }
 
-    public function testGetID() {
-        $tbl = new Search_Table_Mods();
-        $tbl->addMod(0, 'MW', 'Name', 'Author');
+    public function testAddOrUpdateModFromArray() {
 
-
-        $this->assertEquals(
-            $tbl->getID('MW', 'Name', 'Author'),
-            0
-        );
-        $this->assertEquals(
-            $tbl->getID('MW','XName', 'Author'),
-            -1
-        );
-        $this->assertEquals(
-            $tbl->getID('OB', 'Name', 'Author'),
-            -1
-        );
     }
 
+    public function testFindOneBy() {
+        $new = $this->_mods->create();
+        $new->name = 'yacoby';
+        $new->save();
+
+        $this->assertNotEquals(false, $this->_mods->findOneByName(array('yacoby')));
+    }
+
+    public function testFindMatch1() {
+
+        $mod1 = $this->_mods->create();
+        $mod1->name = 'mod1';
+        $mod1->author = 'yacoby';
+        $mod1->save();
+
+        $loc1 = $this->_locations->create();
+        $loc1->modification_id = $mod1->id;
+        $loc1->site_id = 1;
+        $loc1->category_id = 1;
+        $loc1->mod_url_suffix   = 'mod1';
+        $loc1->save();
+
+        //this should match as the url is the same as the mods url
+        $this->assertNotEquals(
+                null,
+                $this->_mods->findMatch(
+                    'mod1',
+                    'no_match',
+                    new Search_Url('http://example.com?id=mod1')
+                )
+        );
+
+        //this should match as the mods details are the same
+        $this->assertNotEquals(
+                null,
+                $this->_mods->findMatch(
+                    'mod1',
+                    'yacoby',
+                    new Search_Url('http://example.com?id=no_match')
+                )
+        );
+
+        //this shouldn't match, as there are no simalarities
+        $this->assertEquals(
+                null,
+                $this->_mods->findMatch(
+                    'mod1',
+                    'no_match',
+                    new Search_Url('http://example.com?id=no_match')
+                )
+        );
+
+
+    }
 }
-
-?>
