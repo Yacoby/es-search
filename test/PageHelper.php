@@ -101,21 +101,24 @@ class PageTest extends PHPUnit_Framework_TestCase {
      * @param array $links
      */
     public function helpRequiredLinks(Search_Url $url, array $links) {
+        if ( !$this->helpHasAnyLinkOf($url, $links) ) {
+            $this->assertFalse($l1);
+        }
+        
+    }
+
+    public function helpHasAnyLinkOf(Search_Url $url, array $links){
         $p = $this->_factory
-                ->getSiteByURL($url)
-                ->getPage($url, $this->_client);
+                  ->getSiteByURL($url)
+                  ->getPage($url, $this->_client);
         foreach ( $links as $l1 ) {
-            $found = false;
             foreach ($p->links() as $l2) {
                 if ( $l2->toString() == $l1) {
-                    $found = true;
-                    break;
+                    return true;
                 }
             }
-            if ( !$found ) {
-                $this->assertFalse($l1);
-            }
         }
+        return false;
     }
 
 
