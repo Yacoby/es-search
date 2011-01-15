@@ -18,36 +18,17 @@
  * along with ES Search. If not, see <http://www.gnu.org/licenses/>.
  * l-b */
 
-abstract class Super_Wiwland extends Search_Parser_Site {
-    private $_sub;
-    function __construct($sub) {
-        $this->_sub = $sub;
-    }
-    /**
-     * Maximum Usage Per day
-     */
-    public function getLimitBytes() {
-        return 1048578;
-    }
-
-    /**
-     * Gets the page used to update the mod.
-     */
-    protected function _getUpdateDetails() {
-        $up = array(
-                '/spip.php?page=classemois',
-        );
-
-        return array(
-                "Urls" => $up,
-                "UpdateFrequency" => 31
-        );
-    }
-
-
-    protected function _getInitialPages() {
-        return array();
-    }
+class Super_Wiwland extends Search_Parser_Site {
+    protected $_details = array(
+        'host'            => null, //set in sub class
+        'domain'          => null,
+        'modUrlPrefix'    => '/spip.php?article', //set in sub class
+        'initialPages'    => array(),
+        'updateUrl'       => array('/spip.php?page=classemois',),
+        'updateFrequency' => 31,
+        'loginRequired'   => false,
+        'limitBytes'      => 1048578,
+    );
 }
 
 abstract class Super_Wiwland_page extends Search_Parser_Page {

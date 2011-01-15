@@ -22,34 +22,21 @@
  */
 class EsFilefront extends Search_Parser_Site {
 
-    public static function getHost(){
-        return null;//DON'T USE CLASS
-    //    return 'elderscrolls.filefront.com';
-    }
-
-    /**
-     * Maximum Usage Per day
- */
-    public function getLimitBytes() {
-        return 1048578;
-    }
-
-    /**
-     * Gets the page used to update the mod.
-     */
-    public function getUpdatePage() {
-        return array(
-            "URL" => array(),
-            "UpdateF" => 31
-        );
-    }
-
-    public function getInitialPages() {
-        return array(
+    protected $_details = array(
+        'host'            => null,// 'elderscrolls.filefront.com',
+        'domain'          => null,
+        'modUrlPrefix'    => '/nuke/html/modules.php?op=modload&name=Downloads&file=index&req=viewdownloaddetails&lid=',
+        'initialPages'    => array(
+            //TODO INCORRECT. SHOULDN'T BE FULL URL
             "http://elderscrolls.filefront.com/files/The_Elder_Scrolls_III_Morrowind/Modifications;7095",
             "http://elderscrolls.filefront.com/files/The_Elder_Scrolls_IV_Oblivion/Modifications;7128"
-        );
-    }
+        ),
+        'updateUrl'       => array(),
+        'updateFrequency' => 31,
+        'loginRequired'   => false,
+        'limitBytes'      => 1048578,
+    );
+
 }
 
 class elderscrolls_filefront_com_page extends Search_Parser_Page {

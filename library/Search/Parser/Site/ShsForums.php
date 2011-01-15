@@ -19,25 +19,19 @@
  * l-b */
 
 final class shsforums_net extends Search_Parser_Site {
-
-    public static function getHost(){
-        //return 'www.shsforums.net';
-		return null;
-    }
-
-    public function getLimitBytes() {
-        return 1048578;
-    }
-    public function getUpdatePage() {
-        return array(
-        "URL" => array(),
-        "UpdateFrequency" => 31
-        );
-    }
-
-    public function getInitialPages() {
-        return array('http://www.shsforums.net/index.php?autocom=downloads&showcat=3');
-    }
+    protected $_details = array(
+        'host'            => null, //'www.shsforums.net',
+        'domain'          => null,
+        'modUrlPrefix'    => '/View.php?view=',
+        'initialPages'    => array(
+                //TODO Fix
+                'http://www.shsforums.net/index.php?autocom=downloads&showcat=3'
+        ),
+        'updateUrl'       => array(),
+        'updateFrequency' => 31,
+        'loginRequired'   => false,
+        'limitBytes'      => 1048578,
+    );
 }
 
 final class shsforums_net_page extends Search_Parser_Page {

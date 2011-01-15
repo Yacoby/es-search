@@ -22,14 +22,8 @@ require_once 'Super/Wiwiland.php';
 
 final class Oblivion_Wiwland extends Super_Wiwland {
     function __construct(){
-        parent::__construct('oblimods');
+        $this->_details['host'] = 'oblimods.wiwiland.net';
     }
-    public static function getHost(){
-        return 'oblimods.wiwiland.net';
-    }
-	public static function getModUrlPrefix(){
-		return '/spip.php?article';
-	}
 }
 
 final class Oblivion_Wiwland_page extends Super_Wiwland_page {

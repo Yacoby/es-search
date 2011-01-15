@@ -67,9 +67,11 @@ class Search_Parser_Factory {
         $classes = get_declared_classes();
         foreach ( $classes as $c ){
             if ( is_subclass_of($c, 'Search_Parser_Site') ){
-                $host = call_user_func(array($c, 'getHost'));
+                $site = new $c();
+
+                $host = $site->getHost();
                 if ( $host !== null ){
-                    $sites[$host] = new $c();
+                    $sites[$host] = $site;
                 }
             }
         }

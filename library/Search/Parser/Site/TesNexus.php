@@ -21,14 +21,16 @@
 /**
  */
 final class tesnexus_com extends Search_Parser_Site {
-
-    public static function getHost() {
-        return 'www.tesnexus.com';
-    }
-	public static function getModUrlPrefix(){
-		return '/downloads/file.php?id=';
-	}
-
+    protected $_details = array(
+        'host'            => 'www.tesnexus.com',
+        'domain'          => null,
+        'modUrlPrefix'    => '/downloads/file.php?id=',
+        'initialPages'    => array('/downloads/categories.php'),
+        'updateUrl'       => array('/downloads/recent.php'),
+        'updateFrequency' => 12,
+        'loginRequired'   => false,
+        'limitBytes'      => 5048578,
+    );
 
     /**
      * Gets an page, but if it is an update page doesn't get a Search_Parser_Dom
@@ -89,26 +91,9 @@ final class tesnexus_com extends Search_Parser_Site {
           ->exec();
     }
 
-    /**
-     * Maximum Usage Per day
-     */
-    public function getLimitBytes() {
-        return 1048578*25;
-    }
-
-    /**
-     * Gets the page used to update the mod.
-     */
-    protected function _getUpdateDetails() {
-        return array(
-                "Urls" => array("/downloads/recent.php"),
-                "UpdateFrequency" => 12
-        );
-    }
-
     public function isUpdatePage(Search_Url $url) {
-        $up = $this->_getUpdateDetails();
-        foreach ($up['Urls'] as $u) {
+        $urls = $this->_details['updateUrl'];
+        foreach ($urls as $u) {
             if ( 'http://'.$this->getHost().$u == $url ) {
                 return true;
             }
@@ -116,11 +101,7 @@ final class tesnexus_com extends Search_Parser_Site {
         return false;
     }
 
-    protected function _getInitialPages() {
-        return array(
-                "/downloads/categories.php"
-        );
-    }
+
 
 
 }

@@ -22,14 +22,8 @@ require_once 'Super/Wiwiland.php';
 
 final class Morrowind_Wiwland extends Super_Wiwland{
     function __construct(){
-        parent::__construct('morromods');
+        $this->_details['host'] = 'morromods.wiwiland.net';
     }
-    public static function getHost(){
-        return 'morromods.wiwiland.net';
-    }
-	public static function getModUrlPrefix(){
-		return '/spip.php?article';
-	}
 }
 
 final class Morrowind_Wiwland_page extends Super_Wiwland_page {

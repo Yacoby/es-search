@@ -22,44 +22,24 @@
  */
 final class elricm_com extends Search_Parser_Site {
 
-    public static function getHost() {
-        return 'www.elricm.com';
-    }
-	public static function getModUrlPrefix(){
-		return '/nuke/html/modules.php?op=modload&name=Downloads&file=index&req=viewdownloaddetails&lid=';
-	}
-
-    /**
-     * Maximum Usage Per day
-     */
-    public function getLimitBytes() {
-        return 1048578;
-    }
-
-    /**
-     * Gets the page used to update the mod.
-     */
-    protected function _getUpdateDetails() {
-        $up = array(
+    protected $_details = array(
+        'host'            => 'www.elricm.com',
+        'domain'          => null,
+        'modUrlPrefix'    => '/nuke/html/modules.php?op=modload&name=Downloads&file=index&req=viewdownloaddetails&lid=',
+        'initialPages'    => array(
                 '/nuke/html/modules.php?op=modload&name=Downloads&file=index&req=viewdownload&cid=4',
                 '/nuke/html/modules.php?op=modload&name=Downloads&file=index&req=viewdownload&cid=8',
                 '/nuke/html/modules.php?op=modload&name=Downloads&file=index&req=viewdownload&cid=7',
-        );
-        return array(
-                'Urls' => $up,
-                'UpdateFrequency' => 31
-        );
-    }
-
-    protected function _getInitialPages() {
-        return array(
+        ),
+        'updateUrl'       => array(
                 '/nuke/html/modules.php?op=modload&name=Downloads&file=index&req=viewdownload&cid=4',
                 '/nuke/html/modules.php?op=modload&name=Downloads&file=index&req=viewdownload&cid=8',
                 '/nuke/html/modules.php?op=modload&name=Downloads&file=index&req=viewdownload&cid=7',
-        );
-    }
-
-
+        ),
+        'updateFrequency' => 31,
+        'loginRequired'   => false,
+        'limitBytes'      => 1048578,
+    );
 }
 
 final class elricm_com_page extends Search_Parser_Page {

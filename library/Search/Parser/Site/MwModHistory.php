@@ -21,36 +21,16 @@
 /**
  */
 final class modding_history extends Search_Parser_Site {
-
-    public static function getHost() {
-        return 'modhistory.fliggerty.com';
-    }
-	public static function getModUrlPrefix(){
-		return '/index.php?dlid=';
-	}
-    /**
-     * Maximum Usage Per day
-     */
-    public function getLimitBytes() {
-        return 1048578*10;
-    }
-
-    /**
-     * Gets the page used to update the mod.
-     */
-    protected function _getUpdateDetails() {
-        return array(
-                'Urls'		=> array(),
-                'UpdateFrequency'	=> 31
-        );
-    }
-
-    protected function _getInitialPages() {
-        return array(
-                '/index.php?cid=5'
-        );
-    }
-
+    protected $_details = array(
+        'host'            => 'modhistory.fliggerty.com',
+        'domain'          => null,
+        'modUrlPrefix'    => '/index.php?dlid=',
+        'initialPages'    => array('/index.php?cid=5'),
+        'updateUrl'       => array(),
+        'updateFrequency' => 31,
+        'loginRequired'   => false,
+        'limitBytes'      => 10485780,
+    );
 }
 
 final class modding_history_page extends Search_Parser_Page {

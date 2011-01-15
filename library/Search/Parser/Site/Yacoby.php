@@ -19,33 +19,16 @@
  * l-b */
 
 final class yacoby_silgrad_com extends Search_Parser_Site {
-
-	public static function getHost() {
-		return 'yacoby.silgrad.com';
-	}
-	public static function getModUrlPrefix(){
-		return '/MW/Mods/';
-	}
-	/**
-	 * Maximum Usage Per day
-	 */
-	public function getLimitBytes() {
-		return 1048578;
-	}
-
-	/**
-	 * Gets the page used to update the mod.
-	 */
-	protected function _getUpdateDetails() {
-		return array(
-				"Urls"		=> array('/MW/Mods/index.htm'),
-				"UpdateFrequency"	=> 31
-		);
-	}
-
-	protected function _getInitialPages() {
-		return array();
-	}
+    protected $_details = array(
+        'host'            => 'yacoby.silgrad.com',
+        'domain'          => null,
+        'modUrlPrefix'    => '/MW/Mods/',
+        'initialPages'    => array(),
+        'updateUrl'       => array('/MW/Mods/index.htm',),
+        'updateFrequency' => 31,
+        'loginRequired'   => false,
+        'limitBytes'      => 1048578,
+    );
 }
 
 final class yacoby_silgrad_com_page extends Search_Parser_Page {

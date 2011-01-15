@@ -22,21 +22,17 @@
  *
  */
 final class planetelderscrolls_com extends Search_Parser_Site {
-    public static function getHost() {
-        return 'planetelderscrolls.gamespy.com';
-    }
-	public static function getModUrlPrefix(){
-		return '/View.php?view=';
-	}
-    public function getLimitBytes() {
-        return 1048578*50;
-    }
-
-    /**
-     * Gets the page used to update the mod.
-     */
-    protected function _getUpdateDetails() {
-        $up = array(
+    protected $_details = array(
+        'host'            => 'planetelderscrolls.gamespy.com',
+        'domain'          => null,
+        'modUrlPrefix'    => '/View.php?view=',
+        'initialPages'    => array(
+                "/View.php?view=OblivionMods.List",
+                "/View.php?view=Mods.List",
+                "/View.php?view=OblivionUtilities.List",
+                "/View.php?view=Utilities.List"
+        ),
+        'updateUrl'       => array(
                 '/View.php?view=LatestAdditions&clusters=utilities&days=30&show_days_back=1',
                 '/View.php?view=RecentUpdates&clusters=utilities&days=30&show_days_back=1',
 
@@ -48,24 +44,11 @@ final class planetelderscrolls_com extends Search_Parser_Site {
 
                 '/View.php?view=LatestAdditions&clusters=oblivionmods&days=30&show_days_back=1',
                 '/View.php?view=RecentUpdates&clusters=oblivionmods&days=30&show_days_back=1',
-        );
-
-        return array(
-                "Urls"		=> $up,
-                "UpdateFrequency"	=> 0.5
-        );
-    }
-
-    public function _getInitialPages() {
-        return array(
-                "/View.php?view=OblivionMods.List",
-                "/View.php?view=Mods.List",
-                "/View.php?view=OblivionUtilities.List",
-                "/View.php?view=Utilities.List"
-        );
-    }
-
-
+        ),
+        'updateFrequency' => 0.5,
+        'loginRequired'   => false,
+        'limitBytes'      => 50485780,
+    );
 }
 
 final class planetelderscrolls_com_page extends Search_Parser_Page {
