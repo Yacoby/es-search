@@ -244,9 +244,15 @@ class Search_Parser_Site {
         $obj = $this->getPageImp($i, $cls, $url);
 
         if ( !$obj->isValidPageBody($obj) ) {
-            throw new Search_Parser_Exception_InvalidPage(
-            "The mod page at {$url} was found to be invalid"
-            );
+            if ( $obj->isModNotFoundPage($client) ){
+                throw new Search_Parser_Exception_ModRemoved(
+                    'The mod was not found'
+                );
+            }else{
+                throw new Search_Parser_Exception_InvalidPage(
+                    "The mod page at {$url} was found to be invalid"
+                );
+            }
         }
 
         if ( $this->needsLogin($obj) && !$this->isLoggedIn($obj) ) {

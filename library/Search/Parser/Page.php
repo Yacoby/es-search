@@ -149,11 +149,34 @@ class Search_Parser_Page {
         }
 
         if ( $this->isValidModPage() ) {
-            $this->doParseModPage($client);
+            try{
+                //try parsing
+                $this->doParseModPage($client);
+
+                //on a parse error, check if it is because the mod has been
+                //deleted
+            }catch(Search_Parser_Exception_Parse $e){
+                //if it is, change the exception
+                if ( $this->isModNotFoundPage($client) ){
+                    throw new Search_Parser_Exception_ModRemoved();
+                }else{
+                    //otherwise, just throw the parse error upwards
+                    throw $e;
+                }
+            }
         }
         $this->getPageLinks();
 
         return true;
+    }
+
+    /**
+     *
+     * This should return true if the current page is related to a mod not found
+     * or mod no longer exists or whatever.
+     */
+    public function isModNotFoundPage($client){
+        return false;
     }
 
     /**
@@ -233,8 +256,8 @@ class Search_Parser_Page {
             if ( method_exists(get_class($this), $method) ) {
                 $result = $this->{$method}($client);
                 if ( $result === null ) {
-                    throw new Search_Parser_Exception_ModPage(
-                    "Failed to parse {$p} when parsing {$this->_url}"
+                    throw new Search_Parser_Exception_Parse(
+                        "Failed to parse {$p} when parsing {$this->_url}"
                     );
                 }
                 $mod[$p] = trim($result);

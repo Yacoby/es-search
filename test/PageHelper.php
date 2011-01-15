@@ -121,7 +121,13 @@ class PageTest extends PHPUnit_Framework_TestCase {
         return false;
     }
 
+    public function helpModRemovedPage(Search_Url $url){
+        $this->setExpectedException('Search_Parser_Exception_ModRemoved');
+        $p = $this->_factory
+                  ->getSiteByURL($url)
+                  ->getPage($url, $this->_client);
 
+    }
 
 }
 

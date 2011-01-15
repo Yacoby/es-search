@@ -18,4 +18,4 @@
  * along with ES Search. If not, see <http://www.gnu.org/licenses/>.
  * l-b */
 
-class Search_Parser_Exception_ModPage extends Exception{}
+class Search_Parser_Exception_Parse extends Search_Parser_Exception_InvalidPage{}

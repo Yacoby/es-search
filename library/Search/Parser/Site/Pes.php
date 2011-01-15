@@ -89,6 +89,15 @@ final class planetelderscrolls_com_page extends Search_Parser_Page {
         );
     }
 
+    public function  isModNotFoundPage($client) {
+        foreach ( $this->_html->find('h1') as $e ){
+            if ( $e->plaintext == 'This entry is not or not yet available' ){
+                return true;
+            }
+        }
+        return false;
+    }
+
     /**********************************************************************
     * Functions for parsing mod pages
     **********************************************************************/

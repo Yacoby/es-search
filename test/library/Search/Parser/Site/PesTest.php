@@ -47,6 +47,15 @@ class planetelderscrolls_comTest extends PageTest {
         $this->helpTestInstance(new Search_Url('http://planetelderscrolls.gamespy.com/View.php?view=Mods.Detail&id=4481'));
     }
 
+    function testModRemoved(){
+        $this->helpModRemovedPage(
+                new Search_Url('http://planetelderscrolls.gamespy.com/View.php?view=Mods.Detail&id=100000')
+        );
+        $this->helpModRemovedPage(
+            new Search_Url('http://planetelderscrolls.gamespy.com/View.php?view=OblivionUtilities.Detail&id=44000')
+        );
+    }
+
     function testMod1() {
         $mod = array(
             'Name'      => 'Pursuit Enhanced',

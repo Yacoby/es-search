@@ -163,6 +163,10 @@ final class tesnexus_com_page extends Search_Parser_Page {
         return $this->isAnyMatch($pages, $url);
     }
 
+    public function  isModNotFoundPage($client) {
+        return stripos((string)$this->_html,
+                       "<script>window.location='/includes/error.php?pop=0&report=0&error=file_exist") === 0;
+    }
 
     function getGame() {
         $find = $this->_html->find("div[id=left_side] h3 a");

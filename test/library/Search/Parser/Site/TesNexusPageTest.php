@@ -33,6 +33,15 @@ class tesnexus_com_pageTest extends PageTest {
         $this->helpTestInstance(new Search_Url('http://www.tesnexus.com/downloads/file.php?id=22938'));
     }
 
+    function testModRemoved(){
+        $this->helpModRemovedPage(
+                new Search_Url('http://www.tesnexus.com/downloads/file.php?id=1')
+        );
+        $this->helpModRemovedPage(
+            new Search_Url('http://www.tesnexus.com/downloads/file.php?id=9999999')
+        );
+    }
+
     function testMod1() {
         $mod = array(
                 'Name'      => 'Pursuit Enhanced',
