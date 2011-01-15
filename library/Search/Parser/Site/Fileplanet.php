@@ -7,8 +7,8 @@ class Fileplanet extends Search_Parser_Site {
         'modUrlPrefix'    => '/',
         'initialPages'    => array(),
         'updateUrl'       => array(
-            'http://www.fileplanet.com/41184/0/section/Mods-',
-            'http://www.fileplanet.com/104054/0/section/Mods',
+            '/41184/0/section/Mods',
+            '/104054/0/section/Mods',
         ),
         'updateFrequency' => 31,
         'loginRequired'   => false,
