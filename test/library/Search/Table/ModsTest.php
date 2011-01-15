@@ -20,6 +20,7 @@ class Search_Table_ModsTest extends PHPUnit_Framework_TestCase {
     //fails as no connection
     public function tearDown() {
         //order is important due to db constraints
+        //ok. Maybe not now? Test it.
         $this->_locations->createQuery()
                 ->delete()
                 ->execute();
@@ -27,6 +28,8 @@ class Search_Table_ModsTest extends PHPUnit_Framework_TestCase {
         $this->_mods->createQuery()
                 ->delete()
                 ->execute();
+
+
 
     }
 
@@ -36,7 +39,8 @@ class Search_Table_ModsTest extends PHPUnit_Framework_TestCase {
 
     public function testFindOneBy() {
         $new = $this->_mods->create();
-        $new->name = 'yacoby';
+        $new->name   = 'yacoby';
+        $new->author = 'someone';
         $new->save();
 
         $this->assertNotEquals(false, $this->_mods->findOneByName(array('yacoby')));
@@ -45,15 +49,15 @@ class Search_Table_ModsTest extends PHPUnit_Framework_TestCase {
     public function testFindMatch1() {
 
         $mod1 = $this->_mods->create();
-        $mod1->name = 'mod1';
+        $mod1->name   = 'mod1';
         $mod1->author = 'yacoby';
         $mod1->save();
 
         $loc1 = $this->_locations->create();
         $loc1->modification_id = $mod1->id;
-        $loc1->site_id = 1;
-        $loc1->category_id = 1;
-        $loc1->mod_url_suffix   = 'mod1';
+        $loc1->site_id         = 1;
+        $loc1->category_id     = 1;
+        $loc1->mod_url_suffix  = 'mod1';
         $loc1->save();
 
         //this should match as the url is the same as the mods url
