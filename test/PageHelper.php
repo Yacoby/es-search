@@ -18,36 +18,6 @@
  * l-b */
 
 /**
- * Class is used in testing to check that the class conforms to a set of standards
- */
-class SiteValidator {
-    /**
-     * @var ReflectionClass
-     */
-    private $_reflect = null;
-
-    /**
-     *
-     * @param string $class The name of the class
-     */
-    public function __construct($class) {
-        $this->_reflect = new ReflectionClass($class);
-    }
-
-    public function hasHostDefined() {
-        return $this->_reflect->hasMethod('getHost') &&
-               $this->_reflect->getMethod('getHost')->isStatic() &&
-               $this->_reflect->getMethod('getHost')->isPublic();
-    }
-
-    public function isFinal() {
-        return $this->_reflect->isFinal();
-    }
-
-}
-
-
-/**
  * Helper class for testing website pages
  */
 class PageTest extends PHPUnit_Framework_TestCase {
@@ -75,11 +45,6 @@ class PageTest extends PHPUnit_Framework_TestCase {
 
         $this->_type = $type;
         $this->_url = $url;
-
-        $sv = new SiteValidator($type);
-        if ( $sv->isFinal() ) {
-            assert($sv->hasHostDefined());
-        }
     }
 
     public function helpTestInstance(Search_Url $url) {
@@ -125,7 +90,7 @@ class PageTest extends PHPUnit_Framework_TestCase {
         $mod = $mods[0];
 
         foreach ( $details as $key => $val ) {
-            $this->assertEquals($val, $mod[$key]);
+            $this->assertEquals($mod[$key], $val);
         }
     }
 
