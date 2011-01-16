@@ -69,13 +69,6 @@ class Search_VersionTest extends PHPUnit_Framework_TestCase {
         );
     }
 
-    public function testOrderEqulivence(){
-        $this->assertEquals(
-                Search_Version::fromString('1 rc'),
-                Search_Version::fromString('rc 1')
-        );
-    }
-
     public function testNameEqulivence(){
         $this->assertEquals(
                 Search_Version::fromString('1 rc'),
@@ -94,13 +87,6 @@ class Search_VersionTest extends PHPUnit_Framework_TestCase {
          $this->assertEquals(
                 Search_Version::fromString('1 dev'),
                 Search_Version::fromString('1 d')
-        );
-    }
-
-    public function testPrecidence(){
-        $this->assertEquals(
-                Search_Version::fromString('1 rc'),
-                Search_Version::fromString('alpha 1 rc')
         );
     }
 }

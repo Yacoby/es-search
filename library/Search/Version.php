@@ -37,17 +37,16 @@
 class Search_Version {
 
     /**
+     * This is a list of values for str_replace that is run through the string
+     *
      * @var array
      */
-    /*
     private static $_strings = array(
             array('rc', 'r'),
             array('beta', 'b'),
             array('alpha', 'a'),
             array('dev', 'd'),
     );
-     * 
-     */
 
     public static function fromString($string){
         return self::parseString((string)$string);
@@ -61,12 +60,14 @@ class Search_Version {
         $string = str_replace(array('_', '-', '+'), '.', $string);
 
         //convert strings to the representation we know what to do with
-        //foreach ( self::$_strings as $s ){
-        //    $string = str_replace($s[0], $s[1], $string);
-        //}
+        foreach ( self::$_strings as $s ){
+            $string = str_replace($s[0], $s[1], $string);
+        }
 
         //remove the string and add a dot so that 1beta3 becomes 1.3
-        $string = preg_replace('/([0-9])?([a-zA-Z]+)([0-9])?/', '$1.$3', $string);
+        $string = self::convertStrings($string);
+        //remove multiple dots and remove them from the ends
+        $string = preg_replace('/[\.]+/', '.', $string);
         $string = trim($string, '.');
 
         //holds the last string value, converted to its ineteger format
@@ -75,11 +76,7 @@ class Search_Version {
         $numberBits = array();
 
         foreach ( explode('.', $string) as $v ) {
-           // if ( is_numeric($v) ) {
-                $numberBits[] = self::getIntVersionBits((int)$v);
-           // }else {
-           //     $stringBits = self::getStrVersionBits((string)$v, $stringBits);
-           // }
+            $numberBits[] = self::getIntVersionBits((int)$v);
         }
 
         //the output
@@ -98,43 +95,18 @@ class Search_Version {
             $int = $int | $val; 
         }
 
-        /*
-        //if a string is set, add in the string and make the number negative
-        if ( $stringBits !== 0 ){
-            //shift it up to the start of the bits
-            $stringBits = $stringBits << 27;
-            $int = $int | $stringBits;
-
-            //remember that stringBits isn't negative, but if
-            //a string is in the version, the result needs to be
-            $int = -$int;
-        }
-         
-         */
 
         return $int;
     }
-    /**
-     * This takes a string and tries to convert it into the required integeer.
-     * It is NOT negative. So the function that uses this needs to swap the
-     * integer to negative if the result from running this is != 0
-     *
-     * @param string $string
-     * @param int $current   The current value. Returned if the $string isn't valid
-     * @return int
-     */
-    /*
-    private static function getStrVersionBits($string, $current) {
+    private static function convertStrings($string) {
         //ordering is very important
         $known = array('r', 'b', 'a', 'd');
-        $index = array_search($string, $known);
-        if ( $index === false ){
-            return $current;
+        foreach ($known as $index => $value){
+            $replace = '.' . str_repeat('0.', $index + 1);
+            $string = str_replace($value, $replace, $string);
         }
-        return 1 << $index;
-
+        return $string;
      }
-     */
     private static function getIntVersionBits($v) {
         if ( $v < 0 || $v > 63 ) {
             throw new Search_Version_Exception('Cannot have versions less than 0 or exceeding 63');
