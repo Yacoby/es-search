@@ -24,28 +24,24 @@ Site:
     columns:
         id:
             type: integer
-
             autoincrement: true
 
         #this is to allow looking up sites by host name
         host:
             primary: true
             type: string(255)
-            notblank: true
         
         #this is the string for the base of the url. This should be common
         #to every
         #for example: http://yacoby.silgrad.com
         base_url:
             type: string
-            notblank: true
             notnull: true
 
         #this is as much as the GET string as possible that is common to every mod
         #i.e. /mod.php?id=
         mod_url_prefix:
             type: string
-            notblank: true
             notnull: true
 
         #The limit in bytes per day that can be used
@@ -210,15 +206,14 @@ Page:
         Site:
             foreignAlias: Pages
 
-#-- DROP TABLE IF EXISTS SearchIndexChanges;
-#-- CREATE TABLE IF NOT EXISTS SearchIndexChanges(
-#--	UpdateId INT NOT NULL,
-#--	IndexId INT NOT NULL,
-#--	IndexVersion INT NOT NULL,
-#--	`Action` ENUM('ADD', 'REMOVE') NOT NULL,
-#--	ModId INT COMMENT 'NULL if the mod doesn\'t exist',
-#--	PRIMARY KEY (UpdateId),
-#--    FOREIGN KEY (IndexId) REFERENCES `SearchIndex`(IndexId) ON DELETE CASCADE,
-#--    FOREIGN KEY (IndexVersion) REFERENCES `SearchIndexVersion`(IndexVersion) ON DELETE CASCADE,
-#--    FOREIGN KEY (ModId) REFERENCES `Mod`(ModId) ON DELETE SET NULL
-#-- ) ENGINE=INNODB DEFAULT CHARSET=latin1;
+# #############################################################################
+AditionalMods:
+    columns:
+        id:
+            type: integer
+            primary: true
+        name: string
+        author: string
+        url: string
+        game: string
+

@@ -14,3 +14,11 @@ Game:
         name: Skyrim
         short_name: sk
         id: 5
+
+#This is the empty sites for the aditional mods.
+Site:
+    DefaultSite:
+        host: ""
+        base_url: ""
+        mod_url_prefix: ""
+        enabled: 0

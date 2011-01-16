@@ -34,17 +34,14 @@ abstract class BaseSite extends Doctrine_Record
         $this->hasColumn('host', 'string', 255, array(
              'primary' => true,
              'type' => 'string',
-             'notblank' => true,
              'length' => '255',
              ));
         $this->hasColumn('base_url', 'string', null, array(
              'type' => 'string',
-             'notblank' => true,
              'notnull' => true,
              ));
         $this->hasColumn('mod_url_prefix', 'string', null, array(
              'type' => 'string',
-             'notblank' => true,
              'notnull' => true,
              ));
         $this->hasColumn('byte_limit', 'integer', null, array(
