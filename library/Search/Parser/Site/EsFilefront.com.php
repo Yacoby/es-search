@@ -40,7 +40,7 @@ class EsFilefront extends Search_Parser_Site {
 
 class EsFilefront_page extends Search_Parser_Page {
     protected function doIsValidModPage($url) {
-        return (preg_match("%http://elderscrolls\\.filefront\\.com/file/.*;\\d+%", $url->toString()) == 1 );
+        return (preg_match("%http://elderscrolls\\.filefront\\.com/file/.*;\\d+$%", $url->toString()) == 1 );
     }
 
     protected function doIsValidPage($url) {

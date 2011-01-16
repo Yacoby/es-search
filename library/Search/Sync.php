@@ -43,13 +43,16 @@ class Search_Sync {
      */
     public function ensureParsersCreated() {
         foreach ( $this->_factory->getSites() as $host => $site) {
-            $dbSite = $this->_sites->create();
+            $dbSite = $this->_sites->findOneByHost($host);
+            if ( $dbSite === false ){
+                $dbSite = $this->_sites->create();
+            }
 
             $dbSite->host           = $host;
             $dbSite->base_url       = $site->getDomain();
             $dbSite->mod_url_prefix = $site->getModUrlPrefix();
 
-            $dbSite->replace();
+            $dbSite->save();
  
         }
     }
@@ -84,7 +87,7 @@ class Search_Sync {
                     $page->last_visited = time();
                     $page->revisit      = time();
                     $page->save();
-                } else if ( $page->last_visited < strtosime('+3 months') ) {
+                } else if ( $page->last_visited < strtotime('+3 months') ) {
                     $page->revisit = time();
                     $page->save();
                 }

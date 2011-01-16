@@ -45,17 +45,17 @@ class Search_Table_Mods extends Search_Table_Abstract {
         return $gameId;
     }
 
-    private function getCategoryId($category){
+    private function getCategoryId($categoryName){
         $categories = new Search_Table_Categories();
         $category   = $categories->createQuery('c')
                                   ->select('c.id')
-                                  ->where('c.name = ?', $category)
+                                  ->where('c.name = ?', $categoryName)
                                   ->fetchOne(array(),
                                              Doctrine_Core::HYDRATE_SINGLE_SCALAR);
 
         if ( $category === false ){
             $category = $categories->create();
-            $category->name = $modDetails['Category'];
+            $category->name = $categoryName;
             $category->save();
             return $category->id;
         }

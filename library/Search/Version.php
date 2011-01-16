@@ -56,7 +56,9 @@ class Search_Version {
     }
 
     private static function parseString($string) {
-        echo $string;
+        if ( trim($string) == '' ){
+            return 0;
+        }
         //remove spaces
         $string = trim(str_replace(' ', '', $string));
 
@@ -78,9 +80,6 @@ class Search_Version {
 
           //remove spaces
         $string = trim(str_replace(' ', '', $string));
-
-
-        echo " - {$string}\n";
 
         //holds an array of versions
         $numberBits = explode('.', $string);

@@ -6,6 +6,13 @@ class Search_Listener_Site_Limits extends Doctrine_Record_Listener{
         assert(is_numeric($current));
         assert(is_numeric($limit));
 
+        if ( $limit == 0 ){
+            return array(
+                'bytes_last_updated' => time(),
+                'bytes_used'         => 0,
+            );
+        }
+
          //get the number of pages we can dl per second (normally 0.xxx);
         $perSec    = $limit / 60 / 60 / 24;
 

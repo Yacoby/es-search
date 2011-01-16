@@ -240,7 +240,8 @@ class Search_Updater extends Search_Observable {
             $this->_mods->addOrUpdateModFromArray($this->_sites, $modArray);
         
         }catch(Doctrine_Validator_Exception $e){
-            echo "Validator Error<br>\n";
+            echo "Validator Error: {$e->getMessage()}<br>\n";
+            echo $e->getTraceAsString();
           //  echo $e->errorMessage();
 
         //    echo $e->getTraceAsString();

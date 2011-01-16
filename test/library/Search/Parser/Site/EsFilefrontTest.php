@@ -40,4 +40,21 @@ class EsFilefrontTest extends PageTest {
             $mod
         );
     }
+
+    function testMod3(){
+        $mod = array(
+            'Name'     => 'East Side Estate',
+            'Author'   => 'Unknown / Anonymous',
+            'Game'     => 'OB',
+            'Version'  => '1.0',
+            'Category' => 'House Mods',
+        );
+        $this->helpTestModPage(
+            new Search_Url('http://elderscrolls.filefront.com/file/East_Side_Estate;72658'),
+            1,
+            $mod
+        );
+
+
+    }
 }

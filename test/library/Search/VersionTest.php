@@ -4,6 +4,11 @@
  */
 class Search_VersionTest extends PHPUnit_Framework_TestCase {
 
+    public function testNothing(){
+        $this->assertEquals(0, Search_Version::fromString(''));
+    }
+
+
     public function testAll(){
         $this->assertLessThan(
                 Search_Version::fromString('0020'),

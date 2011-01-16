@@ -103,7 +103,7 @@ class Search_Parser_Site {
 	 * @return string
 	 */
 	public function getDomain(){
-        if ( $this->_details['host'] === null ){
+        if ( $this->_details['domain'] === null ){
             $host = $this->getHost();
             if ( $host === null ){
                 throw new Exception('Host was null so couldn\'t compute domain');
@@ -121,7 +121,7 @@ class Search_Parser_Site {
 	 *
 	 * @return string
 	 */
-	public static function getModUrlPrefix(){
+	public function getModUrlPrefix(){
         return $this->_details['modUrlPrefix'];
 	}
 
@@ -144,7 +144,7 @@ class Search_Parser_Site {
 	 * @return array
 	 */
 	public function getUpdatePages(){
-        return $this->convertUrlSuffixes($this->_details['updatePages']);
+        return $this->convertUrlSuffixes($this->_details['updateUrl']);
 		//$up = $this->_getUpdateDetails();
 		//return $this->convertUrlSuffixes($up['Urls']);
 	}
