@@ -32,7 +32,6 @@ class Search_Listener_Location_Lucene extends Doctrine_Record_Listener{
         return Doctrine_Query::create()
                                 ->select('m.*, l.*, g.*')
                                 ->from('Modification m, m.Locations l, m.Games g')
-                                //TODO Maybe just add an id in for locations
                                 ->where('l.modification_id = ?', $l->modification_id)
                                 ->fetchOne();
 
