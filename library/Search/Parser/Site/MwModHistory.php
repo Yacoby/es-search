@@ -102,17 +102,21 @@ final class modding_history_page extends Search_Parser_Page {
     }
 
     /**
+     * This will return unkonwn on a blank author. This is so that
+     * we index more mods, as it seems that Unkown is the default for other
+     * mods on the site if there is no author
      *
-     * @return string|null
+     * @return string
      */
     public function getAuthor() {
         $mr = $this->_html->find('.mainrow');
         foreach ( $mr as $r ) {
             if ( trim($r->find('td',0)->plaintext) == "Author:" ) {
-                return $r->find('td',1)->plaintext;
+                $a = trim($r->find('td',1)->plaintext);
+                return $a == '' ? 'Unknown' : $a;
             }
         }
-        return null;
+        return 'Unknown';
     }
 
     /**
