@@ -9,12 +9,17 @@
     sign bit. 
     reserved (x3)
 
+    exta bits (x1)
     major bit (x6)
+ *
+    extra bits (x1)
     minor bit (x6)
+ *
+    extra bits (x1)
     minor bit (x6)
+ *
+    extra bits (x1)
     minor bit (x6)
-
-    reserved  (x4)
  */
 
 /**
@@ -42,10 +47,8 @@ class Search_Version {
      * @var array
      */
     private static $_strings = array(
-            array('rc', 'r'),
             array('beta', 'b'),
             array('alpha', 'a'),
-            array('dev', 'd'),
     );
 
     public static function fromString($string){
@@ -53,8 +56,9 @@ class Search_Version {
     }
 
     private static function parseString($string) {
+        echo $string;
         //remove spaces
-        $string = str_replace(' ', '', $string);
+        $string = trim(str_replace(' ', '', $string));
 
         //replace_, - and + with a .
         $string = str_replace(array('_', '-', '+'), '.', $string);
@@ -64,53 +68,59 @@ class Search_Version {
             $string = str_replace($s[0], $s[1], $string);
         }
 
-        //remove the string and add a dot so that 1beta3 becomes 1.3
-        $string = self::convertStrings($string);
+
+        $string = preg_replace("/([a-zA-Z])$/", ".$1 1", $string);
+        $string = preg_replace('/([a-zA-Z ]+)([0-9])/', '.$1$2', $string);
+
         //remove multiple dots and remove them from the ends
         $string = preg_replace('/[\.]+/', '.', $string);
         $string = trim($string, '.');
 
-        //holds the last string value, converted to its ineteger format
-        //$stringBits = 0;
-        //holds an array of versions
-        $numberBits = array();
+          //remove spaces
+        $string = trim(str_replace(' ', '', $string));
 
-        foreach ( explode('.', $string) as $v ) {
-            $numberBits[] = self::getIntVersionBits((int)$v);
-        }
+
+        echo " - {$string}\n";
+
+        //holds an array of versions
+        $numberBits = explode('.', $string);
 
         //the output
         $int = 0;
 
         //copy as many of the versions (4 of them) as we can into the integer
         for ( $i = 3; $i >= 0; $i-- ){
+
             $val = array_shift($numberBits);
+
             if ( $val === null ){
-                break;
+                $int = self::setExtraBit($int, $i, 2);
+                continue;
             }
 
-            $val = $val << 4; //shift is past the first reserved section
+            $number = (int)preg_replace('/[a-zA-Z]/', '', $val);
+            $letter = preg_replace('/[0-9]/', '', $val);
 
-            $val = $val << $i*6;
-            $int = $int | $val; 
+            $int = self::setVersionBits($int, $i, $number);
+
+            $known = array('a', 'b');
+            $index = array_search($letter, $known);
+            if ( $index === false ){
+                $index = 2; //default
+            }
+            $int = self::setExtraBit($int, $i, $index);
+
         }
-
-
         return $int;
     }
-    private static function convertStrings($string) {
-        //ordering is very important
-        $known = array('r', 'b', 'a', 'd');
-        foreach ($known as $index => $value){
-            $replace = '.' . str_repeat('0.', $index + 1);
-            $string = str_replace($value, $replace, $string);
-        }
-        return $string;
-     }
-    private static function getIntVersionBits($v) {
-        if ( $v < 0 || $v > 63 ) {
-            throw new Search_Version_Exception('Cannot have versions less than 0 or exceeding 63');
-        }
-        return (int)$v;
+
+    private static function setExtraBit($integer, $sectionToSet, $value){
+        $value = $value << 7;
+        $value = $value << $sectionToSet*7;
+        return $integer | $value;
+    }
+    private static function setVersionBits($integer, $sectionToSet, $value){
+            $value = $value << $sectionToSet*8;
+            return $integer | $value;
     }
 }
