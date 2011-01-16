@@ -32,9 +32,8 @@ class ModLocation{
         return new Search_Url($this->_data['url']);
     }
     public function getCategory(){
-        return '?';
         assert(array_key_exists('category', $this->_data));
-        return $this->_data['category'] ? $this->_data['category'] : 'unknown';
+        return $this->_data['category'] ? ucwords($this->_data['category']) : 'Unknown';
     }
     public function getDescription(){
         assert(array_key_exists('description', $this->_data));
@@ -68,22 +67,42 @@ class Default_Model_Mod {
             throw new Exception("Invlalid mod");
         }
 
-        $this->_mod = Doctrine_Query::create()
-                            ->select('m.*, l.*, g.*')
-                            ->addSelect('CONCAT(s.base_url, s.mod_url_prefix, l.mod_url_suffix) as url')
-                            ->from('Modification m, m.Locations l, l.Site s, m.Games g')
-                            ->where('m.id = ?', $mid)
-                            ->orderBy('l.int_version DESC')
-                            ->fetchOne(array(), Doctrine_Core::HYDRATE_ARRAY);
+        $sql = 'SELECT
+                    m.id, m.name, m.author, l.description, l.version,
+                    c.name as category,
+                    CONCAT(s.base_url, s.mod_url_prefix, l.mod_url_suffix) as url
+                FROM modification m
+                LEFT JOIN location l  ON l.modification_id = m.id
+                LEFT JOIN site s      ON l.site_id         = s.id
+                LEFT JOIN category c  ON l.category_id     = c.id
+                WHERE (m.id = ?)
+                ORDER BY l.int_version DESC';
 
-        if ( !$this->_mod ){
+        $dbh =  Doctrine_Manager::getInstance()
+                                ->getCurrentConnection()
+                                ->getDbh();
+
+        $stmt = $dbh->prepare($sql);
+        $stmt->execute(array((int)$mid));
+        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        if ( empty ($result)){
             throw new Exception('Mod was not found');
         }
 
-        foreach ( $this->_mod['Locations'] as $location ){
+        foreach ( $result as $row ){
+            $location = array(
+                'url'         => $row['url'],
+                'category'    => $row['category'],
+                'description' => $row['description'],
+                'version'     => $row['version'],
+            );
             $this->_location[] = new ModLocation($location);
         }
-        var_dump($this->_mod);
+        $this->_mod = array(
+            'name'   => $result[0]['name'],
+            'author' => $result[0]['author'],
+        );
     }
 
     public function getName() {
