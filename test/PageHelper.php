@@ -102,7 +102,7 @@ class PageTest extends PHPUnit_Framework_TestCase {
      */
     public function helpRequiredLinks(Search_Url $url, array $links) {
         if ( !$this->helpHasAnyLinkOf($url, $links) ) {
-            $this->assertFalse($l1);
+            $this->assertFalse(true);
         }
         
     }
