@@ -11,6 +11,7 @@
  * @property Doctrine_Collection $Games
  * @property Doctrine_Collection $GameMods
  * @property Doctrine_Collection $Locations
+ * @property AditionalMods $AditionalMods
  * 
  * @package    ##PACKAGE##
  * @subpackage ##SUBPACKAGE##
@@ -50,6 +51,10 @@ abstract class BaseModification extends Doctrine_Record
              'foreign' => 'modification_id'));
 
         $this->hasMany('Location as Locations', array(
+             'local' => 'id',
+             'foreign' => 'modification_id'));
+
+        $this->hasOne('AditionalMods', array(
              'local' => 'id',
              'foreign' => 'modification_id'));
     }

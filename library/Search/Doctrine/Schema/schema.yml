@@ -1,5 +1,5 @@
 # ##############################################################################
-CookieJar:
+CookeJar:
     columns:
         domain:
             type: string(255)
@@ -89,8 +89,7 @@ Category:
             type: string
             notnull: false
 
-# This ensures that the ModLocations default category points to something
-#INSERT INTO ModCategory (CategoryId, CategoryName) VALUES (0, 'Unknown');
+
 # #############################################################################
 Modification:
     columns:
@@ -104,10 +103,7 @@ Modification:
         author:
             type: string
             notblank: true
-        
-#        game_id:
-#            type: integer
-#            default: 0
+
 # #############################################################################
 Game:
     columns:
@@ -212,8 +208,51 @@ AditionalMods:
         id:
             type: integer
             primary: true
+
+        modification_id: integer
+
         name: string
         author: string
         url: string
-        game: string
+        game_id: integer
+    relations:
+        Modification:
+            type: many
+            foreignType: one
+        Game:
+            type: many
+            foreignType: one
 
+# #############################################################################
+SearchHistory:
+    columns:
+        id:
+            type: integer
+            autoincrement: true
+        #this is so that one persons searches don't take over the entire recent
+        #search history. You are basically allowed at maximum on one search
+        #in the history
+        ip:
+            type: string(127)
+            primary: true
+        search_time: integer
+        game_id: integer
+        general: string
+        name: string
+        author: string
+        description: string
+    relations:
+        Game:
+            type: many
+            foreignType: one
+    indexes:
+        id:
+            fields: [id]
+
+# #############################################################################
+HistoryBanned:
+    columns:
+        ip:
+            type: string(127)
+            primary: true
+        banned_time: integer

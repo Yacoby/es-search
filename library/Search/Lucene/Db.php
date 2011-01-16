@@ -9,7 +9,7 @@
  *
  * @todo This class isn't particuarly unit testaable.
  */
-class Search_Lucene_Db{
+class Search_Lucene_Db extends Search_Observable{
     /**
      * Adds the mod to all game databases. The mod will not be added
      * if there are no locations
@@ -64,11 +64,15 @@ class Search_Lucene_Db{
      */
     private $_db;
 
+    private $_game;
+
     /**
      *
      * @param int $game
      */
     public function  __construct($game) {
+        $this->attach(new Search_Observer_Search());
+
         $this->setDefaults();
 
         if ( array_key_exists($game, self::$_cache) ){
@@ -77,6 +81,8 @@ class Search_Lucene_Db{
             $this->_db = $this->openOrCreate($game);
             self::$_cache[$game] = $this->_db;
         }
+
+        $this->_game = $game;
 
     }
     private function setDefaults(){
@@ -147,6 +153,7 @@ class Search_Lucene_Db{
      * @return Search_Lucene_SearchResults
      */
     public function searchSimple($query, $lowerBound, $length){
+        $this->event()->searchSimple($this->_game, $query);
         return $this->search($query, $lowerBound, $length);
     }
 
@@ -160,6 +167,8 @@ class Search_Lucene_Db{
      * @return Search_Lucene_SearchResults
      */
     public function searchAdvanced($name, $author, $description, $lowerBound, $length){
+        $this->event()->searchSimple($this->_game, $name, $author, $description);
+        
          $input = array(
                 'name'          => $name,
                 'author'        => $author,
