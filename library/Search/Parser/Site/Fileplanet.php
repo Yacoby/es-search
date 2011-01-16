@@ -43,7 +43,11 @@ class Fileplanet_page extends Search_Parser_Page {
     }
 
     protected function doIsValidPage($url) {
-        return preg_match('%http://www.fileplanet.com/[0-9]+/0/0/0/[0-9]+/section/%', (string)$url) == 1;
+        $pages = array(
+            'http://www.fileplanet.com/[0-9]+/0/0/0/[0-9]+/section/',
+            'http://www.fileplanet.com/[0-9]+/0/section/.*',
+        );
+        return $this->isAnyMatch($pages, $url);
     }
 
 

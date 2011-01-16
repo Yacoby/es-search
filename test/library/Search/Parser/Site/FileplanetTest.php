@@ -15,7 +15,28 @@ class FileplanetTest extends PageTest {
         );
     }
 
-    function tesetLinks(){
+    function testModUrls(){
+        $valid = array(
+            "http://www.fileplanet.com/216154/210000/fileinfo/Elder-Scrolls-IV:-Oblivion---Nehrim-At-Fate's-Edge-Mod-(English)-v1.0.7.5-Mod",
+        );
+        $invalid = array();
+
+        $this->helpTestModUrls($valid, $invalid);
+    }
+
+    function testLinks(){
+        $links = array(
+            'http://www.fileplanet.com/40796/0/section/Traditional',
+            'http://www.fileplanet.com/104681/0/section/Quest-mods',
+        );
+        $this->assertTrue(
+                $this->helpHasAnyLinkOf(
+                        new Search_Url('http://www.fileplanet.com/104054/0/section/Mods'),
+                        $links
+                )
+        );
+    }
+    function testNotLinks(){
         $badLins = array(
             'http://www.fileplanet.com/40796/0/section/Traditional',
             "http://www.fileplanet.com/189421/180000/fileinfo/Elder-Scrolls-IV:-Oblivion---Qarl's-Texture-Pack-III-Full-v1.3-OMOD",
@@ -26,7 +47,6 @@ class FileplanetTest extends PageTest {
                         $badLins
                 )
         );
-
     }
 
     function testMod1(){

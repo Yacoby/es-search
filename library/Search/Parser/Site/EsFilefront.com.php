@@ -78,7 +78,7 @@ class EsFilefront_page extends Search_Parser_Page {
     function getCategory() {
         foreach ( $this->_html->find("b") as $b  ) {
             $txt = html_entity_decode($b->plaintext);
-            if ( preg_match('%Downloads > Modifications > ([0-9a-zA-Z ]*)%', $txt, $regs) == 1 ||
+            if ( preg_match('%Downloads > Modifications > ([0-9a-zA-Z ]*):$%', $txt, $regs) == 1 ||
                  preg_match('%Downloads > (.*):$%', $txt, $regs) == 1 ) {
                 return trim($regs[1]);
             }
@@ -87,7 +87,7 @@ class EsFilefront_page extends Search_Parser_Page {
     }
 
     function getVersion() {
-        $regex = '%[0-9a-zA-Z ]* \(([\.0-9\(\)a-zA-Z]+)\) - File Description%';
+        $regex = '%^[0-9a-zA-Z\.&; ]* \(([\.0-9\(\)a-zA-Z]+)\) - File Description$%';
         foreach ( $this->_html->find("b") as $b  ) {
             $txt = $b->plaintext;
             if ( preg_match($regex, $txt, $regs) == 1 ) {
@@ -101,11 +101,10 @@ class EsFilefront_page extends Search_Parser_Page {
     }
 
     function getName() {
-        $regex = '%([0-9a-zA-Z ]*)' //the mod name
-               . '[ ]*' //unndeed
+        $regex = '%^([0-9a-zA-Z\.&; ]*)' //the mod name
                . '(\([\.0-9\(\)a-zA-Z]+\))?' //maybe a version string in brackets
                . '[ ]*'
-               . '- File Description%';
+               . '- File Description$%';
         foreach ( $this->_html->find("b") as $b  ) {
             $txt = $b->plaintext;
             if ( preg_match($regex, $txt, $regs) == 1 ) {

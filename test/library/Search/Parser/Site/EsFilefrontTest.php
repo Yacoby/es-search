@@ -98,4 +98,27 @@ class EsFilefrontTest extends PageTest {
             $mod
         );
     }
+    function testMod7(){
+        $mod = array(
+            'Name'     => 'Oblivion Itemizer v3.00',
+            'Author'   => 'spike1000',
+            'Game'     => 'OB',
+            'Version'  => '3.00',
+            'Category' => 'Utilities',
+        );
+        $this->helpTestModPage(
+            new Search_Url('http://elderscrolls.filefront.com/file/Oblivion_Itemizer_v300;106519'),
+            1,
+            $mod
+        );
+
+        $mod['Version'] = '3.01';
+        $mod['Name']    = 'Oblivion Itemizer v3.01';
+
+        $this->helpTestModPage(
+            new Search_Url('http://elderscrolls.filefront.com/file/Oblivion_Itemizer_v301;107015'),
+            1,
+            $mod
+        );
+    }
 }
