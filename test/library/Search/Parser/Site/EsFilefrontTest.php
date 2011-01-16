@@ -54,7 +54,48 @@ class EsFilefrontTest extends PageTest {
             1,
             $mod
         );
+    }
 
-
+    function testMod4(){
+        $mod = array(
+            'Name'     => 'Cosmic SkyCycling',
+            'Author'   => 'Samroski/Sycamore',
+            'Game'     => 'OB',
+            'Version'  => '4.0.0.1969',
+            'Category' => 'Sound and Textures',
+        );
+        $this->helpTestModPage(
+            new Search_Url('http://elderscrolls.filefront.com/file/Cosmic_SkyCycling;98980'),
+            1,
+            $mod
+        );
+    }
+    function testMod5(){
+        $mod = array(
+            'Name'     => 'Croatian Medieval Armor set',
+            'Author'   => 'CRO White Wolf',
+            'Game'     => 'OB',
+            'Version'  => '1.1beta',
+            'Category' => 'Weapon and Armor',
+        );
+        $this->helpTestModPage(
+            new Search_Url('http://elderscrolls.filefront.com/file/Croatian_Medieval_Armor_set;116637'),
+            1,
+            $mod
+        );
+    }
+    function testMod6(){
+        $mod = array(
+            'Name'     => 'Grey Fox Fans',
+            'Author'   => 'Unknown / Anonymous',
+            'Game'     => 'OB',
+            'Version'  => '1.0',
+            'Category' => 'Miscellaneous',
+        );
+        $this->helpTestModPage(
+            new Search_Url('http://elderscrolls.filefront.com/file/Grey_Fox_Fans;80945'),
+            1,
+            $mod
+        );
     }
 }

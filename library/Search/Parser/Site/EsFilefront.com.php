@@ -63,11 +63,13 @@ class EsFilefront_page extends Search_Parser_Page {
     function getGame() {
         foreach ( $this->_html->find("b") as $b  ) {
             $txt = html_entity_decode($b->plaintext);
-            if ( preg_match("%Downloads > Modifications%", $txt) == 1 ) {
-                if ( stripos($txt, "Morrowind") !== false )
-                    return "MW";
-                if ( stripos($txt, "Oblivion") !== false )
-                    return "OB";
+            if ( preg_match('%Downloads > Modifications%', $txt) == 1 ||
+                 preg_match('%Downloads > .*:$%', $txt) == 1 ) {
+                if ( stripos($txt, 'Morrowind') !== false ){
+                    return 'MW';
+                }else if ( stripos($txt, 'Oblivion') !== false ){
+                    return 'OB';
+                }
             }
         }
         return null;
@@ -76,28 +78,38 @@ class EsFilefront_page extends Search_Parser_Page {
     function getCategory() {
         foreach ( $this->_html->find("b") as $b  ) {
             $txt = html_entity_decode($b->plaintext);
-            if ( preg_match("%Downloads > Modifications > ([0-9a-zA-Z ]*)%", $txt, $regs) == 1 ) {
-                return $regs[1];
+            if ( preg_match('%Downloads > Modifications > ([0-9a-zA-Z ]*)%', $txt, $regs) == 1 ||
+                 preg_match('%Downloads > (.*):$%', $txt, $regs) == 1 ) {
+                return trim($regs[1]);
             }
         }
-        return "";
+        return '';
     }
 
     function getVersion() {
+        $regex = '%[0-9a-zA-Z ]* \(([\.0-9\(\)a-zA-Z]+)\) - File Description%';
         foreach ( $this->_html->find("b") as $b  ) {
             $txt = $b->plaintext;
-            if ( preg_match('%[0-9a-zA-Z ]* \(([\.0-9]+)\) - File Description%', $txt, $regs) == 1 ) {
-                return $regs[1];
+            if ( preg_match($regex, $txt, $regs) == 1 ) {
+                return ltrim(
+                        str_replace(array('(', ')'), '', $regs[1]),
+                        'vV'
+                );
             }
         }
         return '';
     }
 
     function getName() {
+        $regex = '%([0-9a-zA-Z ]*)' //the mod name
+               . '[ ]*' //unndeed
+               . '(\([\.0-9\(\)a-zA-Z]+\))?' //maybe a version string in brackets
+               . '[ ]*'
+               . '- File Description%';
         foreach ( $this->_html->find("b") as $b  ) {
             $txt = $b->plaintext;
-            if ( preg_match('%([0-9a-zA-Z ]*)[ ]*(\([\.0-9]+\))?[ ]*- File Description%', $txt, $regs) == 1 ) {
-                return $regs[1];
+            if ( preg_match($regex, $txt, $regs) == 1 ) {
+                return trim($regs[1]);
             }
         }
         return null;
