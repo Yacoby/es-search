@@ -87,4 +87,17 @@ class FileplanetTest extends PageTest {
             $mod
         );
     }
+    function testMod3(){
+        $mod = array(
+            'Name'    => 'Hanchel Training Hovel v1.2',
+            'Author'  => 'ModderElGrande',
+            'Game'    => 'OB',
+            'Category'=> 'Buildings',
+        );
+        $this->helpTestModPage(
+            new Search_Url('http://www.fileplanet.com/203577/200000/fileinfo/Elder-Scrolls-IV:-Oblivion--Hanchel-Training-Hovel-v1.2'),
+            1,
+            $mod
+        );
+    }
 }

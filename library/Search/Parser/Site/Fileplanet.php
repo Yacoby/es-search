@@ -81,8 +81,8 @@ class Fileplanet_page extends Search_Parser_Page {
 
     function getName() {
         foreach ( $this->_html->find('h2.section-title') as $e ){
-            if ( preg_match('%File Info: .* - (.*)%', $e->plaintext, $regs) == 1 ) {
-                return $regs[1];
+            if ( preg_match('%File Info:.*-(.*)%', $e->plaintext, $regs) == 1 ) {
+                return trim($regs[1]);
             }
         }
         return null;
