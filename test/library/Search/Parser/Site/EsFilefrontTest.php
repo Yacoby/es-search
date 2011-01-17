@@ -121,4 +121,17 @@ class EsFilefrontTest extends PageTest {
             $mod
         );
     }
+    function testMod8(){
+        $mod = array(
+            'Name'     => 'Exile: Spirits of the Underworld Mod',
+            'Author'   => 'Unknown / Anonymous',
+            'Game'     => 'MW',
+            'Category' => 'Modifications',
+        );
+        $this->helpTestModPage(
+            new Search_Url('http://elderscrolls.filefront.com/file/Exile_Spirits_of_the_Underworld_Mod;52669'),
+            1,
+            $mod
+        );
+    }
 }
