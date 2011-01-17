@@ -26,8 +26,8 @@ class FileplanetTest extends PageTest {
 
     function testLinks(){
         $links = array(
-            'http://www.fileplanet.com/40796/0/section/Traditional',
-            'http://www.fileplanet.com/104681/0/section/Quest-mods',
+            'http://www.fileplanet.com/40796/0/0/0/1/section/Traditional',
+            'http://www.fileplanet.com/104681/0/0/0/1/section/Quest-mods',
         );
         $this->assertTrue(
                 $this->helpHasAnyLinkOf(
@@ -36,9 +36,9 @@ class FileplanetTest extends PageTest {
                 )
         );
     }
-    function testNotLinks(){
+    function testNotLinks1(){
         $badLins = array(
-            'http://www.fileplanet.com/40796/0/section/Traditional',
+            'http://www.fileplanet.com/40796/0/0/0/1/section/Traditional',
             "http://www.fileplanet.com/189421/180000/fileinfo/Elder-Scrolls-IV:-Oblivion---Qarl's-Texture-Pack-III-Full-v1.3-OMOD",
         );
         $this->assertFalse(
@@ -49,6 +49,18 @@ class FileplanetTest extends PageTest {
         );
     }
 
+    function testNotLinks2(){
+        $badLins = array(
+            'http://www.fileplanet.com/40796/0/0/0/1/section/Traditional',
+            "http://www.fileplanet.com/189421/180000/fileinfo/Elder-Scrolls-IV:-Oblivion---Qarl's-Texture-Pack-III-Full-v1.3-OMOD",
+        );
+        $this->assertFalse(
+                $this->helpHasAnyLinkOf(
+                        new Search_Url('http://www.fileplanet.com/41184/0/section/Mods'),
+                        $badLins
+                )
+        );
+    }
     function testMod1(){
         $mod = array(
             'Name'    => 'Kummu Planation',

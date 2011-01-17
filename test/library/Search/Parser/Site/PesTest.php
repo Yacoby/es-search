@@ -32,7 +32,7 @@ class planetelderscrolls_comTest extends PageTest {
         $url2 = new Search_Url('http://planetelderscrolls.gamespy.com/View.php?category_show_all=1&view=Mods.List&Data_page=2');
         $this->assertEquals(
             $url2->toString(),
-            $page->stripFromLinks($url1)->toString()
+            $page->preAddLink($url1)->toString()
         );
     }
 

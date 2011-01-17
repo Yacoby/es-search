@@ -53,7 +53,7 @@ final class shsforums_net_page extends Search_Parser_Page {
         return $this->isAnyMatch($pages, $url);
     }
 
-    public function stripFromLinks(Search_Url $url) {
+    public function preAddLink(Search_Url $url) {
         return new Search_Url(preg_replace('/s=[0-9a-zA-Z]*&/i', '', $url->toString()));
     }
 

@@ -63,7 +63,7 @@ class elricm_com_pagetest extends PageTest {
         $this->helpTestModUrls($valid, $invalid);
     }
 
-        function testLinks() {
+    function testLinks() {
         $links = array(
             'http://www.elricm.com/nuke/html/modules.php?op=modload&name=Downloads&file=index&req=viewsdownload&sid=28&min=10&orderby=titleA&show=10'
         );

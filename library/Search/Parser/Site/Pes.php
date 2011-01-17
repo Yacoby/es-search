@@ -83,7 +83,7 @@ final class planetelderscrolls_com_page extends Search_Parser_Page {
     }
 
 
-    public function stripFromLinks(Search_Url $url) {
+    public function preAddLink(Search_Url $url) {
         return new Search_Url(
                 preg_replace('%&persist_search=[0-9a-zA-Z]+%', '', $url->toString(), 1)
         );

@@ -185,7 +185,7 @@ class Search_Parser_Page {
     protected function getPageLinks() {
         foreach( $this->_html->find('a') as $a ) {
             $url = new Search_Url(html_entity_decode($a->href), $this->_url);
-            $url = $this->stripFromLinks($url);
+            $url = $this->preAddLink($url);
 
             if ( !$url->isValid() || $url->toString() == $this->_url->toString() ) {
                 continue;
@@ -204,7 +204,7 @@ class Search_Parser_Page {
      * @param Search_Url $url
      * @return Search_Url the new url
      */
-    public function stripFromLinks(Search_Url $url) {
+    public function preAddLink(Search_Url $url) {
         return $url;
     }
 

@@ -25,7 +25,7 @@ class Fileplanet_page extends Search_Parser_Page {
     protected function getPageLinks() {
         foreach( $this->_html->find('#main a') as $a ) {
             $url = new Search_Url(html_entity_decode($a->href), $this->_url);
-            $url = $this->stripFromLinks($url);
+            $url = $this->preAddLink($url);
 
             if ( !$url->isValid() || $url->toString() == $this->_url->toString() ) {
                 continue;
@@ -43,13 +43,23 @@ class Fileplanet_page extends Search_Parser_Page {
     }
 
     protected function doIsValidPage($url) {
+        return preg_match('%http://www.fileplanet.com/[0-9]+/0/0/0/[0-9]+/section/%', (string)$url) == 1;
         $pages = array(
             'http://www.fileplanet.com/[0-9]+/0/0/0/[0-9]+/section/',
-            'http://www.fileplanet.com/[0-9]+/0/section/.*',
+            'http://www.fileplanet.com/[0-9]+/0/section/',
         );
         return $this->isAnyMatch($pages, $url);
     }
 
+    public function  preAddLink(Search_Url $url) {
+        return new Search_Url(
+            preg_replace(
+                '%http://www.fileplanet.com/([0-9]+)/0/section/%',
+                'http://www.fileplanet.com/$1/0/0/0/1/section/',
+                (string)$url
+            )
+        );
+    }
 
     function getGame() {
         foreach ( $this->_html->find('.col-24 .smaller a') as $e ){
