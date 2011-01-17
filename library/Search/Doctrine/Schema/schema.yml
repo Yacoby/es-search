@@ -175,7 +175,11 @@ Location:
             foreignAlias: Locations
 
     indexes:
-        fields: [modification_id]
+        modification_id:
+            fields: [modification_id]
+        #as searching involves searching for int_version == 0
+        int_version:
+            fields: [int_version]
 # #############################################################################
 Page:
     columns:

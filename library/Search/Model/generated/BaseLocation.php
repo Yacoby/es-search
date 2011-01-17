@@ -53,8 +53,11 @@ abstract class BaseLocation extends Doctrine_Record
              ));
 
 
-        $this->index('fields', array(
-             0 => 'modification_id',
+        $this->index('modification_id', array(
+             'fields' => 
+             array(
+              0 => 'modification_id',
+             ),
              ));
     }
 

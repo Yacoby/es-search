@@ -20,7 +20,7 @@
 
 
 class Default_Model_Search {
-    public static function sortCallback($a, $b){
+    public static function scoreCmp($a, $b){
         return $a['score'] < $b['score'];
     }
 
@@ -44,21 +44,19 @@ class Default_Model_Search {
             $mods = Doctrine_Query::create()
                         ->select('m.*, l.*')
                         ->addSelect('CONCAT(s.base_url, s.mod_url_prefix, l.mod_url_suffix) as Url')
-                        //->addSelect('COUNT(l.version)')
+                        ->addSelect('COUNT(l.version) as version_count')
                         ->from('Modification m')
                         ->leftJoin('m.Locations l')
                         ->leftJoin('l.Site s')
                         ->whereIn('m.id', $modIds)
-                        ->andWhere('l.int_version IN
-                            (SELECT MAX(int_version)
-                                    FROM Location WHERE m.id = modification_id)')
+                        ->andWhere('l.int_version = 0')
                         ->fetchArray();
 
             foreach ( $mods as &$mod ){
                 $mod['score'] = $idScoreMap[$mod['id']];
             }
 
-            uasort($mods, array($this, 'sortCallback'));
+            usort($mods, array($this, 'scoreCmp'));
 
             $this->_result = $mods;
         }
