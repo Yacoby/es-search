@@ -154,11 +154,12 @@ class Search_Table_Mods extends Search_Table_Abstract {
             return $record;
         }
 
-        //then run a author and name check
+        //then run a author and name check.
+        //This is intentionally case insensitive
         $record = $this->createQuery()
                         ->select()
-                        ->where('name=?', $name)
-                        ->andWhere('author=?', $author)
+                        ->where('name LIKE ?', $name)
+                        ->andWhere('author LIKE ?', $author)
                         ->fetchOne();
 
         return $record !== false ? $record : null;

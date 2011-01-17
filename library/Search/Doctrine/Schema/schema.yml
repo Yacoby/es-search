@@ -173,6 +173,9 @@ Location:
             foreignAlias: Locations
         Category:
             foreignAlias: Locations
+
+    indexes:
+        fields: [modification_id]
 # #############################################################################
 Page:
     columns:

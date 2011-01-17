@@ -51,6 +51,11 @@ abstract class BaseLocation extends Doctrine_Record
         $this->hasColumn('category_id', 'integer', null, array(
              'type' => 'integer',
              ));
+
+
+        $this->index('fields', array(
+             0 => 'modification_id',
+             ));
     }
 
     public function setUp()

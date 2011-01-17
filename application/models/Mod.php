@@ -67,6 +67,9 @@ class Default_Model_Mod {
             throw new Exception("Invlalid mod");
         }
 
+        //I can't do this through Doctrine, as it doesn't hydrate correctly,
+        //as the urls are not grouped with the mods.
+
         $sql = 'SELECT
                     m.id, m.name, m.author, l.description, l.version,
                     c.name as category,
