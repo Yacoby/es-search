@@ -7,6 +7,7 @@
  * 
  * @property string $ip
  * @property integer $banned_time
+ * @property SearchHistory $SearchHistory
  * 
  * @package    ##PACKAGE##
  * @subpackage ##SUBPACKAGE##
@@ -31,6 +32,8 @@ abstract class BaseHistoryBanned extends Doctrine_Record
     public function setUp()
     {
         parent::setUp();
-        
+        $this->hasOne('SearchHistory', array(
+             'local' => 'ip',
+             'foreign' => 'ip'));
     }
 }

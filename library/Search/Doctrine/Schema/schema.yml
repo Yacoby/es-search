@@ -263,3 +263,8 @@ HistoryBanned:
             type: string(127)
             primary: true
         banned_time: integer
+    relations:
+        SearchHistory:
+            type: one
+            foreign: ip
+            local: ip

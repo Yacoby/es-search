@@ -25,10 +25,11 @@ require "../AppLoader.php";
 //@todo is this any good here. It was split from a class but does it need to go back?
 require "Zend/Cache.php";
 
-$lifeTimeMult = APPLICATION_ENV == 'production' ? 60 : 0;
+//lifetime in minutes
+$lifeTimeMult = APPLICATION_ENV == 'production' ? 5 : 0;
 
 $frontendOptions = array(
-        'lifetime'                          => 10*$lifeTimeMult,
+        'lifetime'                          => 60*$lifeTimeMult,
         'automatic_cleaning_factor'         => 100,
         'cache_with_get_variables'          => true,
         'cache_with_cookie_variables'       => true,
@@ -37,7 +38,7 @@ $frontendOptions = array(
 
         //I suspect there is a bug somewhere for this to be required
         'default_options' => array(
-                'lifetime'                          => 10*$lifeTimeMult,
+                'lifetime'                          => 60*$lifeTimeMult,
                 'automatic_cleaning_factor'         => 100,
                 'cache_with_get_variables'          => true,
                 'cache_with_cookie_variables'       => true,

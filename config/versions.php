@@ -1,3 +1,0 @@
-<?php
-define('JS_VERSION', 'c856990a8030762ac3200ea04f57588b');
-define('CSS_VERSION', '374e0ceadc50d6214e54cf385781f5d2');

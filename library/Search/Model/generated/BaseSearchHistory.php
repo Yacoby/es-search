@@ -14,6 +14,7 @@
  * @property string $author
  * @property string $description
  * @property Doctrine_Collection $Game
+ * @property Doctrine_Collection $HistoryBanned
  * 
  * @package    ##PACKAGE##
  * @subpackage ##SUBPACKAGE##
@@ -68,5 +69,9 @@ abstract class BaseSearchHistory extends Doctrine_Record
         $this->hasMany('Game', array(
              'local' => 'game_id',
              'foreign' => 'id'));
+
+        $this->hasMany('HistoryBanned', array(
+             'local' => 'ip',
+             'foreign' => 'ip'));
     }
 }

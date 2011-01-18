@@ -48,10 +48,6 @@ class Bootstrap extends Search_Bootstrap_Abstract {
         $view->addHelperPath('Helper/View', 'Helper_View');
     }
 
-    protected function _initFileVersions() {
-        require CONFIG_PATH.'/versions.php';
-    }
-
     protected function _initRegenSession(){
         Zend_Session::regenerateId();
     }

@@ -59,6 +59,12 @@ abstract class BaseLocation extends Doctrine_Record
               0 => 'modification_id',
              ),
              ));
+        $this->index('int_version', array(
+             'fields' => 
+             array(
+              0 => 'int_version',
+             ),
+             ));
     }
 
     public function setUp()

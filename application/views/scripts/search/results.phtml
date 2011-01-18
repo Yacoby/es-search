@@ -1,12 +1,3 @@
-<div id="recentSearch">
-    Recent Searches:
-    <ul>
-        <li>Search 1</li>
-        <li>Search 2</li>
-        <li>Search 3</li>
-    </ul>
-</div>
-
 <div id="resultSearch">
     <?php
     $this->searchForm->setAction(
@@ -19,7 +10,6 @@
 
 <div>
     <div class="results">
-                <?php  echo $this->paginator->count(); ?>
         <?php foreach($this->paginator as $mod) {
 
             $modLink = array(

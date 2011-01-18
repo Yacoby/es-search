@@ -20,16 +20,11 @@
     For the most part pages are parsed using the
     <a href="http://simplehtmldom.sourceforge.net/" target="_blank">Simple HTML DOM</a> library.
     There is one specific case where the 1mb of HTML caused the script to run out
-    of memory so regex was used. The code is also designed in such a way that would
-    allow for the searching to be preformed on another server, or even a group of
-    servers if required without any major alteration to the original code.
-    I am considering looking at using Java and the
-    <a href="http://en.wikipedia.org/wiki/Google_App_Engine" target="_blank">
-        Google App Engine</a> if possible.
+    of memory so regex was used.
 </p>
 
 <p>
-    Version 2.1 is the result of a code review of version 2, along with various
+    Version 2.5 is the result of a code review of version 2, along with various
     bug fixes. The most major one changing the relationship of Mods to URLs from
     'many to many' to 'one to many', as the many to many relationship didn't cope
     with mods names being changed. Also in the works is improved error checking as
@@ -41,10 +36,10 @@
 </p>
 
 <p>
-    Future Plans include adding a spellchecker, which if my server has the space
-    could be a really interesting thing to do. I don't have the searches to do it quite
-    like google does, however I have enough data to be able to build a elder scrolls
-    orientated one. Suggesting URLs is also on the todo list, however due to the
+    Future Plans include adding a spellchecker, part of the issue is due
+    to the large number of TES spesific words it may not preform very well.
+
+    Suggesting URLs is also on the todo list, however due to the
     design of the URL validation, I am waiting for my server to support PHP 5.3
     before I implement it. (It requires late static binding on abstract static
     methods for those interested).
