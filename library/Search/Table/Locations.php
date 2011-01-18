@@ -10,7 +10,7 @@ class Search_Table_Locations extends Search_Table_Abstract {
         $loc = Doctrine_Query::create()
                         ->select()
                         ->from('Location l')
-                        ->leftJoin('l.Site s')
+                        ->innerJoin('l.Site s')
                         ->where('CONCAT(s.base_domain, s.mod_url_prefix, l.mod_url_suffix) = ?', (string)$url)
                         ->fetchOne();
 

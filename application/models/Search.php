@@ -44,10 +44,10 @@ class Default_Model_Search {
             $mods = Doctrine_Query::create()
                         ->select('m.*, l.*')
                         ->addSelect('CONCAT(s.base_url, s.mod_url_prefix, l.mod_url_suffix) as Url')
-                        ->addSelect('COUNT(l.version) as version_count')
+                        //->addSelect('COUNT(l.version) as version_count')
                         ->from('Modification m')
-                        ->leftJoin('m.Locations l')
-                        ->leftJoin('l.Site s')
+                        ->innerJoin('m.Locations l')
+                        ->innerJoin('l.Site s')
                         ->whereIn('m.id', $modIds)
                         ->andWhere('l.int_version = 0')
                         ->fetchArray();

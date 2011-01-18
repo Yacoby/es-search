@@ -143,8 +143,8 @@ class Search_Table_Mods extends Search_Table_Abstract {
         $record = Doctrine_Query::create()
                             ->select('m.*')
                             ->from('Modification m')
-                            ->leftJoin('m.Locations l')
-                            ->leftJoin('l.Site s')
+                            ->innerJoin('m.Locations l')
+                            ->innerJoin('l.Site s')
                             ->where('CONCAT(s.base_url,
                                             s.mod_url_prefix,
                                             l.mod_url_suffix) = ?', (string)$url)

@@ -75,11 +75,11 @@ class Default_Model_Mod {
                     c.name as category,
                     CONCAT(s.base_url, s.mod_url_prefix, l.mod_url_suffix) as url
                 FROM modification m
-                LEFT JOIN location l  ON l.modification_id = m.id
-                LEFT JOIN site s      ON l.site_id         = s.id
-                LEFT JOIN category c  ON l.category_id     = c.id
+                INNER JOIN location l  ON l.modification_id = m.id
+                INNER JOIN site s      ON l.site_id         = s.id
+                INNER JOIN category c  ON l.category_id     = c.id
                 WHERE (m.id = ?)
-                ORDER BY l.int_version DESC';
+                ORDER BY l.int_version ASC';
 
         $dbh =  Doctrine_Manager::getInstance()
                                 ->getCurrentConnection()
@@ -102,6 +102,7 @@ class Default_Model_Mod {
             );
             $this->_location[] = new ModLocation($location);
         }
+        //we know that $result[0] must be set, as $result is not empty
         $this->_mod = array(
             'name'   => $result[0]['name'],
             'author' => $result[0]['author'],

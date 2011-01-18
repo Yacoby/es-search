@@ -17,7 +17,7 @@ class Search_Listener_Location_Lucene extends Doctrine_Record_Listener{
         return Doctrine_Query::create()
                                 ->select('m.*, g.*')
                                 ->from('Modification m')
-                                ->leftJoin('m.Games g')
+                                ->innerJoin('m.Games g')
                                 ->where('m.modification_id = ?', $id)
                                 ->fetchOne();
     }
