@@ -1,6 +1,10 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
     <head>
+        <!--
+            This is for testing. It mimics a cronjob, but with the output in
+            the browser
+        -->
         <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"></script>
 
         <script type="text/javascript">
@@ -9,11 +13,12 @@
                     url: 'Update.php',
                     success: function(data) {
                         $('#result').html($('#result').html() + data);
-                        update();
                     }
                 });
             }
-            $(document).ready(update);
+            $(document).ready(function(){
+                setInterval(update, 60*1000);
+            });
         </script>
         <title></title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
