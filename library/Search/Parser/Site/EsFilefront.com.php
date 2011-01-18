@@ -78,8 +78,11 @@ class EsFilefront_page extends Search_Parser_Page {
     function getCategory() {
         foreach ( $this->_html->find("b") as $b  ) {
             $txt = html_entity_decode($b->plaintext);
-            if ( preg_match('%Downloads > Modifications > ([0-9a-zA-Z ]*):$%', $txt, $regs) == 1 ||
-                 preg_match('%Downloads > (.*):$%', $txt, $regs) == 1 ) {
+            //This will intentionally fail downloads not in the modifications or
+            //utilities category
+            if ( preg_match('%Downloads > Modifications > ([0-9a-zA-Z ]*):$%', $txt, $regs) ||
+                 preg_match('%Downloads > (Utilities):$%', $txt, $regs) ||
+                 preg_match('%Downloads > (Modifications):$%', $txt, $regs) ) {
                 return trim($regs[1]);
             }
         }

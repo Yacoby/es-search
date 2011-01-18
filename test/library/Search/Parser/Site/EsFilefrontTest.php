@@ -84,20 +84,6 @@ class EsFilefrontTest extends PageTest {
             $mod
         );
     }
-    function testMod6(){
-        $mod = array(
-            'Name'     => 'Grey Fox Fans',
-            'Author'   => 'Unknown / Anonymous',
-            'Game'     => 'OB',
-            'Version'  => '1.0',
-            'Category' => 'Miscellaneous',
-        );
-        $this->helpTestModPage(
-            new Search_Url('http://elderscrolls.filefront.com/file/Grey_Fox_Fans;80945'),
-            1,
-            $mod
-        );
-    }
     function testMod7(){
         $mod = array(
             'Name'     => 'Oblivion Itemizer v3.00',
