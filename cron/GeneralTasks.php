@@ -49,6 +49,6 @@ Doctrine_Query::create()
  */
 Doctrine_Query::create()
             ->delete()
-            ->from('BannedHistory')
-            ->where('time_banned < ?', time() - 60 * 60 * 24 * 31)
+            ->from('HistoryBanned')
+            ->where('banned_time < ?', time() - 60 * 60 * 24 * 31)
             ->execute();
