@@ -20,50 +20,44 @@
             );
             ?>
 
-        <div class="mod">
-            <span class="name">
-                <a id="<?php echo $mod['id']; ?>"
-                   class="modLink"
-                   href="<?php echo $mod['Url'] //Locations[0]['Url'] ?>">
-                           <?php echo $mod['name'] ?>
+            <div class="mod">
+                <span class="name" id="<?php echo $mod['id'] ?>">
+                    <a href="<?php echo $mod['url'] ?>">
+                        <?php echo $mod['name'] ?>
+                    </a>
+                </span> - <span class="author"><?php echo $mod['author'] ?></span>
+
+                <div class="sum">
+                    <?php echo $this->trimDescription($mod['Locations'][0]['description']) ?>
+                </div>
+                <span class="url">
+                        <?php echo $this->trimUrl($mod['url']) ?>
+                </span>
+                - <a href="<?php  echo $this->url($modLink, 'mod', true) ?>">
+                    Details
                 </a>
-            </span> - <span class="author"><?php echo $mod['author'] ?></span>
 
-            <div class="sum">
-                <?php echo $this->trimDescription($mod['Locations'][0]['description']) ?>
             </div>
-            <span class="url">
-                    <?php echo $this->trimUrl($mod['Url']) ?>
-            </span>
-            - <span class="ex">Score: <?php  echo round($mod['score'],2) ?></span>
-            - <a href="<?php  echo $this->url($modLink, 'mod', true) ?>">
-                Details
-                <?php if ( false /*count($mod->Locations) > 1 */ ): ?>
-                    (<?php echo count($mod['location_count']) - 1 ?>
-                    other download <?php echo $this->plural('location',count($mod->Locations)-1>1)?>)
-                <?php endif; ?>
-            </a>
-
-        </div>
-            <?php } ?>
+        <?php } ?>
 
 
 
 
         <?php if ( $this->paginator->count() == 0 ): ?>
-        <div class="ui-widget">
-            <div class="ui-state-error ui-corner-all" style="padding: 0 .7em;">
-                <p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>
-                    No results found!</p>
+            <div class="ui-widget">
+                <div class="ui-state-error ui-corner-all" style="padding: 0 .7em;">
+                    <p><span class="ui-icon ui-icon-alert" style="float: left; margin-right: .3em;"></span>
+                        No results found!</p>
+                </div>
             </div>
-        </div>
-
         <?php endif; ?>
 
 
         <?php
         $this->paginator->setPageRange(5);
-        echo $this->paginationControl($this->paginator, 'Sliding', 'pagination.phtml');
+        echo $this->paginationControl($this->paginator,
+                                      'Sliding',
+                                      'pagination.phtml');
         ?>
 
 
