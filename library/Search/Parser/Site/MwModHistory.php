@@ -80,7 +80,7 @@ final class modding_history_page extends Search_Parser_Page {
 
         //remove _ and + from between words
         //117_Better_Bodies_Texture_Replacer_Muscular => 117 Better Bodies Texture Replacer Muscular
-        $str = preg_replace('/([\w\d])[_|\+]([\w\d])/', '$1 $2', $str);
+        $str = preg_replace('/([\w\d\-\(\)])[_|\+]([\w\d\-\(\)])/', '$1 $2', $str);
 
 
         //remove leading numbers but not if there is a letter in the number and only if there
@@ -96,7 +96,7 @@ final class modding_history_page extends Search_Parser_Page {
 
         //add spaces before capitals, but only if there is one capital
         //BB_LeatherAndChain => BB_Leather And Chain
-        $str = preg_replace('/(?<!\ )[A-Z][a-z]/', ' $0', $str);
+        $str = preg_replace('/([a-z])([A-Z][a-z])/', '$1 $2', $str);
 
         return trim($str);
     }

@@ -136,5 +136,15 @@ class modding_history_pageTest extends PageTest {
         );
     }
 
+    function testMod6() {
+        $mod = array(
+                'Name' => 'Amazon (Females Only) Race v1.0',
+        );
+        $this->helpTestModPage(
+                new Search_Url('http://modhistory.fliggerty.com/index.php?dlid=1783'),
+                1,
+                $mod
+        );
+    }
 
 }
