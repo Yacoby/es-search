@@ -167,7 +167,7 @@ class Search_Lucene_Db extends Search_Observable{
      * @return Search_Lucene_SearchResults
      */
     public function searchAdvanced($name, $author, $description, $lowerBound, $length){
-        $this->event()->searchSimple($this->_game, $name, $author, $description);
+        $this->event()->searchAdvanced($this->_game, $name, $author, $description);
         
          $input = array(
                 'name'          => $name,
