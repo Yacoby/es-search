@@ -26,7 +26,10 @@
 require '../AppLoader.php';
 
 createApplication(realpath(dirname(__FILE__).'/Bootstrap/Bootstrap.php'));
-
-$factory = new Search_Parser_Factory();
-$si = new Search_Sync($factory);
-$si->syncAll();
+try{
+    $factory = new Search_Parser_Factory();
+    $si = new Search_Sync($factory);
+    $si->syncAll();
+}catch(Exception $e){
+    Search_Logger::err('Unhandled Exception:' . $e->getMessage());
+}

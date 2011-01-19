@@ -8,16 +8,30 @@
         <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"></script>
 
         <script type="text/javascript">
-            function update(){
+            function callAjax(name){
                 $.ajax({
-                    url: 'Update.php',
+                    url: name,
                     success: function(data) {
                         $('#result').html($('#result').html() + data);
                     }
                 });
             }
+
+            function general(){
+                callAjax('GeneralTasks.php');
+            }
+            function sync(){
+                callAjax('SyncData.php');
+            }
+            function update(){
+                callAjax('Update.php');
+            }
             $(document).ready(function(){
+                sync();
+                setInterval(sync, 30*60*1000);
                 setInterval(update, 60*1000);
+                setInterval(general, 30*60*1000);
+
             });
         </script>
         <title></title>

@@ -71,14 +71,6 @@ Zend_Registry::set('doctrine_config', array(
         'migrations_path'     =>  $base.'Doctrine/Migrations',
         'sql_path'            =>  $base.'Doctrine/Data/Sql',
         'yaml_schema_path'    =>  $base.'Doctrine/Schema',
-        /*'generate_models_options' => array(
-          'classPrefix'=>'Search_Model_',
-          'classPrefixFiles'=>false,
-          'baseClassPrefix' =>  'Generated_',
-          'baseClassDirectory' => 'Generated',
-          'baseClassPrefixFiles' => false
-    ),*/
-
 ));
 
 Doctrine::loadModels(array($base.'Model'));

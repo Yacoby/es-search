@@ -28,13 +28,8 @@ try{
     if ( !$ud->attemptUpdatePage($factory) ) {
         $ud->generalUpdate($factory);
     }
-
+}catch(Search_Parser_Exception_Parse $e){
+    Search_Logger::warn('Parser Error: ' . $e->getMessage());
 }catch(Exception $e){
-        Search_Logger::err($e);
-
-        echo "ERROR:";
-        echo $e->getMessage();
-
-        echo "\n\n";
-        echo $e->getTraceAsString();
+    Search_Logger::err('Unhandled Exception: ' . $e->getMessage());
 }

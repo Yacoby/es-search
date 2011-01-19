@@ -58,21 +58,15 @@ class Search_Bootstrap_Abstract extends Zend_Application_Bootstrap_Bootstrap {
     protected function _initLogger() {
         $this->_logger = new Search_Logger();
 
-        $columnMapping = array(
-                'Level' => 'priority',
-                'Message' => 'message'
+        $cols = array(
+            'message'    => 'message',
+            'level'      => 'priority',
+            'level_name' => 'priorityName',
+            'timestamp'  => 'timestamp',
         );
+        $w = new Search_Log_Writer_Doctrine('ErrorLog', $cols);
 
-        /*
-        $this->bootstrap('db');
-        assert($this->getResource('db'));
+        $this->_logger->addWriter($w);
 
-        $writer = new Zend_Log_Writer_Db(
-                $this->getResource('db'),
-                'ErrorLog', $columnMapping
-        );
-
-        $this->_logger->addWriter($writer);
-         */
     }
 }

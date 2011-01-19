@@ -7,7 +7,9 @@
  * 
  * @property integer $id
  * @property integer $level
+ * @property string $level_name
  * @property string $message
+ * @property timestamp $timestamp
  * 
  * @package    ##PACKAGE##
  * @subpackage ##SUBPACKAGE##
@@ -24,11 +26,19 @@ abstract class BaseErrorLog extends Doctrine_Record
              'primary' => true,
              'autoincrement' => true,
              ));
-        $this->hasColumn('level', 'integer', null, array(
+        $this->hasColumn('level', 'integer', 1, array(
              'type' => 'integer',
+             'length' => '1',
+             ));
+        $this->hasColumn('level_name', 'string', 32, array(
+             'type' => 'string',
+             'length' => '32',
              ));
         $this->hasColumn('message', 'string', null, array(
              'type' => 'string',
+             ));
+        $this->hasColumn('timestamp', 'timestamp', null, array(
+             'type' => 'timestamp',
              ));
     }
 

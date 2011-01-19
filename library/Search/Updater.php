@@ -118,13 +118,12 @@ class Search_Updater extends Search_Observable {
         if ( $host === null ) {
             return false;
         }
-        echo "Updating $host<br />\n";
 
         //set updated. This is so that we don't get stuck on errors
         $this->setSiteUpdated($host);
 
         //get update page
-        $site       = $parserFactory->getSiteByHost($host);
+        $site  = $parserFactory->getSiteByHost($host);
         $pages = $site->getUpdatePages();
 
         if ( $pages === null ) {
@@ -135,7 +134,6 @@ class Search_Updater extends Search_Observable {
         $this->setSiteUpdated($host, $site->getUpdateFrequency());
 
         foreach ( $pages as $url ) {
-            echo $url . "<br>\n";
             $page = $site->getPage($url);
             $this->addPageData($page);
         }
@@ -176,16 +174,12 @@ class Search_Updater extends Search_Observable {
      */
     public function generalUpdate(Search_Parser_Factory $factory) {
         //  select a page needing updating
-       
         $page = $this->_pages->findOneByUpdateRequired();
 
         if ( $page === false ) {
-            echo 'No Page';
             return false;
         }
         $url = new Search_Url($page->Site->base_url . $page->url_suffix);
-        echo $url . "<br>\n";
-        //echo "Updating URL: $url<br />\n";
 
         //flag it as updated before we have a (large) chance for errors to occur
         //$this->_vp->setPageVisited($url);
@@ -196,8 +190,12 @@ class Search_Updater extends Search_Observable {
         try{
             $page = $factory->getSiteByURL($url)
                             ->getPage($url);
+            /*
+             * TODO We are using an exception when it isn't exceptional. Not good
+             */
         }catch(Search_Parser_Exception_ModRemoved $e){
             $this->_locations->deleteByUrl($url);
+            return true; //Really? It was a success I suppose
         }
 
         $this->addPageData($page);
@@ -209,13 +207,11 @@ class Search_Updater extends Search_Observable {
         if ( $page->isValidModPage() ) {
             //  update mod(s)
             foreach ( $page->mods() as $mod ) {
-                //echo "Updating Mod ", $mod['Name'], "<br />\n", $mod['Author'], "<br />\n";
                 $this->addOrUpdateMod($mod, $page->getURL());
             }
         }
         //update all links
         foreach ( $page->links() as $link ) {
-            //echo "Adding Link $link<br />\n";
             $this->addOrUpdateLink($link, $page->isValidModPage($link));
         }
     }
@@ -234,18 +230,9 @@ class Search_Updater extends Search_Observable {
                 'Url'         => $url
         );
         $modArray = array_merge($defualts, $modArray);
-
-        try{
-            //there is a transaction in this function, so we don't need one here
-            $this->_mods->addOrUpdateModFromArray($this->_sites, $modArray);
         
-        }catch(Doctrine_Validator_Exception $e){
-            echo "Validator Error: {$e->getMessage()}<br>\n";
-            echo $e->getTraceAsString();
-          //  echo $e->errorMessage();
-
-        //    echo $e->getTraceAsString();
-        }
+        //there is a transaction in this function, so we don't need one here
+        $this->_mods->addOrUpdateModFromArray($this->_sites, $modArray); 
           
     }
 

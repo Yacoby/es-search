@@ -46,6 +46,7 @@ class Search_Sync {
             $dbSite = $this->_sites->findOneByHost($host);
             if ( $dbSite === false ){
                 $dbSite = $this->_sites->create();
+                $dbSite->bytes_last_updated = time();
             }
 
             $dbSite->host           = $host;

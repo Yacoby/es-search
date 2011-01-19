@@ -15,9 +15,11 @@ ErrorLog:
             primary: true
             autoincrement: true
         level:
-            type: integer
+            type: integer(1)
+        level_name: string(32)
         message:
             type: string
+        timestamp: timestamp
 
 # ##############################################################################
 Site:
