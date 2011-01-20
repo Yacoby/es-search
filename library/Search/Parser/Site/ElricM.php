@@ -38,7 +38,7 @@ final class elricm_com extends Search_Parser_Site {
         ),
         'updateFrequency' => 31,
         'loginRequired'   => false,
-        'limitBytes'      => 1048578,
+        'limitBytes'      => 1100100,
     );
 }
 

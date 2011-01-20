@@ -29,7 +29,7 @@ final class tesnexus_com extends Search_Parser_Site {
         'updateUrl'       => array('/downloads/recent.php'),
         'updateFrequency' => 12,
         'loginRequired'   => false,
-        'limitBytes'      => 5048578,
+        'limitBytes'      => 5100100,
     );
 
     /**

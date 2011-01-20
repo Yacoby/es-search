@@ -33,7 +33,7 @@ class EsFilefront extends Search_Parser_Site {
         'updateUrl'       => array(),
         'updateFrequency' => 31,
         'loginRequired'   => false,
-        'limitBytes'      => 1048578,
+        'limitBytes'      => 3100100,
     );
 
 }

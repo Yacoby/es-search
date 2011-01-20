@@ -29,7 +29,7 @@ final class modding_history extends Search_Parser_Site {
         'updateUrl'       => array(),
         'updateFrequency' => 31,
         'loginRequired'   => false,
-        'limitBytes'      => 10485780,
+        'limitBytes'      => 5100100,
     );
 }
 

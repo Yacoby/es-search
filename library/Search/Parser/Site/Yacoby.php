@@ -27,7 +27,7 @@ final class yacoby_silgrad_com extends Search_Parser_Site {
         'updateUrl'       => array('/MW/Mods/index.htm',),
         'updateFrequency' => 31,
         'loginRequired'   => false,
-        'limitBytes'      => 1048578,
+        'limitBytes'      => 500100,
     );
 }
 
