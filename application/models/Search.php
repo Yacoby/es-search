@@ -25,10 +25,13 @@ class Default_Model_Search {
     }
 
     private $_result;
+    private $_count;
 
     public function __construct(array $vals, $lowerBound, $count) {
         $this->_db = new Search_Lucene_Db((int)$vals['game']);
         $searchResults = $this->search($vals, $lowerBound, $count);
+
+        $this->_count = $searchResults->count();
 
         $modIds = array();
         $idScoreMap = array();
@@ -59,6 +62,10 @@ class Default_Model_Search {
 
             $this->_result = $mods;
         }
+    }
+
+    public function count(){
+        return $this->_count;
     }
 
     /**

@@ -4,6 +4,14 @@ class Search_Table_Pages extends Search_Table_Abstract {
         parent::__construct('Page',$conn);
     }
 
+    private function toUrlSuffix($site, Search_Url $url){
+        $i = stripos((string)$url, $site->base_url);
+        if ( $i === false ){
+            return (string)$url;
+        }
+        return substr((string)$url, $i + strlen($site->base_url));
+    }
+
     /**
      *
      * There is no need for a findByUrl function, as there should never
@@ -19,6 +27,12 @@ class Search_Table_Pages extends Search_Table_Abstract {
                         ->fetchOne();
     }
 
+    public function createByUrl($site, Search_Url $url){
+        $page = $this->create();
+        $page->url_suffix = $this->toUrlSuffix($site, $url);
+        return $page;
+    }
+
     /**
      *
      * @todo maybe some sort of ordering would be very good
@@ -32,7 +46,6 @@ class Search_Table_Pages extends Search_Table_Abstract {
                 ->andWhere('p.revisit < ?', time())
                 ->andWhere('p.revisit != 0')
                 ->andWhere('s.enabled = 1')
-//              ->orderBy('p.revisit DESC') //TODO for testing only
                 ->fetchOne();
     }
 }

@@ -83,13 +83,20 @@ class SearchController extends Zend_Controller_Action {
 						throw new Exception('Invalid page');
 					}
 
-					$si = new Default_Model_Search($f->getValues(), 15*($page-1), 15);
+					//TODO magic number. Maybe have it in a session...
+                    $numPerPage = 10;
+					$si = new Default_Model_Search($f->getValues(),
+                                                   $numPerPage*($page-1),
+                                                   $numPerPage);
+
+					if ( $page > $si->count() ) {
+						throw new Exception('Invalid page');
+					}
 
 					$paginator = new Zend_Paginator(
 						new SearchResults_Paginator($si)
 					);
-					//TODO magic number. Maybe have it in a session...
-					$paginator->setItemCountPerPage(10);
+					$paginator->setItemCountPerPage($numPerPage);
 
 					$paginator->setCurrentPageNumber($page);
 
@@ -107,6 +114,7 @@ class SearchController extends Zend_Controller_Action {
 					*/
 					$cname = get_class($f);
 					$this->view->searchForm->addSubForm(new $cname, $f->getName());
+                    break;
 				}
 			}
 		}
@@ -125,12 +133,12 @@ class SearchResults_Paginator implements Zend_Paginator_Adapter_Interface {
 	 */
 	private $_results;
 	public function __construct(Default_Model_Search $s) {
-		$this->_search = $s;
+		$this->_search  = $s;
 		$this->_results = $this->_search->getResults();
 	}
 
 	public function count() {
-		return count($this->_results);
+		return $this->_search->count();
 	}
 	public function getItems($offset, $itemCountPerPage) {
 		return $this->_results;

@@ -10,14 +10,9 @@
  **/
 return array(
     'js'  => array(
-                '//../res/js/jquery.zend.jsonrpc.js',
-                '//../res/js/json2.js',
-                '//../res/js/urlparam.js',
-                '//../res/js/error.js',
                 '//../res/js/icons.js',
                 '//../res/js/cookie.js',
                 '//../res/js/searchform.js',
-                '//../res/js/results.js'
             ),
      'css' => array(
                  '//../res/css/global.css',

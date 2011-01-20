@@ -29,6 +29,26 @@ class ModController extends Zend_Controller_Action {
 
     }
 
+    public function addAction(){
+        $form = new Default_Form_Add();
+        $this->view->form = $form;
+
+        $req = $this->getRequest();
+
+        $params = $req->getParams();
+        if ( get_magic_quotes_gpc() ) {
+            $params = array_map('stripslashes', $params);
+        }
+        if ( $req->isPost() && $form->isValid($params) ){
+            $url = new Search_Url($params['url']);
+            if ( $url->isValid() ){
+
+            }else{
+                $this->view->error = 'The url isn\'t valid';
+            }
+        }
+    }
+
     public function detailsAction() {
         $request = $this->getRequest();
 

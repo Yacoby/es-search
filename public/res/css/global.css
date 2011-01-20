@@ -122,32 +122,16 @@ a:visited{
 
 .paginationControl {
     margin:30px;
-    /*text-align:center;*/
 }
 
 
-
-ul#icons li {
-    cursor:default;
-    float:left;
+ul#icon li {
+    display:inline;
     list-style-type:none;
     margin:2px;
     padding:4px 0;
 }
 
-ul#icons .ui-icon {
-    float:left;
-    margin:0 4px;
-}
-
-ul#icons .ui-icon-text {
-    text-indent:0px;
-    background-image:none;
-    text-align: center;
-    line-height: 16px;
-}
-
-ul#icons li a{
-    background-image: url(../images/ui-icons_454545_256x240.png);
+ul#icon li a{
     font-weight: bold;
 }

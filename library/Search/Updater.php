@@ -236,13 +236,6 @@ class Search_Updater extends Search_Observable {
           
     }
 
-    private function toUrlSuffix($site, Search_Url $url){
-        $i = stripos((string)$url, $site->base_url);
-        if ( $i === false ){
-            return (string)$url;
-        }
-        return substr((string)$url, $i + strlen($site->base_url));
-    }
 
     public function addOrUpdateLink(Search_Url $url, $modPage = false) {
         //I don't like this being here. It adds a large query overhead compared
@@ -259,15 +252,10 @@ class Search_Updater extends Search_Observable {
         $page = $this->_pages->findOneByUrl($url);
          //If it doesn't exist
         if ( $page === false ) {
-            $page = $this->_pages->create();
-
+            $page = $this->_pages->createByUrl($site, $url);
             $page->site_id = $site->id;
             $page->revisit = time();
-            
-            $page->url_suffix = $this->toUrlSuffix($site, $url);
-
             $page->save();
-
         }else { //else if it doesn't need updating
             if ( $page->revisit == 0 ){
                 $updateDays = $modPage ? UPDATE_MOD_PAGE : UPDATE_NORMAL_PAGE;

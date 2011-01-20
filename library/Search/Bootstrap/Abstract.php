@@ -25,7 +25,7 @@
  */
 class Search_Bootstrap_Abstract extends Zend_Application_Bootstrap_Bootstrap {
     protected function _initMemLimit(){
-        ini_set('memory_limit', '64M');
+        ini_set('memory_limit', '32M');
     }
 
     /**

@@ -8,7 +8,7 @@
      * @return string the query string
      */
     function getParametersAsQuery($page) {
-        $prms = Zend_Controller_Front::getInstance()->getRequest()->getParams();
+        $prms  = Zend_Controller_Front::getInstance()->getRequest()->getParams();
         $uprms = Zend_Controller_Front::getInstance()->getRequest()->getUserParams();
 
         foreach ( $uprms as $k => $v ) {
@@ -25,53 +25,42 @@
     }
     ?>
 
-<div class="paginationControl">
-    <ul id="icons" class="ui-widget ui-helper-clearfix">
-        <li class="ui-state-default ui-corner-all" title="First Page">
-                <?php if (isset($this->previous)): ?>
-            <a class="ui-icon ui-icon-seek-first" href="<?php echo getParametersAsQuery(1); ?>"></a>
-                <?php else: ?>
-            <span class="ui-icon ui-icon-seek-first"></span>
-                <?php endif; ?>
-        </li>
+    <div class="paginationControl">
+        <ul id="icon" >
 
-        <li class="ui-state-default ui-corner-all" title="Previous Page">
+            <li title="Previous Page">
                 <?php if (isset($this->previous)): ?>
-            <a class="ui-icon ui-icon-seek-prev" href="<?php echo getParametersAsQuery($this->previous); ?>"></a>
+                    <a href="<?php echo getParametersAsQuery($this->previous); ?>">
+                        Previous
+                    </a>
                 <?php else: ?>
-            <span class="ui-icon ui-icon-seek-prev"></span>
+                    <span>Previous</span>
                 <?php endif ?>
-        </li>
-
+            </li>
 
             <?php foreach ($this->pagesInRange as $page): ?>
-        <li class="ui-state-default ui-corner-all">
-                    <?php if ($page != $this->current): ?>
-            <a class="ui-icon ui-icon-text" href="<?php echo getParametersAsQuery($page); ?>"><?php echo $page; ?></a>
+                <li>
+                    <?php if ($page == $this->current): ?>
+                        <span><u><?php echo $page; ?></u></span>
                     <?php else: ?>
-            <span class="ui-icon ui-icon-text"><u><?php echo $page; ?></u></span>
+                        <a href="<?php echo getParametersAsQuery($page); ?>">
+                            <?php echo $page; ?>
+                        </a>
                     <?php endif;?>
-        </li>
+                </li>
             <?php endforeach; ?>
 
-
-        <li class="ui-state-default ui-corner-all" title="Next Page">
+            <li title="Next Page">
                 <?php if (isset($this->next)): ?>
-            <a class="ui-icon ui-icon-seek-next" href="<?php echo getParametersAsQuery($this->next); ?>"></a>
+                    <a href="<?php echo getParametersAsQuery($this->next); ?>">
+                        Next
+                    </a>
                 <?php else: ?>
-            <span class="ui-icon ui-icon-seek-next"></span>
+                    <span>Next</span>
                 <?php endif; ?>
-        </li>
+            </li>
 
-        <li class="ui-state-default ui-corner-all" title="Last Page">
-                <?php if (isset($this->next)): ?>
-            <a class="ui-icon ui-icon-seek-end" href="<?php echo getParametersAsQuery($this->last); ?>"></a>
-                <?php else: ?>
-            <span class="ui-icon ui-icon-seek-end"></span>
-                <?php endif; ?>
-        </li>
-
-    </ul>
-</div>
+        </ul>
+    </div>
 <?php endif; ?>
 
