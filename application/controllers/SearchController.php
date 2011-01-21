@@ -32,7 +32,7 @@ class SearchController extends Zend_Controller_Action {
 		if ( !$searchString ) {
 			$searchString = array();
 			foreach ( array('name', 'author', 'description') as $k ) {
-				if ( isset($params[$k]) ) {
+				if ( isset($params[$k]) && trim($params[$k]) != '' ) {
 					$searchString[] = $params[$k];
 				}
 			}

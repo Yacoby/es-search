@@ -23,7 +23,7 @@ class Zend_View_Helper_RecentSearches{
         $strings  = array();
         $urlParts = array();
         foreach ( array('name', 'author', 'description') as $key ){
-            if ( !empty($item[$key])){
+            if ( isset($item[$key]) && trim($item[$key]) != '' ){
                 $strings[]  = $item[$key];
                 $urlParts[] = "{$key}={$item[$key]}";
             }
