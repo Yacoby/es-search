@@ -114,7 +114,6 @@ class SearchController extends Zend_Controller_Action {
 					*/
 					$cname = get_class($f);
 					$this->view->searchForm->addSubForm(new $cname, $f->getName());
-                    break;
 				}
 			}
 		}
