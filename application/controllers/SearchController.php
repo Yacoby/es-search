@@ -89,7 +89,7 @@ class SearchController extends Zend_Controller_Action {
                                                    $numPerPage*($page-1),
                                                    $numPerPage);
 
-					if ( $page > $si->count() ) {
+					if ( $page != 1 && $page > $si->count() ) {
 						throw new Exception('Invalid page');
 					}
 
