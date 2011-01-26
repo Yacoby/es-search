@@ -355,6 +355,8 @@ class Search_Parser_Page {
      *
      */
     public static function getDescriptionText($str) {
+        $str = str_replace("\n", "", $str);
+
         //should match and <BR> <br /> etc
         $str = preg_replace('%<br[\\s]*[/]??>%is', "\n", $str);
 
