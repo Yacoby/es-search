@@ -37,7 +37,7 @@ class Search_Listener_Site_Limits extends Doctrine_Record_Listener{
         // the time, so we can deal deal with it next time.
         //this ensures that we don't end up losing/gaining pages.
         assert($perSec != 0);
-        $lastUpdateTime = time() - ceil(( $changeRem / $perSec));
+        $lastUpdateTime = time();// - ceil(( $changeRem / $perSec));
         return array(
             'bytes_last_updated' => $lastUpdateTime,
             'bytes_used'         => $current,
@@ -45,13 +45,16 @@ class Search_Listener_Site_Limits extends Doctrine_Record_Listener{
     }
 
 
-    public function preHydrate(Doctrine_Event $e){
+    public function postHydrate(Doctrine_Event $e){
         $data = $e->data;
         $details = $this->getUpdatedDetails($data['bytes_last_updated'],
                                             $data['bytes_used'],
                                             $data['byte_limit']);
-        $data = array_merge($data, $details);
+
+        $e->bytes_last_updated = $details['bytes_last_updated'];
+        $e->bytes_used         = $details['bytes_used'];
         $e->data = $data;
     }
+
 
 }
