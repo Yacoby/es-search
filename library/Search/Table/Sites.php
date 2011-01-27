@@ -3,8 +3,6 @@
 class Search_Table_Sites extends Search_Table_Abstract {
     public function __construct($conn = null){
         parent::__construct('Site',$conn);
-
-        $this->addRecordListener(new Search_Listener_Site_Limits());
     }
 
     /**
