@@ -24,6 +24,7 @@ class Search_Table_Pages extends Search_Table_Abstract {
                         ->select()
                         ->from('Page p, p.Site s')
                         ->where('CONCAT(s.base_url, p.url_suffix)=?', (string)$url)
+                        ->limit(1)
                         ->fetchOne();
     }
 
@@ -46,6 +47,7 @@ class Search_Table_Pages extends Search_Table_Abstract {
                 ->andWhere('p.revisit < ?', time())
                 ->andWhere('p.revisit != 0')
                 ->andWhere('s.enabled = 1')
+                ->limit(1)
                 ->fetchOne();
     }
 }

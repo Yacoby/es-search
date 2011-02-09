@@ -22,6 +22,7 @@ class Search_Table_Sites extends Search_Table_Abstract {
                     ->andWhere('bytes_used < byte_limit')
                     ->andWhere('enabled = 1')
                     ->orderBy('next_update ASC')
+                    ->limit(1)
                     ->fetchOne();
     }
 
