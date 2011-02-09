@@ -47,6 +47,7 @@ class Search_Table_Pages extends Search_Table_Abstract {
                 ->andWhere('p.revisit < ?', time())
                 ->andWhere('p.revisit != 0')
                 ->andWhere('s.enabled = 1')
+                ->orderBy('p.revisit ASC')
                 ->limit(1)
                 ->fetchOne();
     }
