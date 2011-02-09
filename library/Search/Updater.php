@@ -118,6 +118,7 @@ class Search_Updater extends Search_Observable {
         if ( $host === null ) {
             return false;
         }
+        Search_Logger::info("Updating Host {$host}");
 
         //set updated. This is so that we don't get stuck on errors
         $this->setSiteUpdated($host);
@@ -181,6 +182,8 @@ class Search_Updater extends Search_Observable {
         }
         $url = new Search_Url($page->Site->base_url . $page->url_suffix);
 
+        Search_Logger::info("Updating Page: {$url}");
+
         //flag it as updated before we have a (large) chance for errors to occur
         //$this->_vp->setPageVisited($url);
         $page->revisit      = 0;
@@ -222,6 +225,8 @@ class Search_Updater extends Search_Observable {
      * @param Search_Url $url
      */
     private function addOrUpdateMod(array $modArray, Search_Url $url) {
+        Search_Logger::info("Found Mod: {$modArray['Name']}");
+
         //merge mod with default values
         $defualts = array(
                 'Version'     => '',
@@ -232,7 +237,9 @@ class Search_Updater extends Search_Observable {
         $modArray = array_merge($defualts, $modArray);
         
         //there is a transaction in this function, so we don't need one here
-        $this->_mods->addOrUpdateModFromArray($this->_sites, $modArray); 
+        $this->_mods->addOrUpdateModFromArray($this->_sites, $modArray);
+
+        Search_Logger::info("Added Mod: {$modArray['Name']}");
           
     }
 
