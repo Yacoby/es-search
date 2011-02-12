@@ -28,6 +28,8 @@ class Search_Observer_Search implements Search_Observer{
     private $_history, $_bans;
 
     private $_badWords = array(
+        'nudity',
+        'adult',
         'sex',
         'boob',
         'cunt',
@@ -72,16 +74,25 @@ class Search_Observer_Search implements Search_Observer{
     }
 
     public function searchSimple($game, $general){
+        if ( trim($general) == "" ){
+            return;
+        }
         if ( $this->isBadTerm($general) ){
             $this->banUser();
             return;
         }
-        $row = $this->getWithDefaults($game);
-        $row->general     = $general;
+        $row          = $this->getWithDefaults($game);
+        $row->general = $general;
         $row->replace();
     }
 
     public function searchAdvanced($game, $name, $author, $description){
+        foreach ( array($name, $author, $description) as $v ){
+            if ( trim($v) == "" ){
+                return;
+            }
+        }
+
         if ( $this->isBadTerm($name . ' ' . $author . ' ' . $description) ){
             $this->banUser();
             return;
