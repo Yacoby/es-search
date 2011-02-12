@@ -47,7 +47,7 @@ final class planetelderscrolls_com extends Search_Parser_Site {
         ),
         'updateFrequency' => 0.5,
         'loginRequired'   => false,
-        'limitBytes'      => 5100100,
+        'limitBytes'      => 50100100,
     );
 }
 

@@ -12,7 +12,7 @@ class Fileplanet extends Search_Parser_Site {
         ),
         'updateFrequency' => 31,
         'loginRequired'   => false,
-        'limitBytes'      => 3100100,
+        'limitBytes'      => 10100100,
     );
 
 }
