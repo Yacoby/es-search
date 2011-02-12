@@ -93,6 +93,16 @@ try{
                 ->execute();
 
     /**
+     * Deletes old uninportant logs
+     */
+    Doctrine_Query::create()
+                ->delete()
+                ->from('ErrorLog')
+                ->where('timestamp < now() - interval 1 day')
+                ->andWhere('level>=6')
+                ->execute();
+
+    /**
      * Cleans up bans
      */
     Doctrine_Query::create()
