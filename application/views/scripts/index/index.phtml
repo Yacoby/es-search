@@ -48,7 +48,7 @@
             </td>
             <td>
                 <?php $mod = $stats['Newest'] ?>
-                <a href="mods/<?php echo $mod['id'] ?>/<?php echo $mod['name'] ?>">
+                <a href="mods/<?php echo $mod['id'] ?>/<?php echo $this->seoString($mod['name']) ?>">
                     <?php echo $mod['name'] ?>
                 </a>
             </td>
