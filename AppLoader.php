@@ -73,7 +73,7 @@ Zend_Registry::set('doctrine_config', array(
         'yaml_schema_path'    =>  $base.'Doctrine/Schema',
 ));
 
-Doctrine::loadModels(array($base.'Model'));
+Doctrine::loadModels(array($base.'Model/generated', $base.'Model'));
 
 /*
  * @param $path the path to Bootstrap.php, if not set it will default to the
