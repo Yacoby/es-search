@@ -48,10 +48,7 @@ class SearchController extends Zend_Controller_Action {
 	 * Should google index this page?
 	 */
 	private function setGoogleIndex() {
-		$page = isset($_GET['page']) ? $_GET['page'] : 1;
-		if ( $page > 1 ) {
-			$this->view->index = false;
-		}
+        $this->view->index = false;
 	}
 
 	/**

@@ -10,8 +10,59 @@
     <?php echo $this->searchForm ?>
 </div>
 
-<div id="text">
-    <div id="intro">
+
+<div id="stats">
+    <?php $stats = $this->stats(); ?>
+
+    <table>
+        <tr>
+            <td>
+                Unique Mods:
+            </td>
+            <td>
+                <?php echo $stats['ModCount'] ?>
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+                Oblivion:
+            </td>
+            <td>
+                <?php echo $stats['Games'][4] ?>
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+                Morrowind:
+            </td>
+            <td>
+                <?php echo $stats['Games'][3] ?>
+            </td>
+        </tr>
+
+        <tr>
+            <td>
+                Newest Mod:
+            </td>
+            <td>
+                <?php $mod = $stats['Newest'] ?>
+                <a href="mods/<?php echo $mod['id'] ?>/<?php echo $mod['name'] ?>">
+                    <?php echo $mod['name'] ?>
+                </a>
+            </td>
+        </tr>
+
+    </table>
+</div>
+
+<div id="intro">
+    <p>
         ES Search is a search engine that searches various Morrowind and Oblivion mod sites.
-    </div>
+    </p>
+
+    <p>
+
+    </p>
 </div>

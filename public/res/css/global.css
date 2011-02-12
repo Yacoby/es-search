@@ -99,12 +99,25 @@ a:visited{
 #text{
     text-align:center;
 }
+#intro{
+    width:49%;
+    float:left;
+}
+#stats{
+    float:right;
+    width: 49%;
+
+
+}
 #wip{
     font-weight:bold;
 }
 #indexSearch{
     padding-bottom:45px;
     text-align:center;
+}
+#recentSearch{
+    clear:both;
 }
 
 /* Mod Things */

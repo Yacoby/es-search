@@ -20,6 +20,15 @@
                 href="<?php echo $baseUrl ?>/minify/?g=css">
         </link>
 
+        <!--
+        <link rel="search"
+              type="application/opensearchdescription+xml"
+              title="ES Search: MW"
+              href="<?php echo $baseUrl ?>/opensearch/mw.xml">
+        </link>
+        -->
+
+
         <?php
         if ( isset($this->index) && $this->index == false ){
             ?><meta name="robots" content="noindex" /><?php
@@ -28,7 +37,7 @@
             $this->headTitle($this->title);
         }
 
-        $this->headTitle('ES Search 2');
+        $this->headTitle('ES Search');
         $this->headTitle()->setSeparator(' | ');
 
         echo $this->headTitle()
@@ -65,16 +74,19 @@
             <?php echo $this->layout()->content ?>
         </div>
 
-        <div style="margin:5px 0">
-            <div class="line"></div>
-        </div>
-        <div style="white-space:nowrap; overflow: hidden;">
-        Recent Searches: <?php echo $this->recentSearches() ?>
-        </div>
+        <div id="recentSearch">
 
+            <div style="margin:5px 0">
+                <div class="line"></div>
+            </div>
 
-        <div style="margin: 5px 0 20px;">
-            <div class="line"></div>
+            <div style="white-space:nowrap; overflow: hidden;">
+                Recent Searches: <?php echo $this->recentSearches() ?>
+            </div>
+
+            <div style="margin: 5px 0 20px;">
+                <div class="line"></div>
+            </div>
         </div>
 
         <div id="footer">
@@ -96,14 +108,16 @@
                         'default'
                 )?>"> Request Feature </a> <!-- -
                 <a href="<?php echo $this->url(
-                        array('controller'=>'mods','action' => 'add'),
+                        array('controller'=>'mod','action' => 'add'),
                         'default'
                 )?>"> Add Mod </a>
                                            -->
             </div>
 
-            <div id="cpy">Design Copyright &copy; Jacob Essex 2011. Mod details and descriptions are owned by its author(s)</div>
-            <div id="time">Page generated on the <?php echo date('jS \a\t g:i a' ) ?> (GMT)</div>
+            <div id="cpy">
+                Design Copyright &copy; Jacob Essex 2011.
+                Mod details and descriptions are owned by its author(s)
+            </div>
         </div>
 
 

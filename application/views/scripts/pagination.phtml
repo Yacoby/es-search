@@ -30,7 +30,8 @@
 
             <li title="Previous Page">
                 <?php if (isset($this->previous)): ?>
-                    <a href="<?php echo getParametersAsQuery($this->previous); ?>">
+                    <a href="<?php echo getParametersAsQuery($this->previous); ?>"
+                       rel="nofollow">
                         Previous
                     </a>
                 <?php else: ?>
@@ -43,7 +44,8 @@
                     <?php if ($page == $this->current): ?>
                         <span><u><?php echo $page; ?></u></span>
                     <?php else: ?>
-                        <a href="<?php echo getParametersAsQuery($page); ?>">
+                        <a href="<?php echo getParametersAsQuery($page); ?>"
+                           rel="nofollow">
                             <?php echo $page; ?>
                         </a>
                     <?php endif;?>
@@ -52,7 +54,8 @@
 
             <li title="Next Page">
                 <?php if (isset($this->next)): ?>
-                    <a href="<?php echo getParametersAsQuery($this->next); ?>">
+                    <a href="<?php echo getParametersAsQuery($this->next); ?>"
+                       rel="nofollow">
                         Next
                     </a>
                 <?php else: ?>
