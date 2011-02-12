@@ -31,10 +31,10 @@ class Search_Listener_Location_Lucene extends Doctrine_Record_Listener{
     private function getRowFromLocation($l){
         return Doctrine_Query::create()
                                 ->select('m.*, l.*, g.*')
-                                ->from('Modification m, m.Locations l, m.Games g')
+                                ->from('Modification m, m.Locations l, '
+                                       .'m.Games g, l.Category c')
                                 ->where('l.modification_id = ?', $l->modification_id)
                                 ->fetchOne();
-
     }
 
     public function postSave(Doctrine_Event $e){

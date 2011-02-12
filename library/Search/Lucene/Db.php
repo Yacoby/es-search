@@ -14,25 +14,28 @@ class Search_Lucene_Db extends Search_Observable{
      * Adds the mod to all game databases. The mod will not be added
      * if there are no locations
      * 
-     * @param Doctrine_Record $mod This record must contain all locations and games
-     *                              associated with the mod
+     * @param Doctrine_Record $mod This record must contain all locations, categories
+     *                              and games associated with the mod
      */
     public static function staticAddOrUpdateMod($mod){
         //No need to add a mod if there are no locations
         if ( $mod->Locations->count() == 0 ){
             return;
         }
-        
+
+        $categoryData = '';
         //Merge the description data from all locations
         $descriptionData = '';
         foreach ( $mod->Locations as $location ){
             $descriptionData .= $location->description . ' ';
+            $categoryData    .= $location->Category->name . ' ';
         }
+        $categoryData    = trim($categoryData);
         $descriptionData = trim($descriptionData);
 
         foreach ( $mod->Games as $game ){
             $db = new self($game->id);
-            $db->addMod($mod->id, $mod->name, $mod->author, $descriptionData);
+            $db->addMod($mod->id, $mod->name, $mod->author, $categoryData, $descriptionData);
         }
 
     }
@@ -121,8 +124,15 @@ class Search_Lucene_Db extends Search_Observable{
         }
     }
 
-    public function addMod($modId, $name, $author, $desc){
-
+    /**
+     *
+     * @param int $modId
+     * @param string $name
+     * @param string $author
+     * @param string $cat A string list of categories
+     * @param string $desc
+     */
+    public function addMod($modId, $name, $author, $cat, $desc){
         //remove the mod so we don't add twice
         $this->removeMod($modId);
 
@@ -133,9 +143,9 @@ class Search_Lucene_Db extends Search_Observable{
         $doc->addField(Zend_Search_Lucene_Field::Keyword('mod_id', $modId, $encoding));
         $doc->addField(Zend_Search_Lucene_Field::text('name', $name , $encoding));
         $doc->addField(Zend_Search_Lucene_Field::UnStored('author', $author, $encoding));
+        $doc->addField(Zend_Search_Lucene_Field::UnStored('category', $cat, $encoding));
         $doc->addField(Zend_Search_Lucene_Field::UnStored('description',  $desc, $encoding));
         $this->_db->addDocument($doc);
- 
     }
 
     public function removeMod($modId){
