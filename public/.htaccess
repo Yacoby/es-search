@@ -1,15 +1,29 @@
 allow from all
 
 #<IfModule mod_rewrite.c>
-SetEnv APPLICATION_ENV development
+    SetEnv APPLICATION_ENV development
 
-RewriteEngine On
-RewriteCond %{REQUEST_FILENAME} -s [OR]
-RewriteCond %{REQUEST_FILENAME} -l [OR]
-RewriteCond %{REQUEST_FILENAME} -d
-RewriteRule ^.*$ - [NC,L]
-RewriteRule ^.*$ index.php [NC,L]
+    RewriteEngine On
 
+    #converts from version 1 style requests to version 2 style requests
+    #by redirecting a query string pointing to the main page to a search page
+    RewriteCond %{REQUEST_URI} ^/$
+    RewriteCond %{QUERY_STRING} ^(.+)$
+    RewriteRule .* http://search.yacoby.net/search?%1 [L,R=301]
 
+    #converts from version 2 to version 2.5 style requests by
+    #converting the game parameter
+    RewriteCond %{QUERY_STRING} ^(.*)game=MW(.*)$
+    RewriteRule ^([^?]*)? http://search.yacoby.net/$1?%1game=3%2 [L,R=301]
+
+    RewriteCond %{QUERY_STRING} ^(.*)game=OB(.*)$
+    RewriteRule ^([^?]*)? http://search.yacoby.net/$1?%1game=4%2 [L,R=301]
+
+    #used for the zend framework
+    RewriteCond %{REQUEST_FILENAME} -s [OR]
+    RewriteCond %{REQUEST_FILENAME} -l [OR]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^.*$ - [NC,L]
+    RewriteRule ^.*$ index.php [NC,L]
 
 #</IfModule>
