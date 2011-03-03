@@ -16,16 +16,19 @@ class Zend_View_Helper_RecentSearches{
         $baseUrl = Zend_Controller_Front::getInstance()->getBaseUrl();
         $url     = '?page=1&game=' . $item['game_id'];
         if ( isset($item['general']) ){
-            $url .= "&general={$item['general']}";
-            return "<a href='{$baseUrl}/search{$url}'>{$item['general']}</a>";
+            $url .= "&general=" . htmlspecialchars($item['general'], ENT_QUOTES);
+            return "<a href='{$baseUrl}/search{$url}'>"
+                 . htmlspecialchars($item['general'], ENT_QUOTES)
+                 . "</a>";
         }
 
         $strings  = array();
         $urlParts = array();
         foreach ( array('name', 'author', 'description') as $key ){
             if ( isset($item[$key]) && trim($item[$key]) != '' ){
-                $strings[]  = $item[$key];
-                $urlParts[] = "{$key}={$item[$key]}";
+                $i          = htmlspecialchars($item[$key], ENT_QUOTES);
+                $strings[]  = $i;
+                $urlParts[] = "{$key}={$i}";
             }
         }
         $string = implode(' + ', $strings);
