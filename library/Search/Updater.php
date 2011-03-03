@@ -225,8 +225,6 @@ class Search_Updater extends Search_Observable {
      * @param Search_Url $url
      */
     private function addOrUpdateMod(array $modArray, Search_Url $url) {
-        Search_Logger::info("Found Mod: {$modArray['Name']}");
-
         //merge mod with default values
         $defualts = array(
                 'Version'     => '',
@@ -265,7 +263,7 @@ class Search_Updater extends Search_Observable {
             $page->save();
         }else { //else if it doesn't need updating
             if ( $page->revisit == 0 ){
-                $updateDays = $modPage ? UPDATE_MOD_PAGE : UPDATE_NORMAL_PAGE;
+                $updateDays    = $modPage ? UPDATE_MOD_PAGE : UPDATE_NORMAL_PAGE;
                 $page->revisit = time() + $updateDays*60*60*24;
                 $page->save();
             }

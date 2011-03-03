@@ -26,7 +26,7 @@ require "../AppLoader.php";
 require "Zend/Cache.php";
 
 //lifetime in minutes
-$lifeTimeMult = APPLICATION_ENV == 'production' ? 5 : 0;
+$lifeTimeMult = APPLICATION_ENV == 'production' ? 2 : 0;
 
 $frontendOptions = array(
         'lifetime'                          => 60*$lifeTimeMult,
