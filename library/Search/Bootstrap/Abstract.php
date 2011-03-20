@@ -45,9 +45,8 @@ class Search_Bootstrap_Abstract extends Zend_Application_Bootstrap_Bootstrap {
         $user = $options['username'];
         $pass = $options['password'];
         $dbnm = $options['dbname'];
-        Doctrine_Manager::connection("mysql://{$user}:{$pass}@{$host}/{$dbnm}");
-
-
+        $c = Doctrine_Manager::connection("mysql://{$user}:{$pass}@{$host}/{$dbnm}");
+        $c->setCharset('utf8');
     }
 
     public function _initValidation(){

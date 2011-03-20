@@ -1,5 +1,9 @@
+options:
+    type: InnoDB
+    collate: utf8_general_ci
+    charset: utf8
 # ##############################################################################
-CookeJar:
+CookieJar:
     columns:
         domain:
             type: string(255)
