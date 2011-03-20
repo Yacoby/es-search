@@ -28,6 +28,10 @@ abstract class BaseGameMods extends Doctrine_Record
              'type' => 'integer',
              'primary' => true,
              ));
+
+        $this->option('type', 'InnoDB');
+        $this->option('collate', 'utf8_general_ci');
+        $this->option('charset', 'utf8');
     }
 
     public function setUp()
