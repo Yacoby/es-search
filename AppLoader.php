@@ -60,7 +60,6 @@ $loader->setFallbackAutoloader(true);
 //useful debug into. TODO make dependant on APP ENV
 $loader->suppressNotFoundWarnings(false);
 
-$manager = Doctrine_Manager::getInstance();
 
 //Doctrine Configuration. This should probably. Posibly. Maybe. Be moved
 //to the config file. Ug
