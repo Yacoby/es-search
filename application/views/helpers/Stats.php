@@ -8,7 +8,7 @@ class Zend_View_Helper_Stats{
                     ->groupBy('game_id')
                     ->execute();
 
-        $games = array();
+        $games = array(3 => 0, 4 => 0, 5 => 0);
         foreach ( $rows as $row ){
             $games[$row->game_id] = $row->count;
         }
