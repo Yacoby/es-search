@@ -22,12 +22,12 @@ require '../AppLoader.php';
 $app = createApplication(realpath(dirname(__FILE__).'/Bootstrap/Bootstrap.php'));
 
 try{
-    $ud = new Search_Updater();
-
+    $uw = new Search_UpdateWorker();
     $factory = new Search_Parser_Factory();
-    if ( !$ud->attemptUpdatePage($factory) ) {
-        $ud->generalUpdate($factory);
-    }
+    $ud = new Search_Updater_Site($factory);
+
+    $uw->runUpdateTask($ud);
+
 }catch(Search_Parser_Exception_Parse $e){
     Search_Logger::warn('Parser Error: ' . $e->getMessage());
 }catch(Exception $e){

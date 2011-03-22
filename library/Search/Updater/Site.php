@@ -58,8 +58,10 @@ define('UPDATE_MOD_PAGE', 15);
  */
 define('UPDATE_NORMAL_PAGE', 60);
 
-
-class Search_Updater extends Search_Observable {
+/**
+ * Class for updating mods from sites
+ */
+class Search_Updater_Site extends Search_Observable implements Search_Updater_Interface {
     /**
      *
      * @var Search_Table_Sites
@@ -68,33 +70,34 @@ class Search_Updater extends Search_Observable {
 
     /**
      *
-     * @var Search_Table_Mods
-     */
-    private $_mods;
-
-    /**
-     *
-     * @var Search_Table_Locations
-     */
-    private $_locations;
-
-    /**
-     *
      * @var Search_Table_Pages 
      */
     private $_pages;
 
+    /**
+     * @var Search_Parser_Factory
+     */
+    private $_factory;
 
     public function __construct(
+            Search_Parser_Factory $fac     = null,
             Search_Table_Sites $ws         = null,
-            Search_Table_Pages $pages      = null,
-            Search_Table_Mods $mods        = null,
-            Search_Table_Locations $locs   = null
+            Search_Table_Pages $pages      = null
             ) {
+        $this->_factory   = $fac   ? $fac   : new Search_Parser_Factory();
         $this->_sites     = $ws    ? $ws    : new Search_Table_Sites();
         $this->_pages     = $pages ? $pages : new Search_Table_Pages();
-        $this->_mods      = $mods  ? $mods  : new Search_Table_Mods();
-        $this->_locations = $locs  ? $locs  : new Search_Table_Locations();
+    }
+
+    public function update(){
+        //this will reutnrn false if there is no site to update, otherwise
+        //it will contain some(?) data that may or many not contain mods
+        $pageData = $this->attemptUpdatePage($this->_factory);
+        if ( $pageData !== false ){
+            return $pageData;
+        }
+        //updates a page
+        return $this->generalUpdate($this->_factory);
     }
 
     /**
@@ -109,11 +112,10 @@ class Search_Updater extends Search_Observable {
     }
 
     /**
-     * Trys to update an update page, if it finds to update, it retures true
-     *
-     * @return bool True if it managed to find a page to update and update it
+     * Trys to update an update page, if it finds to update, if it doesn't it
+     * returns false
      */
-    public function attemptUpdatePage(Search_Parser_Factory $parserFactory) {
+    private function attemptUpdatePage(Search_Parser_Factory $parserFactory) {
         $host = $this->getUpdateSite();
         if ( $host === null ) {
             return false;
@@ -134,11 +136,12 @@ class Search_Updater extends Search_Observable {
         //ensure the next time to update is now set with the correct frequency
         $this->setSiteUpdated($host, $site->getUpdateFrequency());
 
+        $data = array();
         foreach ( $pages as $url ) {
             $page = $site->getPage($url);
-            $this->addPageData($page);
+            $data = array_merge_recursive($data, $this->processPageData($page));
         }
-        return true;
+        return $data;
     }
 
     /**
@@ -178,7 +181,7 @@ class Search_Updater extends Search_Observable {
         $page = $this->_pages->findOneByUpdateRequired();
 
         if ( $page === false ) {
-            return false;
+            return array();
         }
         $url = new Search_Url($page->Site->base_url . $page->url_suffix);
 
@@ -197,48 +200,30 @@ class Search_Updater extends Search_Observable {
              * TODO We are using an exception when it isn't exceptional. Not good
              */
         }catch(Search_Parser_Exception_ModRemoved $e){
-            $this->_locations->deleteByUrl($url);
-            return true; //Really? It was a success I suppose
+            return array('Deleted' => array($url));
         }
 
-        $this->addPageData($page);
-
-        return true;
+        return $this->processPageData($page);
     }
 
-    public function addPageData(Search_Parser_Page $page) {
-        if ( $page->isValidModPage() ) {
-            //  update mod(s)
-            foreach ( $page->mods() as $mod ) {
-                $this->addOrUpdateMod($mod, $page->getURL());
-            }
-        }
+    public function processPageData(Search_Parser_Page $page) {
         //update all links
         foreach ( $page->links() as $link ) {
             $this->addOrUpdateLink($link, $page->isValidModPage($link));
         }
-    }
 
-    /**
-     *
-     * @param array $modArray
-     * @param Search_Url $url
-     */
-    private function addOrUpdateMod(array $modArray, Search_Url $url) {
-        //merge mod with default values
-        $defualts = array(
-                'Version'     => '',
-                'Category'    => '',
-                'Description' => '',
-                'Url'         => $url
-        );
-        $modArray = array_merge($defualts, $modArray);
-        
-        //there is a transaction in this function, so we don't need one here
-        $this->_mods->addOrUpdateModFromArray($this->_sites, $modArray);
+        //this is a bit of a hacky fix to ensure that every mod has a url
+        $mods = $page->mods();
+        foreach ( $mods as &$mod ){
+            if ( !array_key_exists('Url', $mod) ){
+                $mod['Url'] = $page->getURL();
+            }
+        }
 
-        Search_Logger::info("Added Mod: {$modArray['Name']}");
-          
+        if ( $page->isValidModPage() ) {
+            return array('NewUpdated' => $mods);
+        }
+        return array();
     }
 
 
