@@ -84,7 +84,6 @@ Site:
 
     relations:
         ModSource:
-            foreignAlias: Locations
             onDelete: CASCADE
     indexes:
         id:
@@ -230,8 +229,6 @@ ModSource:
             autoincrement: true
 
         mod_url_prefix: string
-
-        host: string
 
     relations:
         Modification:

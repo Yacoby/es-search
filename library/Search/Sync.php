@@ -2,22 +2,22 @@
 
 class Search_Sync {
     /**
-     *
      * @var Search_Parser_Factory
      */
     private $_factory;
     /**
-     *
      * @var Search_Table_Sites
      */
     private $_sites;
 
     /**
-     *
      * @var Search_Table_Pages
      */
     private $_pages;
 
+    /**
+     * @var Search_Parser_ModSources
+     */
     private $_sources;
     
     public function __construct(
@@ -63,19 +63,33 @@ class Search_Sync {
         }
     }
 
+    /**
+     * Ensure that for every site there is a mod source
+     */
 	public function ensureModSourcesCreated(){
         foreach ( $this->_factory->getSites() as $host => $site){
             //if not created, create Mod Sources for each site
             $dbSite = $this->_sites->findOneByHost($host);
-            $source = $this->_sources->findOneByHost($host);
-            if ( $source === false ){
+
+            //check if we need to sync
+            $source = null;
+            if ( $dbSite->mod_source_id === null ){
                 $source = $this->_sources->create();
+                $source->save();
+                //have to save the source before we can create a ref to it on the site
+                //TODO FIX
+
+                $dbSite->mod_source_id = $source->id;
+                $dbSite->save();
+            }else{
+                $source = $this->_sources->findOneById($dbSite->mod_source_id);
+                if ( $source === false ){
+                    throw new Exception('Could not find Sites source');
+                }
             }
-            //ensure that the
-            $source->host           = $host;
+            //ensure that the prefix is correct
             $source->mod_url_prefix = $dbSite->base_url . $dbSite->mod_url_prefix;
             $source->save();
-
         }
 
 

@@ -7,9 +7,9 @@
  * 
  * @property integer $id
  * @property string $mod_url_prefix
- * @property string $host
  * @property Doctrine_Collection $Modification
  * @property Doctrine_Collection $Game
+ * @property Doctrine_Collection $Site
  * @property Doctrine_Collection $Locations
  * 
  * @package    ##PACKAGE##
@@ -30,9 +30,6 @@ abstract class BaseModSource extends Doctrine_Record
         $this->hasColumn('mod_url_prefix', 'string', null, array(
              'type' => 'string',
              ));
-        $this->hasColumn('host', 'string', null, array(
-             'type' => 'string',
-             ));
 
         $this->option('type', 'InnoDB');
         $this->option('collate', 'utf8_general_ci');
@@ -50,7 +47,11 @@ abstract class BaseModSource extends Doctrine_Record
              'local' => 'game_id',
              'foreign' => 'id'));
 
-        $this->hasMany('Site as Locations', array(
+        $this->hasMany('Site', array(
+             'local' => 'id',
+             'foreign' => 'mod_source_id'));
+
+        $this->hasMany('Location as Locations', array(
              'local' => 'id',
              'foreign' => 'mod_source_id'));
     }

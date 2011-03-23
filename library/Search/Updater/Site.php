@@ -102,13 +102,12 @@ class Search_Updater_Site extends Search_Observable implements Search_Updater_In
 
     /**
      * Gets a site to update, that it is possible to update (e.g. not over any
-     * byte limits)
+     * byte limits) and the source Id for it
      * 
-     * @return string|null The hostname, or null if no site needs to be updated
      */
     private function getUpdateSite() {
         $row = $this->_sites->findOneByUpdateRequired();
-        return $row !== false ? $row->host : null;
+        return $row !== false ? array($row->host, $row->mod_source_id) : array(null,null);
     }
 
     /**
@@ -116,7 +115,7 @@ class Search_Updater_Site extends Search_Observable implements Search_Updater_In
      * returns false
      */
     private function attemptUpdatePage(Search_Parser_Factory $parserFactory) {
-        $host = $this->getUpdateSite();
+        list($host, $sourceId) = $this->getUpdateSite();
         if ( $host === null ) {
             return false;
         }
@@ -136,7 +135,7 @@ class Search_Updater_Site extends Search_Observable implements Search_Updater_In
         //ensure the next time to update is now set with the correct frequency
         $this->setSiteUpdated($host, $site->getUpdateFrequency());
 
-        $data = array();
+        $data = array('Source' => $sourceId);
         foreach ( $pages as $url ) {
             $page = $site->getPage($url);
             $data = array_merge_recursive($data, $this->processPageData($page));
@@ -207,9 +206,11 @@ class Search_Updater_Site extends Search_Observable implements Search_Updater_In
     }
 
     public function processPageData(Search_Parser_Page $page) {
+        $site = $this->_sites->findOneByHost($page->getURL()->getHost());
+
         //update all links
         foreach ( $page->links() as $link ) {
-            $this->addOrUpdateLink($link, $page->isValidModPage($link));
+            $this->addOrUpdateLink($site, $link, $page->isValidModPage($link));
         }
 
         //this is a bit of a hacky fix to ensure that every mod has a url
@@ -221,22 +222,13 @@ class Search_Updater_Site extends Search_Observable implements Search_Updater_In
         }
 
         if ( $page->isValidModPage() ) {
-            return array('NewUpdated' => $mods);
+            return array('Source' => $site->mod_source_id, 'NewUpdated' => $mods);
         }
-        return array();
+        return array('Source' => $site->mod_source_id);
     }
 
 
-    public function addOrUpdateLink(Search_Url $url, $modPage = false) {
-        //I don't like this being here. It adds a large query overhead compared
-        //to if it was taken out of the function. However, consider
-        //the fact that a link from some site may link to another site. It is a
-        //corner case, but it *may* happen.
-        //
-        //plus, this is only called in the updating, so it isn't a huge huge issue
-        //I don't think...
-        $site = $this->_sites->findOneByHost($url->getHost());
-
+    public function addOrUpdateLink($site, Search_Url $url, $modPage = false) {
         $this->_pages->getConnection()->beginTransaction();
         
         $page = $this->_pages->findOneByUrl($url);

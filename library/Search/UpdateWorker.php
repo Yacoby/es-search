@@ -35,8 +35,17 @@ class Search_UpdateWorker{
         $result = $updater->update();
 
         if (array_key_exists('NewUpdated', $result)){
+            //if we are adding mods, we need the source
+            if ( !array_key_exists('Source', $result)){
+                throw new Exception('No source for result');
+            }
+
+            if ( $result['Source'] === null ){
+                throw new Exception('Invalid Source');
+            }
+
             foreach ( $result['NewUpdated'] as $mod ){
-                $this->addOrUpdateMod($mod);
+                $this->addOrUpdateMod($mod, $result['Source']);
             }
         }
         if (array_key_exists('Deleted', $result)){
@@ -46,7 +55,7 @@ class Search_UpdateWorker{
         }
     }
 
-    private function addOrUpdateMod(array $modArray) {
+    private function addOrUpdateMod(array $modArray, $source) {
         //merge mod with default values
         $defualts = array(
                 'Version'     => '',
@@ -56,7 +65,7 @@ class Search_UpdateWorker{
         $modArray = array_merge($defualts, $modArray);
 
         //there is a transaction in this function, so we don't need one here
-        $this->_mods->addOrUpdateModFromArray($this->_sources, $modArray);
+        $this->_mods->addOrUpdateModFromArray($this->_sources, $modArray, $source);
 
         Search_Logger::info("Added Mod: {$modArray['Name']}");
     }

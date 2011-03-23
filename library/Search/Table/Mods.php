@@ -68,7 +68,7 @@ class Search_Table_Mods extends Search_Table_Abstract {
      * @param Search_Table_Sites $sites
      * @param array $modDetails
      */
-    public function addOrUpdateModFromArray(Search_Table_ModSources $sources, array $modDetails){
+    public function addOrUpdateModFromArray(Search_Table_ModSources $sources, array $modDetails, $sourceId){
         $this->getConnection()->beginTransaction();
 
         $modId = $this->getModId($modDetails['Name'],
@@ -95,9 +95,9 @@ class Search_Table_Mods extends Search_Table_Abstract {
         $gm->replace();
 
         $url          = $modDetails['Url'];
-        $source       = $sources->findOneByHost($url->getHost());
+        $source       = $sources->findOneById($sourceId);
         if ( $source === false ){
-            throw new Exception('There was no soucre for the given host');
+            throw new Exception('There was no soucre for the given id');
         }
         $modUrlSuffix = substr((string)$url, strlen($source->mod_url_prefix));
 
