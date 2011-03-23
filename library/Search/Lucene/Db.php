@@ -90,10 +90,10 @@ class Search_Lucene_Db extends Search_Observable{
     }
     private function setDefaults(){
         $defaultAnalysis = Zend_Search_Lucene_Analysis_Analyzer::getDefault();
-        $instanceOf = ($defaultAnalysis instanceOf Zend_Search_Lucene_Analysis_Analyzer_Common_TextNum_CaseInsensitive);
+        $instanceOf = ($defaultAnalysis instanceOf Zend_Search_Lucene_Analysis_Analyzer_Common_Utf8Num_CaseInsensitive);
         if ( !$instanceOf ) {
             Zend_Search_Lucene_Analysis_Analyzer::setDefault(
-                    new Zend_Search_Lucene_Analysis_Analyzer_Common_TextNum_CaseInsensitive()
+                    new Zend_Search_Lucene_Analysis_Analyzer_Common_Utf8Num_CaseInsensitive()
             );
         }
     }
@@ -138,7 +138,7 @@ class Search_Lucene_Db extends Search_Observable{
 
         $doc = new Zend_Search_Lucene_Document();
 
-        $encoding = 'iso-8859-1';
+        $encoding = 'utf-8';
        
         $doc->addField(Zend_Search_Lucene_Field::Keyword('mod_id', $modId, $encoding));
         $doc->addField(Zend_Search_Lucene_Field::text('name', $name , $encoding));
