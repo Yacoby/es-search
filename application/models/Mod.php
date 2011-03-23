@@ -73,11 +73,11 @@ class Default_Model_Mod {
         $sql = 'SELECT
                     m.id, m.name, m.author, l.description, l.version,
                     c.name as category,
-                    CONCAT(s.base_url, s.mod_url_prefix, l.mod_url_suffix) as url
+                    CONCAT(s.mod_url_prefix, l.mod_url_suffix) as url
                 FROM modification m
-                INNER JOIN location l  ON l.modification_id = m.id
-                INNER JOIN site s      ON l.site_id         = s.id
-                INNER JOIN category c  ON l.category_id     = c.id
+                INNER JOIN location l   ON l.modification_id = m.id
+                INNER JOIN mod_source s ON l.mod_source_id   = s.id
+                INNER JOIN category c   ON l.category_id     = c.id
                 WHERE (m.id = ?)
                 ORDER BY l.int_version ASC';
 

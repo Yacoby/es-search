@@ -68,7 +68,7 @@ class Search_Table_Mods extends Search_Table_Abstract {
      * @param Search_Table_Sites $sites
      * @param array $modDetails
      */
-    public function addOrUpdateModFromArray(Search_Table_Sites $sites, array $modDetails){
+    public function addOrUpdateModFromArray(Search_Table_ModSources $sources, array $modDetails){
         $this->getConnection()->beginTransaction();
 
         $modId = $this->getModId($modDetails['Name'],
@@ -94,15 +94,15 @@ class Search_Table_Mods extends Search_Table_Abstract {
         $gm->modification_id = $mod->id;
         $gm->replace();
 
-        $url  = $modDetails['Url'];
-        $site = $sites->findOneByHost($url->getHost());
+        $url          = $modDetails['Url'];
+        $source       = $sources->findOneByHost($url->getHost());
+        if ( $source === false ){
+            throw new Exception('There was no soucre for the given host');
+        }
+        $modUrlSuffix = substr((string)$url, strlen($source->mod_url_prefix));
 
-        $modUrlSuffix = substr((string)$url,
-                               strlen($site->base_url . $site->mod_url_prefix));
-
-        
         $locations = new Search_Table_Locations();
-        $location = $locations->create();
+        $location  = $locations->create();
 
 
         $categoryId = $this->getCategoryId($modDetails['Category']);
@@ -114,7 +114,7 @@ class Search_Table_Mods extends Search_Table_Abstract {
         $location->category_id      = $categoryId;
 
         $location->modification_id  = $mod->id;
-        $location->site_id          = $site->id;
+        $location->mod_source_id    = $source->id;
 
         $location->replace();
 
@@ -144,9 +144,8 @@ class Search_Table_Mods extends Search_Table_Abstract {
                             ->select('m.*')
                             ->from('Modification m')
                             ->innerJoin('m.Locations l')
-                            ->innerJoin('l.Site s')
-                            ->where('CONCAT(s.base_url,
-                                            s.mod_url_prefix,
+                            ->innerJoin('l.ModSource s')
+                            ->where('CONCAT(s.mod_url_prefix,
                                             l.mod_url_suffix) = ?', (string)$url)
                             ->fetchOne();
 

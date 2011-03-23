@@ -17,23 +17,28 @@ class Search_Sync {
      * @var Search_Table_Pages
      */
     private $_pages;
+
+    private $_sources;
     
     public function __construct(
             Search_Parser_Factory $factory,
-            Search_Table_Sites $sites      = null,
-            Search_Table_Pages $pages      = null
+            Search_Table_Sites $sites        = null,
+            Search_Table_Pages $pages        = null,
+            Search_Table_ModSources $sources = null
     ) {
         assert ( $factory );
         $this->_factory = $factory;
-        $this->_sites   = $sites ? $sites : new Search_Table_Sites();
-        $this->_pages   = $pages ? $pages : new Search_Table_Pages();
+        $this->_sites   = $sites   ? $sites   : new Search_Table_Sites();
+        $this->_pages   = $pages   ? $pages   : new Search_Table_Pages();
+        $this->_sources = $sources ? $sources : new Search_Table_ModSources();
     }
 
     /**
      * Helper function that runs all functions in the correct order
      */
     public function syncAll() {
-        $this->ensureParsersCreated();
+        $this->ensureSitesCreated();
+		$this->ensureModSourcesCreated();
         $this->updateByteLimits();
         $this->copyInitalPages();
     }
@@ -41,7 +46,7 @@ class Search_Sync {
     /**
      * Checks all the sites that exist as files are on the database
      */
-    public function ensureParsersCreated() {
+    public function ensureSitesCreated() {
         foreach ( $this->_factory->getSites() as $host => $site) {
             $dbSite = $this->_sites->findOneByHost($host);
             if ( $dbSite === false ){
@@ -57,6 +62,24 @@ class Search_Sync {
  
         }
     }
+
+	public function ensureModSourcesCreated(){
+        foreach ( $this->_factory->getSites() as $host => $site){
+            //if not created, create Mod Sources for each site
+            $dbSite = $this->_sites->findOneByHost($host);
+            $source = $this->_sources->findOneByHost($host);
+            if ( $source === false ){
+                $source = $this->_sources->create();
+            }
+            //ensure that the
+            $source->host           = $host;
+            $source->mod_url_prefix = $dbSite->base_url . $dbSite->mod_url_prefix;
+            $source->save();
+
+        }
+
+
+	}
 
     public function updateByteLimits() {
         foreach ( $this->_factory->getSites() as $host => $site) {

@@ -12,7 +12,7 @@ CookieJar:
             type: blob
 
 # ##############################################################################
-ErrorLog:
+Log:
     columns:
         id:
             type: integer
@@ -31,6 +31,8 @@ Site:
         id:
             type: integer
             autoincrement: true
+            
+        mod_source_id: integer
 
         #this is to allow looking up sites by host name
         host:
@@ -80,6 +82,10 @@ Site:
             default: true
             notnull: true
 
+    relations:
+        ModSource:
+            foreignAlias: Locations
+            onDelete: CASCADE
     indexes:
         id:
             fields: [id]
@@ -169,13 +175,13 @@ Location:
             type: integer
         
 
-        site_id: integer
+        mod_source_id: integer
         category_id: integer
     relations:
         Modification:
             foreignAlias: Locations
             onDelete: CASCADE
-        Site:
+        ModSource:
             foreignAlias: Locations
         Category:
             foreignAlias: Locations
@@ -216,18 +222,17 @@ Page:
             foreignAlias: Pages
 
 # #############################################################################
-AditionalMods:
+ModSource:
     columns:
         id:
             type: integer
             primary: true
+            autoincrement: true
 
-        modification_id: integer
+        mod_url_prefix: string
 
-        name: string
-        author: string
-        url: string
-        game_id: integer
+        host: string
+
     relations:
         Modification:
             type: many

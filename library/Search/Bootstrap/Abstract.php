@@ -63,7 +63,7 @@ class Search_Bootstrap_Abstract extends Zend_Application_Bootstrap_Bootstrap {
             'level_name' => 'priorityName',
             'timestamp'  => 'timestamp',
         );
-        $w = new Search_Log_Writer_Doctrine('ErrorLog', $cols);
+        $w = new Search_Log_Writer_Doctrine('Log', $cols);
 
         $this->_logger->addWriter($w);
 

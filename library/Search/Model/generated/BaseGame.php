@@ -10,7 +10,7 @@
  * @property string $name
  * @property Doctrine_Collection $Modification
  * @property Doctrine_Collection $GameMods
- * @property AditionalMods $AditionalMods
+ * @property ModSource $ModSource
  * @property SearchHistory $SearchHistory
  * 
  * @package    ##PACKAGE##
@@ -54,7 +54,7 @@ abstract class BaseGame extends Doctrine_Record
              'local' => 'id',
              'foreign' => 'game_id'));
 
-        $this->hasOne('AditionalMods', array(
+        $this->hasOne('ModSource', array(
              'local' => 'id',
              'foreign' => 'game_id'));
 

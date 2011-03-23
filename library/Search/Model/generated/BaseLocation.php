@@ -10,10 +10,10 @@
  * @property string $description
  * @property string $version
  * @property integer $int_version
- * @property integer $site_id
+ * @property integer $mod_source_id
  * @property integer $category_id
  * @property Modification $Modification
- * @property Site $Site
+ * @property ModSource $ModSource
  * @property Category $Category
  * 
  * @package    ##PACKAGE##
@@ -45,7 +45,7 @@ abstract class BaseLocation extends Doctrine_Record
         $this->hasColumn('int_version', 'integer', null, array(
              'type' => 'integer',
              ));
-        $this->hasColumn('site_id', 'integer', null, array(
+        $this->hasColumn('mod_source_id', 'integer', null, array(
              'type' => 'integer',
              ));
         $this->hasColumn('category_id', 'integer', null, array(
@@ -78,8 +78,8 @@ abstract class BaseLocation extends Doctrine_Record
              'foreign' => 'id',
              'onDelete' => 'CASCADE'));
 
-        $this->hasOne('Site', array(
-             'local' => 'site_id',
+        $this->hasOne('ModSource', array(
+             'local' => 'mod_source_id',
              'foreign' => 'id'));
 
         $this->hasOne('Category', array(

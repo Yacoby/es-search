@@ -97,7 +97,7 @@ try{
      */
     Doctrine_Query::create()
                 ->delete()
-                ->from('ErrorLog')
+                ->from('Log')
                 ->where('timestamp < now() - interval 1 day')
                 ->andWhere('level>=6')
                 ->execute();
