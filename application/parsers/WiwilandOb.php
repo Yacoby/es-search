@@ -17,17 +17,12 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with ES Search. If not, see <http://www.gnu.org/licenses/>.
  * l-b */
-require_once 'Super/Wiwiland.php';
+require_once 'super/Wiwiland.php';
 
 
-final class Oblivion_Wiwland extends Super_Wiwland {
-    function __construct(){
-        $this->_details['host'] = 'oblimods.wiwiland.net';
-    }
-}
 
-final class Oblivion_Wiwland_page extends Super_Wiwland_page {
-    function __construct(Search_Url $url, Search_Parser_Dom $html){
+final class WiwlandObPage extends Super_Wiwland_page {
+    function __construct($url, $html){
         parent::__construct($url, $html, 'oblimods');
     }
     function getGame() {

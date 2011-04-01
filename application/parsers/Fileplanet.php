@@ -1,24 +1,5 @@
 <?php
-class Fileplanet extends Search_Parser_Site {
-
-    protected $_details = array(
-        'host'            => 'www.fileplanet.com',
-        'domain'          => null,
-        'modUrlPrefix'    => '/',
-        'initialPages'    => array(),
-        'updateUrl'       => array(
-            '/41184/0/section/Mods',
-            '/104054/0/section/Mods',
-        ),
-        'updateFrequency' => 31,
-        'loginRequired'   => false,
-        'limitBytes'      => 10100100,
-    );
-
-}
-
-
-class Fileplanet_page extends Search_Parser_Page {
+class FileplanetPage extends Search_Parser_Site_Page {
     /**
      * The only change in the derived function is it only finds links in #main
      */
@@ -32,7 +13,7 @@ class Fileplanet_page extends Search_Parser_Page {
             }
 
             if ( $this->isValidModPage($url) || $this->isValidPage($url) ) {
-                $this->_links[] = $url;
+                $this->addLink($url);
             }
         }
     }
@@ -43,29 +24,31 @@ class Fileplanet_page extends Search_Parser_Page {
     }
 
     protected function doIsValidPage($url) {
-        return preg_match('%http://www.fileplanet.com/[0-9]+/0/0/0/[0-9]+/section/%', (string)$url) == 1;
+        return preg_match('%http://www\.fileplanet\.com/[0-9]+/0/0/0/[0-9]+/section/%', (string)$url) == 1;
+        /*
         $pages = array(
             'http://www.fileplanet.com/[0-9]+/0/0/0/[0-9]+/section/',
             'http://www.fileplanet.com/[0-9]+/0/section/',
         );
         return $this->isAnyMatch($pages, $url);
+         */
     }
 
     public function  preAddLink(Search_Url $url) {
-        return new Search_Url(
-            preg_replace(
-                '%http://www.fileplanet.com/([0-9]+)/0/section/%',
-                'http://www.fileplanet.com/$1/0/0/0/1/section/',
-                (string)$url
-            )
+        $l = preg_replace(
+            '%http://www.fileplanet.com/([0-9]+)/0/section/%',
+            'http://www.fileplanet.com/$1/0/0/0/1/section/',
+            (string)$url
         );
+        $l = str_replace('-', '_', $l);
+        return new Search_Url($l);
     }
 
     function getGame() {
-        foreach ( $this->_html->find('.col-24 .smaller a') as $e ){
-            if ( $e->plaintext == 'Elder Scrolls III: Morrowind' ){
+        foreach ( $this->_html->find('.col-24 .smaller a') as $e ) {
+            if ( $e->plaintext == 'Elder Scrolls III: Morrowind' ) {
                 return 'MW';
-            }else if ( $e->plaintext == 'Elder Scrolls IV: Oblivion' ){
+            }else if ( $e->plaintext == 'Elder Scrolls IV: Oblivion' ) {
                 return 'OB';
             }
         }
@@ -73,14 +56,14 @@ class Fileplanet_page extends Search_Parser_Page {
     }
 
     function getCategory() {
-        foreach ( $this->_html->find('.col-24 .smaller') as $e ){
+        foreach ( $this->_html->find('.col-24 .smaller') as $e ) {
             return $e->lastChild()->plaintext;
         }
         return null;
     }
 
     function getName() {
-        foreach ( $this->_html->find('h2.section-title') as $e ){
+        foreach ( $this->_html->find('h2.section-title') as $e ) {
             if ( preg_match('%File Info:.*-(.*)%', $e->plaintext, $regs) == 1 ) {
                 return trim($regs[1]);
             }
@@ -89,8 +72,8 @@ class Fileplanet_page extends Search_Parser_Page {
     }
 
     function getAuthor() {
-        foreach ( $this->_html->find('.alpha') as $e ){
-            if ( $e->plaintext == 'Author:' ){
+        foreach ( $this->_html->find('.alpha') as $e ) {
+            if ( $e->plaintext == 'Author:' ) {
                 return $e->nextSibling()->plaintext;
             }
         }
@@ -98,10 +81,10 @@ class Fileplanet_page extends Search_Parser_Page {
     }
 
     function getDescription() {
-        foreach ( $this->_html->find('h2.section-title') as $e ){
-            if ( strpos($e->plaintext, 'Description:') !== false ){
+        foreach ( $this->_html->find('h2.section-title') as $e ) {
+            if ( strpos($e->plaintext, 'Description:') !== false ) {
                 return substr($e->parent()->plaintext,
-                              strlen($e->plaintext));
+                    strlen($e->plaintext));
             }
         }
         return null;

@@ -163,15 +163,16 @@ class HttpRequestObject{
             $this->_client->setUri($this->_url->toString());
             $req = $this->_client->request($this->_method);
 
-            if ( !$req->isSuccessful() ) {
+            if ( $req->isRedirect() ) {
+                throw new Search_HTTP_Exception_Redirect(
+                    $req->getHeader('Location'),
+                    "Redirects not supported, but were encountered when retriving $this->_url"
+                );
+            }else if ( !$req->isSuccessful() ) {
                 throw new HTTPException(
                     "Invalid return status (". $req->getStatus() . ") when requesting {$this->_url}"
                 );
-            }else if ( $req->isRedirect() ) {
-                throw new HTTPException(
-                    "Redirects not supported, but were encountered when retriving $this->_url"
-                );
-            }
+            } 
 
             //update the bytes used
             $this->_limits->addRequesedPage($this->_url, strlen($req->getBody()));
@@ -214,6 +215,16 @@ class HttpRequestObject{
     }
 }
 class HTTPException extends Exception {}
+class Search_HTTP_Exception_Redirect extends Exception {
+    private $_to;
+    public function  __construct($to, $message = "", $code = 0 , $previous = NULL) {
+        parent::__construct($message, $code, $previous);
+        $this->_to = $to;
+    }
+    public function to(){
+        return $this->_to;
+    }
+}
 
 /**
  * This class should be used for accessing webpages so features such as caching

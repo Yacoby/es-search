@@ -28,16 +28,7 @@
  * @todo checking if links are valid shouldn't really be in here as it requires
  * construction of a class.
  */
-class Search_Parser_Page {
-    /**
-     * @var array
-     */
-    protected $_mods = array();
-
-    /**
-     * @var array
-     */
-    protected $_links = array();
+class Search_Parser_Site_Page extends Search_Parser_Page_Abstract {
 
     /**
      * @var Search_Url
@@ -51,29 +42,27 @@ class Search_Parser_Page {
     protected $_isLoggedIn = false;
 
     /**
-	 * The Search_Parser_Dom object passsed to this object becomes owned by this
-	 * object and shouldn't be used after it has been passesed. This is
-	 * due the fact that the PHP gc works by refrence counting.
-	 *
-	 * The page is not parsed in this function as if it fails it throws, which
-	 * means it is impossible to check if we need to login
-	 *
-     * @param Search_Url $url
-     * @param Search_Parser_Dom $html
+     * The Search_Parser_Dom object passsed to this object becomes owned by this
+     * object and shouldn't be used after it has been passesed. This is
+     * due the fact that the PHP gc works by refrence counting.
+     *
+     * The page is not parsed in this function as if it fails it throws, which
+     * means it is impossible to check if we need to login
+     *
+     * @param Search_Url|null $url
+     * @param Search_Parser_Dom|null $html
      */
-    public function __construct(Search_Url $url, Search_Parser_Dom $html) {
-        $this->_url = $url;
+    public function __construct($url, $html) {
+        $this->_url  = $url;
         $this->_html = $html;
 
-        assert($url->isValid());
-
-        $this->_isLoggedIn = $this->getLoginStateFromHTML();
+        $this->_isLoggedIn = $html !== null ? $this->getLoginStateFromHTML() : true;
     }
 
     /**
-	 * Clears the dom objects, this means that the dom object doesn't exist after
-	 * this., even if it refrenced elsewhere
-	 *
+     * Clears the dom objects, this means that the dom object doesn't exist after
+     * this., even if it refrenced elsewhere
+     *
      * PHP sucks, as its garbage collector is refrence based it doesn't clear html
      * dom objects. This is basically something I shouldn't have to do
      */
@@ -86,40 +75,23 @@ class Search_Parser_Page {
 
 
     /**
-     * Gets the array of links found by the parser that match isValidModPage and
-	 * isValidPage
-	 *
-     * @return array
-     */
-    public function links() {
-        return $this->_links;
-    }
-	/**
-	 * Gets all mods found
-	 *
-	 * @return array
-	 */
-    public function mods() {
-        return $this->_mods;
-    }
-
-    /**
      * Returns a mod at a set index
-     * 
+     *
      * @param int $index
      * @return array
      */
     public function mod($index) {
+        $mods = $this->mods();
         assert ((int)$index == $index);
-        assert(array_key_exists($index, $this->_mods));
-        return $this->_mods[$index];
+        assert(array_key_exists($index, $mods));
+        return $mods[$index];
     }
 
     /**
      * Gets the logged in status from the html page. If the site requries being
      * logged in, the site should overwrite this function
-	 *
-	 * @todo rename to something like _getIsLoggedInFromHTML
+     *
+     * @todo rename to something like _getIsLoggedInFromHTML
      *
      * @return bool true if logged in
      */
@@ -134,32 +106,32 @@ class Search_Parser_Page {
     /**
      * @return Search_Url The url specified by the page
      */
-    public function getURL() {
+    public function getUrl() {
         return $this->_url;
     }
 
-	/**
-	 * Parses the page
-	 * 
-	 * @return bool sucsess 
-	 */
+    /**
+     * Parses the page
+     *
+     * @return bool sucsess
+     */
     public function parsePage($client) {
         if ( !$this->_html ) {
             return false;
         }
 
         if ( $this->isValidModPage() ) {
-            try{
+            try {
                 //try parsing
                 $this->doParseModPage($client);
 
                 //on a parse error, check if it is because the mod has been
                 //deleted
-            }catch(Search_Parser_Exception_Parse $e){
+            }catch(Search_Parser_Exception_Parse $e) {
                 //if it is, change the exception
-                if ( $this->isModNotFoundPage($client) ){
+                if ( $this->isModNotFoundPage($client) ) {
                     throw new Search_Parser_Exception_ModRemoved();
-                }else{
+                }else {
                     //otherwise, just throw the parse error upwards
                     throw $e;
                 }
@@ -175,7 +147,7 @@ class Search_Parser_Page {
      * This should return true if the current page is related to a mod not found
      * or mod no longer exists or whatever.
      */
-    public function isModNotFoundPage($client){
+    public function isModNotFoundPage($client) {
         return false;
     }
 
@@ -192,7 +164,7 @@ class Search_Parser_Page {
             }
 
             if ( $this->isValidModPage($url) || $this->isValidPage($url) ) {
-                $this->_links[] = $url;
+                $this->addLink($url);
             }
         }
     }
@@ -257,27 +229,27 @@ class Search_Parser_Page {
                 $result = $this->{$method}($client);
                 if ( $result === null ) {
                     throw new Search_Parser_Exception_Parse(
-                        "Failed to parse {$p} when parsing {$this->_url}"
+                    "Failed to parse {$p} when parsing {$this->_url}"
                     );
                 }
                 $mod[$p] = trim($result);
             }
         }
 
-        $this->_mods[] = $mod;
+        $this->addMod($mod);
     }
 
     /**
      * This function is used before parsing and logging in to check that the page is
      * at least roughly valid. A basic check should be done to see if the page at least
-	 * looks correct.
-	 *
-	 * This was implemented due to tesnexus not returning
-	 * 404 when the mod didn't exist, just a plain page saying 'this mod isn't valid'
-	 *
-	 * @return bool
+     * looks correct.
+     *
+     * This was implemented due to tesnexus not returning
+     * 404 when the mod didn't exist, just a plain page saying 'this mod isn't valid'
+     *
+     * @return bool
      */
-    public function isValidPageBody(){
+    public function isValidPageBody() {
         return true;
     }
 
@@ -296,10 +268,10 @@ class Search_Parser_Page {
         assert($url instanceof Search_Url);
         return $this->doIsValidModPage($url);
     }
-	/*
+    /*
      * Classses inheriting from this class should override this function with
      * a function for checking if the url is valid
-	 */
+    */
     protected function doIsValidModPage($url) {
         throw new Search_Parser_Exception_Unimplemented('Fucntion '.__FUNCTION__.' not implemented');
     }

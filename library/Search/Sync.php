@@ -16,7 +16,7 @@ class Search_Sync {
     private $_pages;
 
     /**
-     * @var Search_Parser_ModSources
+     * @var Search_Table_ModSources
      */
     private $_sources;
     
@@ -38,7 +38,7 @@ class Search_Sync {
      */
     public function syncAll() {
         $this->ensureSitesCreated();
-		$this->ensureModSourcesCreated();
+        $this->ensureModSourcesCreated();
         $this->updateByteLimits();
         $this->copyInitalPages();
     }
@@ -59,7 +59,6 @@ class Search_Sync {
             $dbSite->mod_url_prefix = $site->getModUrlPrefix();
 
             $dbSite->save();
- 
         }
     }
 

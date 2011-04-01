@@ -22,15 +22,31 @@
  */
 class PageTest extends PHPUnit_Framework_TestCase {
 
-    private $_type;
-    private $_url;
     private $_factory;
 
     protected $_client;
 
+    private $_host;
 
-    public function __construct($type, Search_Url $url) {
-        $this->_factory = new Search_Parser_Factory();
+    protected function getFactory(){
+        return $this->_factory;
+    }
+
+    protected function getClient(){
+        return $this->_client;
+    }
+
+    protected function getEmptyPage(){
+        $cls = $this->_factory
+                    ->getSiteByHost($this->_host)
+                    ->getOption('pageClass');
+        return new $cls(null, null);
+    }
+
+
+    public function __construct($host) {
+        $this->_factory = new Search_Parser_Factory(APPLICATION_PATH . '/parsers/defaults.ini',
+                                                    APPLICATION_PATH . '/parsers/parsers.ini');
 
         $limits = $this->getMock('Search_HTTP_Limits', array(), array(), '', false);
         $limits->expects($this->any())
@@ -43,20 +59,11 @@ class PageTest extends PHPUnit_Framework_TestCase {
                                                 $limits,
                                                 Search_HTTP_CookieJar_Memory::getInstance());
 
-        $this->_type = $type;
-        $this->_url = $url;
-    }
-
-    public function helpTestInstance(Search_Url $url) {
-        $p = $this->_factory->getSiteByURL($url)->getPage($url, $this->_client);
-        $this->assertTrue($p instanceof $this->_type || $p instanceof $this->_type."_page" );
+        $this->_host = $host;
     }
 
     public function helpTestModUrls(array $valid, array $invalid) {
-        $p = $this->_factory
-                ->getSiteByURL($this->_url)
-                ->getPage($this->_url, $this->_client);
-
+        $p = $this->getEmptyPage();
 
         foreach ( $valid as $v ) {
             $this->assertTrue($p->isValidModPage(new Search_Url($v)));
@@ -67,15 +74,43 @@ class PageTest extends PHPUnit_Framework_TestCase {
     }
 
     public function helpTestUrls(array $valid, array $invalid) {
-        $p = $this->_factory
-                ->getSiteByURL($this->_url)
-                ->getPage($this->_url, $this->_client);
+        $p = $this->getEmptyPage();
 
         foreach ( $valid as $v ) {
             $this->assertTrue($p->isValidPage(new Search_Url($v)));
         }
         foreach ( $invalid as $v ) {
             $this->assertFalse($p->isValidPage(new Search_Url($v)));
+        }
+    }
+
+    /**
+     *
+     * @param array $allDetails An array of mod detals. Each mod detail should
+     *              include a mod url
+     */
+    public function helpTestMods(array $allDetails){
+        foreach ( $allDetails as $modDetail ){
+            $url  = $modDetail['Url'];
+            $url  = $url instanceof Search_Url ? $url : new Search_Url($url);
+
+            unset ( $modDetail['Url'] );
+            
+            $page = $this->_factory
+                         ->getSiteByUrl($url)
+                         ->getPage($url, $this->_client);
+
+            $this->assertTrue($page->isValidModPage(),
+                              "Failed asserting that {$url} is a valid mod page");
+
+            $mods = $page->mods();
+            $mod  = array_shift($mods);
+
+            foreach ( $modDetail as $key => $val ) {
+                $this->assertEquals($val,
+                                    $mod[$key],
+                                    "Failed asserting that {$key} is equal with mod from {$url}");
+            }
         }
     }
 
@@ -100,14 +135,21 @@ class PageTest extends PHPUnit_Framework_TestCase {
      * @param Search_Url $url
      * @param array $links
      */
-    public function helpRequiredLinks(Search_Url $url, array $links) {
-        if ( !$this->helpHasAnyLinkOf($url, $links) ) {
-            $this->assertFalse(true);
+    public function helpPageHasLinks(Search_Url $url, array $links) {
+        $p = $this->_factory
+                  ->getSiteByURL($url)
+                  ->getPage($url, $this->_client);
+        foreach ( $links as $link ) {
+            foreach ( $p->links() as $linkOnPage ){
+                if ( $linkOnPage->toString() == $link ){
+                    continue 2;
+                }
+            }
+            $this->fail("The page {$url} did not contain the link {$link}");
         }
-        
     }
 
-    public function helpHasAnyLinkOf(Search_Url $url, array $links){
+    public function helpPageHasAnyLinkOf(Search_Url $url, array $links){
         $p = $this->_factory
                   ->getSiteByURL($url)
                   ->getPage($url, $this->_client);
@@ -126,7 +168,6 @@ class PageTest extends PHPUnit_Framework_TestCase {
         $p = $this->_factory
                   ->getSiteByURL($url)
                   ->getPage($url, $this->_client);
-
     }
 
 }

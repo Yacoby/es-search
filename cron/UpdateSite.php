@@ -22,9 +22,9 @@ require '../AppLoader.php';
 $app = createApplication(realpath(dirname(__FILE__).'/Bootstrap/Bootstrap.php'));
 
 try{
-    $uw = new Search_UpdateWorker();
+    $uw      = new Search_UpdateWorker();
     $factory = new Search_Parser_Factory();
-    $ud = new Search_Updater_Site($factory);
+    $ud      = new Search_Updater_Site($factory);
 
     $uw->runUpdateTask($ud);
 

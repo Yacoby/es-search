@@ -18,26 +18,14 @@
  * along with ES Search. If not, see <http://www.gnu.org/licenses/>.
  * l-b */
 
-final class yacoby_silgrad_com extends Search_Parser_Site {
-    protected $_details = array(
-        'host'            => 'yacoby.silgrad.com',
-        'domain'          => null,
-        'modUrlPrefix'    => '/MW/Mods/',
-        'initialPages'    => array(),
-        'updateUrl'       => array('/MW/Mods/index.htm',),
-        'updateFrequency' => 31,
-        'loginRequired'   => false,
-        'limitBytes'      => 500100,
-    );
-}
-
-final class yacoby_silgrad_com_page extends Search_Parser_Page {
+final class YacobyPage extends Search_Parser_Site_Page {
 	/**
 	 * Gets data for checking which pages are valid
 	 */
 	protected function doIsValidModPage($url) {
-		if ( $url->toString() == "http://yacoby.silgrad.com/MW/Mods/index.htm" )
+		if ( $url->toString() == "http://yacoby.silgrad.com/MW/Mods/index.htm" ){
 			return false;
+                }
 		return (preg_match("%http://yacoby\\.silgrad\\.com/MW/Mods/\\w*\\.htm%", $url->toString()) == 1 );
 	}
 

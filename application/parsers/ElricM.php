@@ -18,31 +18,8 @@
  * along with ES Search. If not, see <http://www.gnu.org/licenses/>.
  * l-b */
 
-/**
- */
-final class elricm_com extends Search_Parser_Site {
 
-    protected $_details = array(
-        'host'            => 'www.elricm.com',
-        'domain'          => null,
-        'modUrlPrefix'    => '/nuke/html/modules.php?op=modload&name=Downloads&file=index&req=viewdownloaddetails&lid=',
-        'initialPages'    => array(
-                '/nuke/html/modules.php?op=modload&name=Downloads&file=index&req=viewdownload&cid=4',
-                '/nuke/html/modules.php?op=modload&name=Downloads&file=index&req=viewdownload&cid=8',
-                '/nuke/html/modules.php?op=modload&name=Downloads&file=index&req=viewdownload&cid=7',
-        ),
-        'updateUrl'       => array(
-                '/nuke/html/modules.php?op=modload&name=Downloads&file=index&req=viewdownload&cid=4',
-                '/nuke/html/modules.php?op=modload&name=Downloads&file=index&req=viewdownload&cid=8',
-                '/nuke/html/modules.php?op=modload&name=Downloads&file=index&req=viewdownload&cid=7',
-        ),
-        'updateFrequency' => 31,
-        'loginRequired'   => false,
-        'limitBytes'      => 10100100,
-    );
-}
-
-final class elricm_com_page extends Search_Parser_Page {
+final class ElricMPage extends Search_Parser_Site_Page {
 
     protected function doIsValidModPage($url) {
         $pages = array(
@@ -50,7 +27,6 @@ final class elricm_com_page extends Search_Parser_Page {
                 "http://www\\.elricm\\.com/nuke/html/modules\\.php\\?op=modload&name=Downloads&file=index&req=viewsdownload&sid=\\d+&min=\\d+&orderby=titleA&show=10"
         );
         return $this->isAnyMatch($pages, $url);
-
     }
 
     protected function doIsValidPage($url) {
@@ -74,8 +50,9 @@ final class elricm_com_page extends Search_Parser_Page {
         }else if ( stripos($regs[1], 'Oblivion') !== false ) {
             $game = 'OB';
         }else if ( stripos($regs[1], 'Affiliates') !== false ) {
-            $game = 'UN';
-            $cat = ''; //not a cat
+            return;
+            //$game = 'UN';
+            //$cat = ''; //not a cat
         }else {
             return ; //failed
         }
@@ -98,18 +75,18 @@ final class elricm_com_page extends Search_Parser_Page {
 
                 if ( preg_match("%^Description: (.*)%", $text, $regs) ) {
                     $mod['Description'] = self::getDescriptionText($regs[1]);
-                }elseif ( preg_match("%^Author: (.*)%", $text, $regs) ) {
+                }else if ( preg_match("%^Author: (.*)%", $text, $regs) ) {
                     $mod['Author'] = $regs[1];
-                }elseif ( preg_match("%^File Version: ([0-9\\.]+) | File size: .*%", $text, $regs) ) {
+                }else if ( preg_match("%^File Version: ([0-9\\.]+) | File size: .*%", $text, $regs) ) {
                     if ( count($regs) >= 2 ) {
                         $mod['Version'] = $regs[1];
                     }
-                }elseif ( $text == "Details") {
+                }else if ( $text == "Details") {
                     $mod['Url'] = new Search_Url(html_entity_decode($elem->href), $this->_url);
                     break;
                 }
             }
-            $this->_mods[] = $mod;
+            $this->addMod($mod);
         }
 
     }

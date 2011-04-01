@@ -18,37 +18,20 @@
  * along with ES Search. If not, see <http://www.gnu.org/licenses/>.
  * l-b */
 
-final class shsforums_net extends Search_Parser_Site {
-    protected $_details = array(
-        'host'            => null, //'www.shsforums.net',
-        'domain'          => null,
-        'modUrlPrefix'    => '/View.php?view=',
-        'initialPages'    => array(
-                //TODO Fix
-                'http://www.shsforums.net/index.php?autocom=downloads&showcat=3'
-        ),
-        'updateUrl'       => array(),
-        'updateFrequency' => 31,
-        'loginRequired'   => false,
-        'limitBytes'      => 1048578,
-    );
-}
-
-final class shsforums_net_page extends Search_Parser_Page {
+final class ShsForumsPage extends Search_Parser_Site_Page {
 
     protected function doIsValidModPage($url) {
         $pages = array(
-            "http://www\\.shsforums\\.net/index\\.php\\?autocom=downloads&showfile=\\d+",
+            'http://www\.shsforums\.net/index\.php\?autocom=downloads&showfile=\d+',
         );
         return $this->isAnyMatch($pages, $url);
-
     }
 
     protected function doIsValidPage($url) {
         $pages = array(
-            'http://www\\.shsforums\\.net/index\\.php\\?autocom=downloads&showcat=\\d+',
-            'http://www\\.shsforums\\.net/index\\.php\\?automodule=downloads&showcat=\\d+',
-            'http://www\\.shsforums\\.net/index\\.php\\?autocom=downloads&showcat=\\d+&sort_by=ASC&sort_key=file_name&num=\\d+&st=\\d+',
+            'http://www\.shsforums\.net/index\\.php\?autocom=downloads&showcat=\d+',
+            'http://www\.shsforums\.net/index\\.php\?automodule=downloads&showcat=\d+',
+            'http://www\.shsforums\.net/index\\.php\?autocom=downloads&showcat=\d+&sort_by=ASC&sort_key=file_name&num=\d+&st=\d+',
         );
         return $this->isAnyMatch($pages, $url);
     }
@@ -65,23 +48,28 @@ final class shsforums_net_page extends Search_Parser_Page {
 
     function getName() {
         $elems = $this->_html->find("td.nopad");
-        foreach ($elems as $e)
-            if ( isset($e->width) )
-                if ( $e->width == "100%" )
+        foreach ($elems as $e){
+            if ( isset($e->width) ){
+                if ( $e->width == "100%" ){
                     return $e->plaintext;
+                }
+            }
+        }
         return null;
     }
 
     function getAuthor() {
         $elem = $this->_html->find(".pformright a", 0);
-        if ( $elem->parent()->prev_sibling()->plaintext == "File Name" )
+        if ( $elem->parent()->prev_sibling()->plaintext == "File Name" ){
             return $elem->plaintext;
+        }
         return "";
     }
     function getDescription() {
         $elems = $this->_html->find(".divpad");
-        if ( !count($elems) )
+        if ( !count($elems) ){
             return null;
+        }
         return $elems[0]->plaintext;
     }
     function getCategory() {

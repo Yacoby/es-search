@@ -35,7 +35,8 @@ try{
         throw new Exception('The module mbstring is not installed!');
     }
 
-    $factory = new Search_Parser_Factory();
+    $factory = new Search_Parser_Factory(APPLICATION_PATH . '/parsers/defaults.ini',
+                                         APPLICATION_PATH . '/parsers/parsers.ini');
     $si = new Search_Sync($factory);
     $si->syncAll();
 }catch(Exception $e){

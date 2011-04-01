@@ -18,40 +18,7 @@
  * along with ES Search. If not, see <http://www.gnu.org/licenses/>.
  * l-b */
 
-/**
- *
- */
-final class planetelderscrolls_com extends Search_Parser_Site {
-    protected $_details = array(
-        'host'            => 'planetelderscrolls.gamespy.com',
-        'domain'          => null,
-        'modUrlPrefix'    => '/View.php?view=',
-        'initialPages'    => array(
-                "/View.php?view=OblivionMods.List",
-                "/View.php?view=Mods.List",
-                "/View.php?view=OblivionUtilities.List",
-                "/View.php?view=Utilities.List"
-        ),
-        'updateUrl'       => array(
-                '/View.php?view=LatestAdditions&clusters=utilities&days=30&show_days_back=1',
-                '/View.php?view=RecentUpdates&clusters=utilities&days=30&show_days_back=1',
-
-                '/View.php?view=LatestAdditions&clusters=oblivionutilities&days=30&show_days_back=1',
-                '/View.php?view=RecentUpdates&clusters=oblivionutilities&days=30&show_days_back=1',
-
-                '/View.php?view=RecentUpdates&clusters=mods&days=30&show_days_back=1',
-                '/View.php?view=LatestAdditions&clusters=mods&days=300&show_days_back=1',
-
-                '/View.php?view=LatestAdditions&clusters=oblivionmods&days=30&show_days_back=1',
-                '/View.php?view=RecentUpdates&clusters=oblivionmods&days=30&show_days_back=1',
-        ),
-        'updateFrequency' => 0.5,
-        'loginRequired'   => false,
-        'limitBytes'      => 50100100,
-    );
-}
-
-final class planetelderscrolls_com_page extends Search_Parser_Page {
+final class PlanetElderScrollsPage extends Search_Parser_Site_Page {
 
     protected function doIsValidModPage($url) {
         $pages = array(
@@ -90,8 +57,8 @@ final class planetelderscrolls_com_page extends Search_Parser_Page {
     }
 
     public function  isModNotFoundPage($client) {
-        foreach ( $this->_html->find('h1') as $e ){
-            if ( $e->plaintext == 'This entry is not or not yet available' ){
+        foreach ( $this->_html->find('h1') as $e ) {
+            if ( $e->plaintext == 'This entry is not or not yet available' ) {
                 return true;
             }
         }
@@ -109,22 +76,22 @@ final class planetelderscrolls_com_page extends Search_Parser_Page {
         $find = $find[0];
 
         $gs = $find->plaintext;
-        if ( stripos($gs, "Morrowind") !== false ){
-			return "MW";
-		}
-        if ( stripos($gs, "Oblivion") !== false ){
-			return "OB";
-		}
+        if ( stripos($gs, "Morrowind") !== false ) {
+            return "MW";
+        }
+        if ( stripos($gs, "Oblivion") !== false ) {
+            return "OB";
+        }
 
-		//we have to do another check here as
+        //we have to do another check here as
         //ob lists:
         //Oblivion Utilities
         //but mw only lists
         //utilites
 
-        if ( stripos($gs, "UTILITIES") !== false ){
-			return "MW";
-		}
+        if ( stripos($gs, "UTILITIES") !== false ) {
+            return "MW";
+        }
 
         return null;
     }
@@ -160,11 +127,8 @@ final class planetelderscrolls_com_page extends Search_Parser_Page {
             $key = trim(htmlspecialchars_decode($tr->children(0)->plaintext));
             if ( substr($key, 0, strlen("Description")) == "Description" ) {
                 return self::getDescriptionText(
-                    trim(
-                        htmlspecialchars_decode(
-                            $tr->next_sibling()->children(0)->innertext
+                        trim(htmlspecialchars_decode($tr->next_sibling()->children(0)->innertext)
                         )
-                    )
                 );
             }
         }
@@ -180,9 +144,9 @@ final class planetelderscrolls_com_page extends Search_Parser_Page {
             $val = trim(htmlspecialchars_decode($tr->children(1)->plaintext));
             $key = trim(htmlspecialchars_decode($tr->children(0)->plaintext));
 
-            if ( substr($key, 0, strlen($string)) == $string ){
+            if ( substr($key, 0, strlen($string)) == $string ) {
                 return $val;
-			}
+            }
         }
         return null;
     }

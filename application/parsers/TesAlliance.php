@@ -1,20 +1,6 @@
 <?php
-final class tes_alliance extends Search_Parser_Site {
-    protected $_details = array(
-        'host'            => 'tesalliance.org',
-        'domain'          => null,
-        'modUrlPrefix'    => '/forums/index.php?/files/file/',
-        'initialPages'    => array(
-                "/forums/index.php?/files/",
-        ),
-        'updateUrl'       => array(),
-        'updateFrequency' => 31,
-        'loginRequired'   => false,
-        'limitBytes'      => 100100,
-    );
-}
 
-final class tes_alliance_page extends Search_Parser_Page {
+final class TesAlliancePage extends Search_Parser_Site_Page{
 
     protected function doIsValidModPage($url) {
         $pages = array(
@@ -26,7 +12,7 @@ final class tes_alliance_page extends Search_Parser_Page {
     protected function doIsValidPage($url) {
         $pages = array(
                 'http://tesalliance\.org/forums/index\.php\?/files/category/[0-9+].*/',
-                'http://tesalliance.org/forums/index.php\?/files/category/[0-9]+.*/page__sort_by__DESC__sort_key__file_submitted__num__10__st__[0-9]+'
+                'http://tesalliance\.org/forums/index.php\?/files/category/[0-9]+.*/page__sort_by__DESC__sort_key__file_submitted__num__10__st__[0-9]+'
         );
         return $this->isAnyMatch($pages, $url);
     }

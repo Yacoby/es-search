@@ -17,28 +17,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with ES Search. If not, see <http://www.gnu.org/licenses/>.
  * l-b */
-
-/**
- */
-class EsFilefront extends Search_Parser_Site {
-
-    protected $_details = array(
-        'host'            => 'elderscrolls.filefront.com',
-        'domain'          => null,
-        'modUrlPrefix'    => '/file/',
-        'initialPages'    => array(
-            '/files/The_Elder_Scrolls_III_Morrowind/Modifications;7095',
-            '/files/The_Elder_Scrolls_IV_Oblivion/Modifications;7128',
-        ),
-        'updateUrl'       => array(),
-        'updateFrequency' => 31,
-        'loginRequired'   => false,
-        'limitBytes'      => 3100100,
-    );
-
-}
-
-class EsFilefront_page extends Search_Parser_Page {
+class EsFilefrontPage extends Search_Parser_Site_Page {
     protected function doIsValidModPage($url) {
         return (preg_match("%http://elderscrolls\\.filefront\\.com/file/.*;\\d+$%", $url->toString()) == 1 );
     }

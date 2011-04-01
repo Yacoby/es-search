@@ -18,22 +18,7 @@
  * along with ES Search. If not, see <http://www.gnu.org/licenses/>.
  * l-b */
 
-/**
- */
-final class modding_history extends Search_Parser_Site {
-    protected $_details = array(
-        'host'            => 'modhistory.fliggerty.com',
-        'domain'          => null,
-        'modUrlPrefix'    => '/index.php?dlid=',
-        'initialPages'    => array('/index.php?cid=5'),
-        'updateUrl'       => array(),
-        'updateFrequency' => 31,
-        'loginRequired'   => false,
-        'limitBytes'      => 5100100,
-    );
-}
-
-final class modding_history_page extends Search_Parser_Page {
+final class ModdingHistoryPage extends Search_Parser_Site_Page {
 
     protected function doIsValidModPage($url) {
         return preg_match(
@@ -145,8 +130,9 @@ final class modding_history_page extends Search_Parser_Page {
      */
     public function getCategory() {
         $mr = $this->_html->find('.topbg strong',0);
-        if ( $mr == null )
+        if ( $mr == null ){
             return '';
+        }
 
         $n = count($mr->children());
         return $mr->children($n-2)->plaintext;

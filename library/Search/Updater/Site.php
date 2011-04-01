@@ -80,11 +80,11 @@ class Search_Updater_Site extends Search_Observable implements Search_Updater_In
     private $_factory;
 
     public function __construct(
-            Search_Parser_Factory $fac     = null,
+            Search_Parser_Factory $fac,
             Search_Table_Sites $ws         = null,
             Search_Table_Pages $pages      = null
             ) {
-        $this->_factory   = $fac   ? $fac   : new Search_Parser_Factory();
+        $this->_factory   = $fac;
         $this->_sites     = $ws    ? $ws    : new Search_Table_Sites();
         $this->_pages     = $pages ? $pages : new Search_Table_Pages();
     }
@@ -205,8 +205,8 @@ class Search_Updater_Site extends Search_Observable implements Search_Updater_In
         return $this->processPageData($page);
     }
 
-    public function processPageData(Search_Parser_Page $page) {
-        $site = $this->_sites->findOneByHost($page->getURL()->getHost());
+    public function processPageData(Search_Parser_Site_Page $page) {
+        $site = $this->_sites->findOneByHost($page->getUrl()->getHost());
 
         //update all links
         foreach ( $page->links() as $link ) {

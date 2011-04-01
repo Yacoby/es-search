@@ -1,18 +1,18 @@
 <?php /* l-b
  * This file is part of ES Search.
- * 
+ *
  * Copyright (c) 2009 Jacob Essex
- * 
+ *
  * Foobar is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
- * 
+ *
  * ES Search is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Affero General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Affero General Public License
  * along with ES Search. If not, see <http://www.gnu.org/licenses/>.
  * l-b */
@@ -20,6 +20,7 @@
 
 
 require '../AppLoader.php';
+
 
 /**
  *
@@ -59,36 +60,8 @@ function resetLucene() {
     delDirectory($dataPath.'/lucene_testing/MW');
 }
 
-
-/**
- * @todo fix the requirment for sleep
- */
-function resetDatabse() {
-    $scriptPath = APPLICATION_PATH.'/../scripts';
-
-    /*
-    $sqlQuery = file_get_contents($scriptPath . '/schema.sql');
-
-    $adapter = Zend_Db_Table_Abstract::getDefaultAdapter();
-    $mysqli = $adapter->getConnection();
-    $mysqli->multi_query($sqlQuery);
-
-    //cleans all results out of the buffer, so we don't ever get a
-    //'commands out of sync' error
-    while( $mysqli->next_result() ){
-        $mysqli->store_result(); 
-    }
-
-    $si = new Search_SiteInformation(Search_Parser_Factory::getInstance());
-    $si->ensureParsersCreated();
-    $si->ensureByteLimitsCorrect();
-    $si->copyInitialPages();
-     */
-}
-
 function resetAll() {
     resetLucene();
-    resetDatabse();
 }
 
 ?>

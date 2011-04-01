@@ -20,34 +20,34 @@
 
 /**
  */
-final class tesnexus_com extends Search_Parser_Site {
-    protected $_details = array(
-        'host'            => 'www.tesnexus.com',
-        'domain'          => null,
-        'modUrlPrefix'    => '/downloads/file.php?id=',
-        'initialPages'    => array('/downloads/categories.php'),
-        'updateUrl'       => array('/downloads/recent.php'),
-        'updateFrequency' => 12,
-        'loginRequired'   => false,
-        'limitBytes'      => 20100100,
-    );
+final class TesNexus extends Search_Parser_Site {
 
     /**
      * Gets an page, but if it is an update page doesn't get a Search_Parser_Dom
-     * object but a
+     * object but ensures the pageclass uses regex to parse the page
      *
      * @param Search_Url $url
      * @return string|Search_Parser_Dom
      */
     public function getPage(Search_Url $url, $client = null) {
         if ( !$this->isUpdatePage($url) ) {
-            return parent::getPage($url, $client);
+            //if not logged in then the page will be redirected to /adult
+            //this simply logs in and tries again
+            try{
+                return parent::getPage($url, $client);
+            }catch(Search_HTTP_Exception_Redirect $e){
+                if ( $e->to() == '/adult.php' ){
+                    $this->login($client);
+                    return parent::getPage($url, $client);
+                }
+                throw $e;
+            }
         }
 
-        $cls = get_class($this)."_page";
+        $cls = $this->getOption('pageClass');
         assert(class_exists($cls));
 
-        $i = $client ? $client : new Search_HTTP_Client();
+        $i      = $client ? $client : new Search_HTTP_Client();
         $result = $i->request($url)
                     ->method('GET')
                     ->exec();
@@ -66,7 +66,7 @@ final class tesnexus_com extends Search_Parser_Site {
         return $p->isValidModPage();
     }
 
-    protected function login(Search_HTTP_Client $ig) {
+    public function login(Search_HTTP_Client $ig) {
         //get the cookies for the login page
         $ig->request(new Search_Url('http://www.tesnexus.com/modules/login/index.php?redirect=/'))
                 ->method('GET')
@@ -92,17 +92,14 @@ final class tesnexus_com extends Search_Parser_Site {
     }
 
     public function isUpdatePage(Search_Url $url) {
-        $urls = $this->_details['updateUrl'];
+        $urls = $this->getOption('updateUrl');
         foreach ($urls as $u) {
-            if ( 'http://'.$this->getHost().$u == $url ) {
+            if ( 'http://'.$this->getHost().$u == $url->toString() ) {
                 return true;
             }
         }
         return false;
     }
-
-
-
 
 }
 
@@ -110,7 +107,7 @@ final class tesnexus_com extends Search_Parser_Site {
  * Parses the update page using regex as SimpleHTML uses up far to much memory
  * doing it.
  */
-final class tesnexus_com_page extends Search_Parser_Page {
+final class TesNexusPage extends Search_Parser_Site_Page {
 
     protected function getLoginStateFromHTML() {
         $links = $this->_html->find('#menu li a span');
@@ -123,8 +120,8 @@ final class tesnexus_com_page extends Search_Parser_Page {
         return false;
     }
 
-    public function __construct(Search_Url $url, $html) {
-        if ( $html instanceof Search_Parser_Dom ) {
+    public function __construct($url, $html) {
+        if ( $html === null || $html instanceof Search_Parser_Dom ) {
             parent::__construct($url, $html);
         }else {
             $this->_url = $url;
@@ -140,7 +137,7 @@ final class tesnexus_com_page extends Search_Parser_Page {
             $url = new Search_Url($m, $this->_url);
 
             if ( $this->isValidModPage($url)) {
-                $this->_links[] = new Search_Url($m, $this->_url);
+                $this->addLink(new Search_Url($m, $this->_url));
             }
 
         }
