@@ -41,12 +41,20 @@ class Search_Bootstrap_Abstract extends Zend_Application_Bootstrap_Bootstrap {
     public function _initDb(){
         assert ($this->hasOption('doctrine'));
         $options = $this->getOption('doctrine');
-        $host = $options['host'];
-        $user = $options['username'];
-        $pass = $options['password'];
-        $dbnm = $options['dbname'];
-        $c = Doctrine_Manager::connection("mysql://{$user}:{$pass}@{$host}/{$dbnm}");
-        $c->setCharset('utf8');
+        $dbtype = $options['type'];
+        $host   = $options['host'];
+        $user   = $options['username'];
+        $pass   = $options['password'];
+        $dbnm   = $options['dbname'];
+
+        $conn = null;
+        if ( $dbtype == 'sqlite' ){
+            $path = $options['path'];
+            $conn = Doctrine_Manager::connection("{$dbtype}://{$path}");
+        }else{
+            $conn = Doctrine_Manager::connection("{$dbtype}://{$user}:{$pass}@{$host}/{$dbnm}");
+        }
+        $conn->setCharset('utf8');
     }
 
     public function _initValidation(){
