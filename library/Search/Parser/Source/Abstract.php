@@ -3,6 +3,10 @@ abstract class Search_Parser_Source_Abstract {
 
     private $_options = array();
 
+    public function getPageClass() {
+        return $this->getOption('pageClass');
+    }
+
     public function setOptions(array $options) {
         foreach ( $options as $key => $value ) {
             $this->_options[$key] = $value;

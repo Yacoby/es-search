@@ -11,26 +11,22 @@ class Search_Table_ModsTest extends PHPUnit_Framework_TestCase {
      * @var Search_Table_Locations
      */
     private $_locations;
+
+    private $_sources;
     
     public function setUp() {
         $this->_mods      = new Search_Table_Mods();
         $this->_locations = new Search_Table_Locations();
+        $this->_sources   = new Search_Table_ModSources();
     }
 
     //fails as no connection
     public function tearDown() {
         //order is important due to db constraints
         //ok. Maybe not now? Test it.
-        $this->_locations->createQuery()
-                ->delete()
-                ->execute();
-
-        $this->_mods->createQuery()
-                ->delete()
-                ->execute();
-
-
-
+        $this->_locations->createQuery()->delete()->execute();
+        $this->_mods->createQuery()->delete()->execute();
+        $this->_sources->createQuery()->delete()->execute();
     }
 
     public function testAddOrUpdateModFromArray() {
@@ -53,9 +49,13 @@ class Search_Table_ModsTest extends PHPUnit_Framework_TestCase {
         $mod1->author = 'yacoby';
         $mod1->save();
 
+        $sor1 = $this->_sources->create();
+        $sor1->mod_url_prefix = 'http://example.com?id=';
+        $sor1->save();
+
         $loc1 = $this->_locations->create();
         $loc1->modification_id = $mod1->id;
-        $loc1->site_id         = 1;
+        $loc1->mod_source_id   = $sor1->id;
         $loc1->category_id     = 1;
         $loc1->mod_url_suffix  = 'mod1';
         $loc1->save();

@@ -6,7 +6,7 @@
 class Search_Updater_Xml implements Search_Updater_Interface{
 
     public function update() {
-        $file = $this->findXmlToUpdate();
+        list($file, $source) = $this->findXmlToUpdate();
         if ( $file === null ){
             return array();
         }
@@ -14,16 +14,20 @@ class Search_Updater_Xml implements Search_Updater_Interface{
 
         $mods = $this->getXmlFileMods($fileContent);
 
-        $modsOnDisk = $this->getStoredMods();
+        $modsOnDisk = $this->getStoredMods($source);
 
-
-
+        //do something like this.
+        $deleting = array_diff($modsOnDisk, $mods);
+        $adding   = array_diff($mods, $modsOnDisk);
 
     }
 
     private function isLocalFile($fname){
         return stripos($fname, 'http') !== 0;
     }
+    /**
+     * Checks the database for an xml file that needs to be updated
+     */
     private function findXmlToUpdate(){
     }
 

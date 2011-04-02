@@ -267,13 +267,12 @@ class Search_HTTP_Client {
      */
     private function getUserAgent() {
         if ( APPLICATION_ENV == 'testing' || APPLICATION_ENV == 'development' ) {
-            return "Mozilla/5.0 (X11; U; Linux i686; en-GB; rv:1.9.0.5) \
-                   Gecko/2008121621 Ubuntu/8.04 (hardy) Firefox/3.0.6";
+            return "Mozilla/5.0 (X11; U; Linux i686; en-GB; rv:1.9.0.5) "
+                 . "Gecko/2008121621 Ubuntu/8.04 (hardy) Firefox/3.0.6";
         }else {
-            return "ES Search Bot (search.yacoby.net) Contact Yacoby on \
-                Bethesda Forum if usage to high. Please don't block";
+            return "ES Search Bot (search.yacoby.net) Contact Yacoby on "
+                 . "Bethesda Forum if usage to high. Please don't block";
         }
-
     }
 
     /**

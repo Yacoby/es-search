@@ -53,8 +53,7 @@ class Search_Parser_Site_Page extends Search_Parser_Page_Abstract {
      * @param Search_Parser_Dom|null $html
      */
     public function __construct($url, $html) {
-        $this->_url  = $url;
-        $this->_html = $html;
+        parent::__construct($url, $html);
 
         $this->_isLoggedIn = $html !== null ? $this->getLoginStateFromHTML() : true;
     }
@@ -237,20 +236,6 @@ class Search_Parser_Site_Page extends Search_Parser_Page_Abstract {
         }
 
         $this->addMod($mod);
-    }
-
-    /**
-     * This function is used before parsing and logging in to check that the page is
-     * at least roughly valid. A basic check should be done to see if the page at least
-     * looks correct.
-     *
-     * This was implemented due to tesnexus not returning
-     * 404 when the mod didn't exist, just a plain page saying 'this mod isn't valid'
-     *
-     * @return bool
-     */
-    public function isValidPageBody() {
-        return true;
     }
 
     /**

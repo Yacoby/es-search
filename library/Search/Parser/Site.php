@@ -27,9 +27,6 @@
  * All sites implmenetations should go in the library/Search/Site directory
  */
 class Search_Parser_Site extends Search_Parser_Source_Abstract {
-    public function getPageClass() {
-        return $this->getOption('pageClass');
-    }
 
     public function getLimitBytes() {
         return $this->getOption('limitBytes');

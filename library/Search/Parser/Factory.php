@@ -120,7 +120,9 @@ class Search_Parser_Factory {
             }else{
                 throw new Search_Parser_Exception_ClassNotFound("No class for type {$details->parent}");
             }
-            $site->setOptions((array)$details->option->source);
+            if ( isset($details->option) && isset($details->option->source) ){
+                $site->setOptions((array)$details->option->source);
+            }
 
             //now setup for the page
             require_once $this->_iniDir . $details->page->location;

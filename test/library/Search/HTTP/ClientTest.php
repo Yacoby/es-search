@@ -57,7 +57,7 @@ class Search_HTTP_ClientTest extends PHPUnit_Framework_TestCase {
 
 
     public function testGetWebpage() {
-        $url = new Search_Url('http://example.com');
+        $url = new Search_Url('http://www.bbc.co.uk/');
         /*
         $this->_limits->expects($this->once())
                 ->method('canGetPage')
@@ -79,7 +79,7 @@ class Search_HTTP_ClientTest extends PHPUnit_Framework_TestCase {
         $result = $client->request($url)->withCache(false)->exec();
         $this->assertEquals(200, $result->getStatus());
 
-        $index = stripos($result->getBody(), "RFC");
+        $index = stripos($result->getBody(), "BBC");
         $this->assertTrue($index!==false);
     }
 
