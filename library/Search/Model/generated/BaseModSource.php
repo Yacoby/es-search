@@ -9,6 +9,7 @@
  * @property string $url_prefix
  * @property Doctrine_Collection $Modification
  * @property Doctrine_Collection $Sources
+ * @property Doctrine_Collection $ScheduledSource
  * @property Doctrine_Collection $ByteLimitedSource
  * 
  * @package    ##PACKAGE##
@@ -43,6 +44,10 @@ abstract class BaseModSource extends Doctrine_Record
              'foreign' => 'id'));
 
         $this->hasMany('Location as Sources', array(
+             'local' => 'id',
+             'foreign' => 'mod_source_id'));
+
+        $this->hasMany('ScheduledSource', array(
              'local' => 'id',
              'foreign' => 'mod_source_id'));
 
