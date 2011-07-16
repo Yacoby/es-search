@@ -4,7 +4,7 @@ class Zend_View_Helper_Stats{
     public function stats(){
         $rows = Doctrine_Query::create()
                     ->select('game_id, COUNT(*) as count')
-                    ->from('GameMods')
+                    ->from('Modification')
                     ->groupBy('game_id')
                     ->execute();
 

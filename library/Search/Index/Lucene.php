@@ -9,7 +9,7 @@
  *
  * @todo This class isn't particuarly unit testaable.
  */
-class Search_Lucene_Db extends Search_Observable{
+class Search_Index_Lucene extends Search_Observable implements Search_Index_Abstract{
     /**
      * Adds the mod to all game databases. The mod will not be added
      * if there are no locations
@@ -232,7 +232,7 @@ class Search_Lucene_Db extends Search_Observable{
                             'score'  => $h->score,
             ));
         }
-        return new Search_Lucene_SearchResults($results, $total);
+        return new Search_Index_Results($results, $total);
     }
 
 }

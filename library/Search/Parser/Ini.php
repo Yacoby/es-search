@@ -1,4 +1,5 @@
 <?php
+
 class Search_Parser_Ini {
     private $_iniSections = array();
 
@@ -16,10 +17,13 @@ class Search_Parser_Ini {
 
     /**
      *
-     * @param string $ini The path of the ini path
+     * @param string $ini The path of the ini path or the ini string
      */
     public function parse($ini) {
-        $this->_iniSections = $this->parseUsingFunction($this->selectFunction($ini),$ini);
+        $this->_iniSections = $this->parseUsingFunction(
+                                            $this->selectFunction($ini),
+                                            $ini
+                              );
     }
 
     public function merge($ini, $overwrite = true) {
@@ -68,8 +72,9 @@ class Search_Parser_Ini {
                     throw new Exception("{$section->parent} doesn't exist but is required");
                 }
 
-                $secToMerge = isset($sections->{$section->parent}) ?
-                                $sections->{$section->parent} : $this->section($section->parent);
+                $secToMerge = isset($sections->{$section->parent}) 
+                                     ? $sections->{$section->parent} 
+                                     : $this->section($section->parent);
 
                 $this->mergeIni($section,
                                 $secToMerge,

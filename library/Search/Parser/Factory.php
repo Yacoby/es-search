@@ -1,30 +1,21 @@
 <?php
-/* l-b
- * This file is part of ES Search.
- *
- * Copyright (c) 2009 Jacob Essex
- *
- * Foobar is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * ES Search is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with ES Search. If not, see <http://www.gnu.org/licenses/>.
- * l-b */
-
 /**
  * This is the class that manages the parsers. It will, given a host, provide
  * the parser class for it
  */
 class Search_Parser_Factory {
     private $_iniPath, $_iniDir, $_ini, $_sites;
+    private $_hosts = array();
 
+    /**
+     * This is an array of the base types of sections in the ini sections mapped
+     * to a class name. This is the default class if no other class exists.
+     * 
+     * @todo This could probably be removed by setting base classes in the 
+     *       ini file itself.
+     *
+     * @var array
+     */
     private $_types = array(
         'forum' => 'Search_Parser_Forum',
         'site'  => 'Search_Parser_Site',
@@ -32,39 +23,67 @@ class Search_Parser_Factory {
 
     public function  __construct($defaults = null, $ini = null) {
         if ( $defaults !== null && $ini !== null ){
-            $this->parse($defaults, $ini);
+            $this->parseIni($defaults, $ini);
         }
     }
 
-    public function parse($defaults, $ini){
+    public function parseIni($defaults, $ini){
         $this->_iniPath = $ini;
         $this->_iniDir  = dirname($ini) . '/';
-        $this->_ini     = new Search_Parser_Ini($defaults, $ini);
-        $this->_sites     = new stdClass();
+        $this->setIni(new Search_Parser_Ini($defaults, $ini));
+    }
+
+    public function setIni(Search_Parser_Ini $ini){
+        $this->_ini     = $ini;
+        $this->_sites   = new stdClass();
         foreach ( $this->_ini->sections() as $host => $site ){
-            if ( $site->implementation == 1 ){
+            if ( isset($site->implementation) && $site->implementation == 1 ){
+                $this->_hosts[]        = $host;
                 $this->_sites->{$host} = $site;
             }
         }
     }
 
+    public function getHostsByBaseType($type = null){
+        if ( $type && !is_array($type) ){
+            $type = array($type);
+        }
+        $hosts = array();
+        foreach ( $this->getHosts() as $host ){
+            if ( !$type || in_array($this->findBaseType($host), $type) ){
+                $hosts[] = $host;
+            }
+        }
+        return $hosts;
+    }
+
     /**
-     * Gets a list of all sites registered with this factory
+     * Gets an array of string hosts
      *
      * @return array
      */
-    public function getSites(){
-        return $this->_sites;
-    }
-    public function getSite($host){
-        return isset($this->_sites->{$host}) ? $this->_sites->{$host} : null;
+    public function getHosts(){
+        return $this->_hosts;
     }
 
+    /**
+     * Returns true if a host exists.
+     *
+     * @param string $host
+     * @return boolean
+     */
     public function hasSite($host) {
         return isset($this->_sites->{$host});
     }
-    public function hasSiteByUrl($url) {
-        return $this->hasSite($url->getHost(),$this->getSites());
+
+    /**
+     * Returns true if there is a parser for the given Url.
+     *
+     * @param Search_Url $url
+     * @return boolean
+     */
+    public function hasSiteByUrl(Search_Url $url) {
+        return $this->hasSite($url->getHost(),$this->_sites);
     }
 
     /**
@@ -83,7 +102,7 @@ class Search_Parser_Factory {
      * @param string $host
      * @return string|null
      */
-    private function findBaseType($host){
+    public function findBaseType($host){
         if ( !$this->_ini->hasSection($host) ){
             throw new Exception('Cannot find given host');
         }
@@ -97,20 +116,19 @@ class Search_Parser_Factory {
         
         return $this->findBaseType($details->parent);
     }
+
     /**
-     *
      * @param string $host
      * @return Search_Parser_Source_Abstract
      */
     public function getSiteByHost($host){
-        
         if ( $this->hasSite($host) ){
-            $details = $this->getSite($host);
+            $details = $this->_sites->{$host};
             $site     = null;
             $baseType = $this->findBaseType($host);
 
             //check if we have a special site class
-            if ( $details->site->class != ''){
+            if ( isset($details->site->class) && $details->site->class != ''){
                 //load the new site class
                 require_once $this->_iniDir . $details->site->location;
                 $site = new $details->site->class();
@@ -118,25 +136,27 @@ class Search_Parser_Factory {
                 //check its parent. if it has one use that as the search class
                 $site = new $this->_types[$baseType]();
             }else{
-                throw new Search_Parser_Exception_ClassNotFound("No class for type {$details->parent}");
+                throw new Search_Parser_Exception_ClassNotFound(
+                                    "No class for type {$details->parent}"
+                );
             }
             if ( isset($details->option) && isset($details->option->source) ){
                 $site->setOptions((array)$details->option->source);
             }
 
             //now setup for the page
-            require_once $this->_iniDir . $details->page->location;
+            if ( isset($details->page->location) ){
+                require_once $this->_iniDir . $details->page->location;
+            }
             $site->setOption('pageClass', $details->page->class);
             $site->setOption('host', $host);
 
             return $site;
         }else{
-            echo "Looking for {$host}\n";
-            var_dump($this->getSites());
-
             throw new Search_Parser_Exception_ClassNotFound("Class doesn't exist");
         }
     }
 
 }
+
 ?>

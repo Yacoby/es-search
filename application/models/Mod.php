@@ -1,22 +1,4 @@
 <?php
-/* l-b
- * This file is part of ES Search.
- * 
- * Copyright (c) 2009 Jacob Essex
- * 
- * Foobar is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- * 
- * ES Search is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- * 
- * You should have received a copy of the GNU Affero General Public License
- * along with ES Search. If not, see <http://www.gnu.org/licenses/>.
- * l-b */
 
 class ModLocation{
     /**
@@ -73,7 +55,7 @@ class Default_Model_Mod {
         $sql = 'SELECT
                     m.id, m.name, m.author, l.description, l.version,
                     c.name as category,
-                    CONCAT(s.mod_url_prefix, l.mod_url_suffix) as url
+                    CONCAT(s.url_prefix, l.url_suffix) as url
                 FROM modification m
                 INNER JOIN location l   ON l.modification_id = m.id
                 INNER JOIN mod_source s ON l.mod_source_id   = s.id

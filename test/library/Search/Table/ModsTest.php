@@ -50,14 +50,14 @@ class Search_Table_ModsTest extends PHPUnit_Framework_TestCase {
         $mod1->save();
 
         $sor1 = $this->_sources->create();
-        $sor1->mod_url_prefix = 'http://example.com?id=';
+        $sor1->url_prefix = 'http://example.com?id=';
         $sor1->save();
 
         $loc1 = $this->_locations->create();
         $loc1->modification_id = $mod1->id;
         $loc1->mod_source_id   = $sor1->id;
         $loc1->category_id     = 1;
-        $loc1->mod_url_suffix  = 'mod1';
+        $loc1->url_suffix      = 'mod1';
         $loc1->save();
 
         //this should match as the url is the same as the mods url

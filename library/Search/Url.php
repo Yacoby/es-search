@@ -1,26 +1,14 @@
 <?php
-/* l-b
- * This file is part of ES Search.
- * 
- * Copyright (c) 2009 Jacob Essex
- * 
- * Foobar is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- * 
- * ES Search is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- * 
- * You should have received a copy of the GNU Affero General Public License
- * along with ES Search. If not, see <http://www.gnu.org/licenses/>.
- * l-b */
 
 final class Search_Url {
+    /**
+     * @var string
+     */
     private $_url;
-    private $_parts;
+
+    /**
+     * @var boolean
+     */
     private $_valid = true;
 
     /**
@@ -31,18 +19,19 @@ final class Search_Url {
      */
     public function __construct($url, Search_Url $currentURL = null) {
         if ( $currentURL === null ) {
+            #print "COnstruct String\n";
             $this->constructString($url);
         }else {
+            #print "COnstruct Rel\n";
             $this->constructRel($url, $currentURL);
         }
     }
 
     private function constructString($url) {
-        if ( !$this->isValidURL($url) ) {
-            $this->_valid = false;
-        }else {
+        if ( $this->isValidURL($url) ) {
             $this->_url   = $url;
-            $this->_parts = parse_url($url);
+        }else {
+            $this->_valid = false;
         }
     }
 
@@ -51,26 +40,27 @@ final class Search_Url {
      */
     private function constructRel($url, Search_Url  $currentURL) {
         if ( !$currentURL->isValid() ) {
+            #print "Not Valid1\n";
             $this->_valid = false;
-        }else if ( !$this->shouldParse($url) ) {
+        }else if ( $url == 'http://' ) {
+            #print "Not Valid2\n";
             $this->_valid = false;
         }else {
-            try {
-                $url = $this->parsePartialURL($url, $currentURL->toString());
+            //try {
+            #print "From {$url} and given {$currentURL}\n";
+                $url = $this->parsePartialUrl($url, $currentURL->toString());
+                #print $url . "\n";
                 $this->constructString($url);
-            }catch(Exception $e ) {
-                $this->_valid = false;
-            }
+            //}catch(Exception $e ) {
+            //    $this->_valid = false;
+            //}
 
         }
 
     }
 
-    private function shouldParse($url) {
-        if ( $url == 'http://' ) {
-            return false;
-        }
-        return true;
+    private function isRelative($url){
+        return parse_url($url, PHP_URL_SCHEME) == NULL;
     }
 
     /**
@@ -78,65 +68,107 @@ final class Search_Url {
      * @param string $relative
      * @param string $absolute
      * @return string
-     *
-     * @todo implement a better parse_url function that fails in a better way
      */
-    private function parsePartialURL($relative, $absolute) {
-        $p = parse_url($relative);
-        if(isset($p["scheme"])) {
+    private function parsePartialUrl($relative, $absolute) {
+        if ( !$this->isRelative($relative) ){
             return $relative;
         }
 
-        $host = $user = $scheme = '';
-        extract(parse_url($absolute));
+        if ( strlen($relative) == 0 ){
+            return $absolute;
+        }
 
-        $path = dirname($path);
+        $parsedAbs = parse_url($absolute);
+        $parsedRel = parse_url($relative);
 
-        if(isset($relative) && strlen($relative) > 0 && $relative{0} == '/') {
-            $cparts = array_filter(explode("/", $relative));
-        }else {
-            $aparts = array_filter(explode("/", $path));
-            $rparts = array_filter(explode("/", $relative));
-            $cparts = array_merge($aparts, $rparts);
-            foreach($cparts as $i => $part) {
-                if($part == '.') {
-                    $cparts[$i] = null;
-                }
-                if($part == '..') {
-                    $cparts[$i - 1] = null;
-                    $cparts[$i] = null;
-                }
+        if ( !isset($parsedAbs['path']) ){
+            $parsedAbs['path'] = ''; 
+        }
+
+        //absolute url, but that may contain ../ or // or /./
+        if ( isset($parsedRel['path']) && !empty($parsedRel['path']) ){
+            //strip last filename in the path
+            $parsedAbs['path'] = preg_replace('#/[^/]*$#',
+                                              '',
+                                              $parsedAbs['path']);
+            if ( $parsedRel['path'][0] == '/'){
+                $parsedAbs['path'] = '';
             }
-            $cparts = array_filter($cparts);
+            $parsedAbs['path'] .= '/' . $parsedRel['path'];
+            $parsedAbs['query'] = $parsedAbs['fragment'] = '';
         }
-        $path = implode("/", $cparts);
-        $url = "";
-        if($scheme) {
-            $url = $scheme."://";
-        }
-        if($user) {
-            $url .= $user;
-            if($pass) {
-                $url .= ":".$pass;
-            }
-            $url .= "@";
-        }
-        if($host) {
-            $url .= $host."/";
 
+        //copy across query path etc
+        foreach ( array('query', 'fragment') as $k ){
+            if ( isset($parsedRel[$k]) ){
+                $parsedAbs[$k] = $parsedRel[$k];
+            }
         }
-        $url .= $path;
-        return $url;
+
+        return $this->cleanUrl($parsedAbs);
     }
 
+    private function cleanUrl($url){
+        if ( is_array($url) ){
+            $urlParts = $url;
+        }else{
+            $urlParts = parse_url((string)$url);
+        }
+
+        //replace '//' or '/./' or '/foo/../' with '/'
+        $re = array('#(/\.?/)#', '#/(?!\.\.)[^/]+/\.\./#');
+        $n = 1; //number of replacements
+        do{
+            $urlParts['path'] = preg_replace($re, //look for any of these
+                                             '/', //replace with this
+                                             $urlParts['path'],
+                                             -1, //no limit to number of replaces
+                                             $n); //load n with num of replaces
+        }while($n); //while a replacement has been made
+
+        return $this->constructFromParts($urlParts);
+    }
+
+    private function constructFromParts(array $p){
+        $url = $p['scheme'] . '://';
+
+        if ( isset($p['user']) ){
+            $url .= $p['user'];
+            if ( isset($p['pass']) ){
+                $url .= $p['pass'];
+            }
+            $url .= '@';
+        }
+        
+        $url .= $p['host'];
+        if ( isset($p['port']) ){
+            $url .= ':' . $p['port'];
+        }
+
+        if ( isset($p['path']) ){
+            $url .= $p['path'];
+        }
+
+        if ( isset($p['query']) && strlen($p['query']) ){
+            $url .= '?' . $p['query'];
+        }
+
+        if ( isset($p['fragment']) && strlen($p['fragment']) ){
+            $url .= '#' . $p['fragment'];
+        }
+
+        return $url;
+    }
 
     public function isValid() {
         return $this->_valid;
     }
+
     public function getHost() {
         assert($this->_valid);
-        return strtolower($this->_parts['host']);
+        return parse_url($this->_url, PHP_URL_HOST);
     }
+
 	public function getGet(){
 		$hloc = stripos($this->toString(), $this->getHost());
 		if ( $hloc === false ){
@@ -145,13 +177,16 @@ final class Search_Url {
 		$hloc += strlen($this->getHost());
 		return substr($this->toString(),$hloc);
 	}
+
     public function toString() {
         return $this->_url;
     }
+
     public function __toString() {
         return (string)$this->toString();
     }
-    protected function isValidURL($url) {
+
+    protected function isValidUrl($url) {
         return Zend_Uri::check($url);
     }
 

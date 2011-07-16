@@ -8,9 +8,7 @@
  * @property integer $id
  * @property string $short_name
  * @property string $name
- * @property Doctrine_Collection $Modification
- * @property Doctrine_Collection $GameMods
- * @property ModSource $ModSource
+ * @property Doctrine_Collection $Game
  * @property SearchHistory $SearchHistory
  * 
  * @package    ##PACKAGE##
@@ -45,16 +43,7 @@ abstract class BaseGame extends Doctrine_Record
     public function setUp()
     {
         parent::setUp();
-        $this->hasMany('Modification', array(
-             'refClass' => 'GameMods',
-             'local' => 'game_id',
-             'foreign' => 'modification_id'));
-
-        $this->hasMany('GameMods', array(
-             'local' => 'id',
-             'foreign' => 'game_id'));
-
-        $this->hasOne('ModSource', array(
+        $this->hasMany('Modification as Game', array(
              'local' => 'id',
              'foreign' => 'game_id'));
 

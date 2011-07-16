@@ -1,52 +1,29 @@
 <?php
-/* l-b
- * This file is part of ES Search.
- * 
- * Copyright (c) 2009 Jacob Essex
- * 
- * Foobar is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- * 
- * ES Search is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- * 
- * You should have received a copy of the GNU Affero General Public License
- * along with ES Search. If not, see <http://www.gnu.org/licenses/>.
- * l-b */
 
 final class PlanetElderScrollsPage extends Search_Parser_Site_Page {
+    
+    private $_urlSections = '(Oblivion(Mods|Utilities)|Mods|Utilities)';
 
     protected function doIsValidModPage($url) {
-        $pages = array(
-                "http://planetelderscrolls\\.gamespy\\.com/View\\.php\\?view=Mods\\.Detail&id=\\d+", //mw
-                "http://planetelderscrolls\\.gamespy\\.com/View\\.php\\?view=OblivionMods\\.Detail&id=\\d+",//ob
-                "http://planetelderscrolls\\.gamespy\\.com/View\\.php\\?view=OblivionUtilities\\.Detail&id=\\d+", //ob util
-                "http://planetelderscrolls\\.gamespy\\.com/View\\.php\\?view=Utilities\\.Detail&id=\\d+" //mwutil
-        );
-        return $this->isAnyMatch($pages, $url);
+        
+        $re = 'http://planetelderscrolls\.gamespy\.com/View\.php\?view='
+            . $this->_urlSections
+            . '\.Detail&id=\d+';
+        
+        return $this->isAnyMatch(array($re), $url);
     }
 
     protected function doIsValidPage($url) {
-        $pages = array(
-                "http://planetelderscrolls\\.gamespy\\.com/View\\.php\\?category_show_all=1&view=OblivionMods\\.List&Data_page=\\d+",
-                "http://planetelderscrolls\\.gamespy\\.com/View\\.php\\?view=OblivionMods\\.List",
-
-                "http://planetelderscrolls\\.gamespy\\.com/View\\.php\\?category_show_all=1&view=Mods\\.List&Data_page=\\d+",
-                "http://planetelderscrolls\\.gamespy\\.com/View\\.php\\?view=Mods\\.List",
-
-                "http://planetelderscrolls\\.gamespy\\.com/View\\.php\\?category_show_all=1&view=OblivionUtilities\\.List&Data_page=\\d+",
-                "http://planetelderscrolls\\.gamespy\\.com/View\\.php\\?view=OblivionUtilities\\.List",
-
-
-                "http://planetelderscrolls\\.gamespy\\.com/View\\.php\\?category_show_all=1&view=Utilities\\.List&Data_page=\\d+",
-                "http://planetelderscrolls\\.gamespy\\.com/View\\.php\\?view=Utilities\\.List"
-
-        );
-        return $this->isAnyMatch($pages, $url);
+        
+        $reCat = 'http://planetelderscrolls\.gamespy\.com/View\.php'
+               . '\?category_show_all=1&view='
+               . $this->_urlSections
+               . '\.List&Data_page=\d+';
+        $reList = 'http://planetelderscrolls\.gamespy\.com/View\.php'
+                . '\?view='
+                . $this->_urlSections
+                . '\.List';
+        return $this->isAnyMatch(array($reCat, $reList), $url);
     }
 
 
@@ -58,7 +35,7 @@ final class PlanetElderScrollsPage extends Search_Parser_Site_Page {
 
     public function  isModNotFoundPage($client) {
         foreach ( $this->_html->find('h1') as $e ) {
-            if ( $e->plaintext == 'This entry is not or not yet available' ) {
+            if ( $e->plaintext == 'This entry either does not exist or is not yet available.' ) {
                 return true;
             }
         }
@@ -69,7 +46,7 @@ final class PlanetElderScrollsPage extends Search_Parser_Site_Page {
     * Functions for parsing mod pages
     **********************************************************************/
     public function getGame() {
-        $find = $this->_html->find(".datatable_page center h1");
+        $find = $this->_html->find("#article_box_body center h1");
         if ( count($find) == 0 ) {
             return null;
         }

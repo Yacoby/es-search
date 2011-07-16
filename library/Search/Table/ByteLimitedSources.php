@@ -1,8 +1,8 @@
 <?php
 
-class Search_Table_Sites extends Search_Table_Abstract {
+class Search_Table_ByteLimitedSources extends Search_Table_Abstract {
     public function __construct($conn = null){
-        parent::__construct('Site',$conn);
+        parent::__construct('ByteLimitedSource',$conn);
     }
 
     /**
@@ -18,6 +18,7 @@ class Search_Table_Sites extends Search_Table_Abstract {
 
     public function findOneByUpdateRequired(){
         return $this->createQuery()
+                    ->select()
                     ->where('next_update < ?', time())
                     ->andWhere('bytes_used < byte_limit')
                     ->andWhere('enabled = 1')

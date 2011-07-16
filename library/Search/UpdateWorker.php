@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This handles updating the changed mods. It is passed a class that complies
  * with an interface that can be used to update a site, xml, or other source

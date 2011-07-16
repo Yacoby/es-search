@@ -1,4 +1,5 @@
 <?php
+
 abstract class Search_Parser_Source_Abstract {
 
     private $_options = array();

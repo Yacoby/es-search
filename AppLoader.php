@@ -1,24 +1,6 @@
 <?php
-/* l-b
- * This file is part of ES Search.
- * 
- * Copyright (c) 2009 Jacob Essex
- * 
- * Foobar is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- * 
- * ES Search is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- * 
- * You should have received a copy of the GNU Affero General Public License
- * along with ES Search. If not, see <http://www.gnu.org/licenses/>.
- * l-b */
 
-/** ***************************************************************************
+/**
  * This should setup the application to the point where it can load its
  * bootstrap file (or do whatever is required).
  *
@@ -26,6 +8,8 @@
  * really include constants, as they should be in the application.ini
  * 
  */
+
+date_default_timezone_set('Europe/London');
 
 //Set the library directory
 set_include_path(implode(PATH_SEPARATOR, array(
@@ -72,7 +56,17 @@ Zend_Registry::set('doctrine_config', array(
         'yaml_schema_path'    =>  $base.'Doctrine/Schema',
 ));
 
-Doctrine::loadModels(array($base.'Model/generated', $base.'Model'));
+$oldPath = get_include_path();
+set_include_path(implode(PATH_SEPARATOR, array(
+        realpath(dirname(__FILE__) . '/library/Search/Model/generated'),
+        get_include_path(),
+)));
+set_include_path(implode(PATH_SEPARATOR, array(
+        realpath(dirname(__FILE__) . '/library/Search/Model'),
+        get_include_path(),
+)));
+Doctrine::loadModels(array($base.'Model'));
+set_include_path($oldPath);
 
 /*
  * @param $path the path to Bootstrap.php, if not set it will default to the

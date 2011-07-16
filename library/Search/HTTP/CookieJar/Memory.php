@@ -10,15 +10,18 @@
  */
 class Search_HTTP_CookieJar_Memory implements Search_HTTP_CookieJar_Interface{
     private $_domains;
+    
     public function addOrUpdateCookies(array $cookies, $domain){
         $this->_domains[$domain] = $cookies;
     }
+    
     public function getCookies($domain){
         if ( isset($this->_domains[$domain]) ){
             return $this->_domains[$domain];
         }
         return array();
     }
+    
     private static $_instance;
     public static function getInstance(){
         if (!isset(self::$_instance)) {

@@ -22,7 +22,7 @@ class Search_Table_Pages extends Search_Table_Abstract {
     public function findOneByUrl($url){
         return Doctrine_Query::create()
                         ->select()
-                        ->from('Page p, p.Site s')
+                        ->from('Page p, p.ByteLimitedSource s')
                         ->where('CONCAT(s.base_url, p.url_suffix)=?', (string)$url)
                         ->limit(1)
                         ->fetchOne();
@@ -34,15 +34,10 @@ class Search_Table_Pages extends Search_Table_Abstract {
         return $page;
     }
 
-    /**
-     *
-     * @todo maybe some sort of ordering would be very good
-     * @return Doctrine_Record
-     */
     public function findOneByUpdateRequired(){
         return Doctrine_Query::create()
                 ->select('p.*, s.*')
-                ->from('Page p, p.Site s')
+                ->from("Page p, p.ByteLimitedSource s")
                 ->where('s.bytes_used < s.byte_limit')
                 ->andWhere('p.revisit < ?', time())
                 ->andWhere('p.revisit != 0')

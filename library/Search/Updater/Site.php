@@ -1,24 +1,4 @@
 <?php
-/* l-b
- * This file is part of ES Search.
- * 
- * Copyright (c) 2009 Jacob Essex
- * 
- * Foobar is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- * 
- * ES Search is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- * 
- * You should have received a copy of the GNU Affero General Public License
- * along with ES Search. If not, see <http://www.gnu.org/licenses/>.
- * l-b */
-
-
 
 /*Find new page on update page
     if mod page
@@ -63,14 +43,12 @@ define('UPDATE_NORMAL_PAGE', 60);
  */
 class Search_Updater_Site extends Search_Observable implements Search_Updater_Interface {
     /**
-     *
      * @var Search_Table_Sites
      */
     private $_sites;
 
     /**
-     *
-     * @var Search_Table_Pages 
+     * @var Search_Table_SitePages 
      */
     private $_pages;
 
@@ -81,12 +59,12 @@ class Search_Updater_Site extends Search_Observable implements Search_Updater_In
 
     public function __construct(
             Search_Parser_Factory $fac,
-            Search_Table_Sites $ws         = null,
-            Search_Table_Pages $pages      = null
+            Search_Table_ByteLimitedSources $ws = null,
+            Search_Table_Pages $pages           = null
             ) {
-        $this->_factory   = $fac;
-        $this->_sites     = $ws    ? $ws    : new Search_Table_Sites();
-        $this->_pages     = $pages ? $pages : new Search_Table_Pages();
+        $this->_factory = $fac;
+        $this->_sites   = $ws    ? $ws    : new Search_Table_ByteLimitedSources();
+        $this->_pages   = $pages ? $pages : new Search_Table_Pages();
     }
 
     public function update(){
@@ -105,9 +83,10 @@ class Search_Updater_Site extends Search_Observable implements Search_Updater_In
      * byte limits) and the source Id for it
      * 
      */
-    private function getUpdateSite() {
+    private function getSiteToUpdate() {
         $row = $this->_sites->findOneByUpdateRequired();
-        return $row !== false ? array($row->host, $row->mod_source_id) : array(null,null);
+        return $row !== false ? array($row->host, $row->mod_source_id) 
+                              : array(null,null);
     }
 
     /**
@@ -115,7 +94,7 @@ class Search_Updater_Site extends Search_Observable implements Search_Updater_In
      * returns false
      */
     private function attemptUpdatePage(Search_Parser_Factory $parserFactory) {
-        list($host, $sourceId) = $this->getUpdateSite();
+        list($host, $sourceId) = $this->getSiteToUpdate();
         if ( $host === null ) {
             return false;
         }
@@ -129,6 +108,7 @@ class Search_Updater_Site extends Search_Observable implements Search_Updater_In
         $pages = $site->getUpdatePages();
 
         if ( $pages === null ) {
+            print 'No pages';
             return false;
         }
 
@@ -149,7 +129,8 @@ class Search_Updater_Site extends Search_Observable implements Search_Updater_In
      * @return bool
      */
     public function hasUpdateUpdate() {
-        return $this->getUpdateSite() !== null;
+        list($a, $b) = $this->getSiteToUpdate();
+        return $a !== null;
     }
 
 
@@ -182,7 +163,7 @@ class Search_Updater_Site extends Search_Observable implements Search_Updater_In
         if ( $page === false ) {
             return array();
         }
-        $url = new Search_Url($page->Site->base_url . $page->url_suffix);
+        $url = new Search_Url($page->ByteLimitedSource->base_url . $page->url_suffix);
 
         Search_Logger::info("Updating Page: {$url}");
 
@@ -235,7 +216,7 @@ class Search_Updater_Site extends Search_Observable implements Search_Updater_In
          //If it doesn't exist
         if ( $page === false ) {
             $page = $this->_pages->createByUrl($site, $url);
-            $page->site_id = $site->id;
+            $page->byte_limited_source_id = $site->id;
             $page->revisit = time();
             $page->save();
         }else { //else if it doesn't need updating

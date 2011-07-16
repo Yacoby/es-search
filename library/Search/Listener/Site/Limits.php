@@ -1,4 +1,5 @@
 <?php
+
 class Search_Listener_Site_Limits extends Doctrine_Record_Listener{
 
     private function getUpdatedDetails($lastUpdateTime, $current, $limit) {

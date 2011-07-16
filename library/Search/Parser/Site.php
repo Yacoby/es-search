@@ -1,23 +1,4 @@
 <?php
-/* l-b
- * This file is part of ES Search.
- *
- * Copyright (c) 2009 Jacob Essex
- *
- * Foobar is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * ES Search is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with ES Search. If not, see <http://www.gnu.org/licenses/>.
- * l-b */
-
 
 /**
  * Superclass for a site, all sites should inherit from this class, else they
@@ -29,6 +10,9 @@
 class Search_Parser_Site extends Search_Parser_Source_Abstract {
 
     public function getLimitBytes() {
+        if (!$this->hasOption('limitBytes')){
+            throw new Exception($this->getOption('host') . " has no property limitBytes");
+        }
         return $this->getOption('limitBytes');
     }
     /**
@@ -47,14 +31,14 @@ class Search_Parser_Site extends Search_Parser_Source_Abstract {
      * @return string
      */
     public function getDomain() {
-        if ( $this->getOption('domain') == null ) {
+        if ( !$this->hasOption('domain') || $this->getOption('domain') == null ){
             $host = $this->getHost();
             if ( $host == null ) {
                 throw new Exception('Host was null so couldn\'t compute domain');
             }
             return "http://{$host}";
         }
-        return $this->getOption('host');
+        return $this->getOption('domain');
     }
 
     /**
@@ -66,6 +50,9 @@ class Search_Parser_Site extends Search_Parser_Source_Abstract {
      * @return string
      */
     public function getModUrlPrefix() {
+        if ( !$this->hasOption('modUrlPrefix') ){
+            throw new Exception("{$this->getHost()} should have a url prefix");
+        }
         return $this->getOption('modUrlPrefix');
     }
 
@@ -88,6 +75,9 @@ class Search_Parser_Site extends Search_Parser_Source_Abstract {
      * @return array
      */
     public function getUpdatePages() {
+        if ( !$this->hasOption('updateUrl') ){
+            return array();
+        }
         return $this->convertUrlSuffixes($this->getOption('updateUrl'));
     }
     /**
@@ -100,6 +90,9 @@ class Search_Parser_Site extends Search_Parser_Source_Abstract {
      * @return array
      */
     public function getInitialPages() {
+        if ( !$this->hasOption('initialPages') ){
+            return array();
+        }
         return $this->convertUrlSuffixes($this->getOption('initialPages'));
     }
     /**

@@ -1,21 +1,4 @@
-<?php /* l-b
- * This file is part of ES Search.
- * 
- * Copyright (c) 2009 Jacob Essex
- * 
- * Foobar is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- * 
- * ES Search is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- * 
- * You should have received a copy of the GNU Affero General Public License
- * along with ES Search. If not, see <http://www.gnu.org/licenses/>.
- * l-b */
+<?php
 
 class Search_UrlTest extends PHPUnit_Framework_TestCase {
 
@@ -29,12 +12,29 @@ class Search_UrlTest extends PHPUnit_Framework_TestCase {
         $c = new Search_Url("http://yacoby.silgrad.com/FS/index.html");
         $s = "../index.html";
         $u = new Search_Url($s, $c);
-        $this->assertEquals($u->toString(), "http://yacoby.silgrad.com/index.html");
+        $this->assertEquals($u->toString(), 
+                            "http://yacoby.silgrad.com/index.html");
     }
 
     public function testConstructRel2() {
-        $url = new Search_Url('../index.php', new Search_Url('http://foobar.com/xyz/index.htm'));
-        $this->assertEquals('http://foobar.com/index.php', $url->toString());
+        $url = new Search_Url('../index.php',
+                              new Search_Url('http://foobar.com/xyz/index.htm'));
+        $this->assertEquals('http://foobar.com/index.php',
+                            $url->toString());
+    }
+
+    public function testConstructRel3(){
+        $url = new Search_Url('?bar',
+                              new Search_Url('http://foobar.com/n/index.htm'));
+        $this->assertEquals('http://foobar.com/n/index.htm?bar',
+                            $url->toString());
+    }
+
+    public function testConstructRel4(){
+        $url = new Search_Url('spip.php?article979',
+                              new Search_Url('http://morromods.wiwiland.net/spip.php?page=classemois'));
+        $this->assertEquals('http://morromods.wiwiland.net/spip.php?article979',
+                            $url->toString());
     }
 
     public function testIsValid() {

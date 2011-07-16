@@ -38,7 +38,7 @@ class Search_Listener_Location_Lucene extends Doctrine_Record_Listener{
     }
 
     public function postSave(Doctrine_Event $e){
-        Search_Lucene_Db::staticAddOrUpdateMod(
+        Search_Index_Lucene::staticAddOrUpdateMod(
                 $this->getRowFromLocation($e->getInvoker())
         );
     }
@@ -53,11 +53,11 @@ class Search_Listener_Location_Lucene extends Doctrine_Record_Listener{
                             ->fetchOne(array(), Doctrine_Core::HYDRATE_SINGLE_SCALAR);
 
         if ( $count == 0 ){
-            Search_Lucene_Db::staticRemoveMod(
+            Search_Index_Lucene::staticRemoveMod(
                     $this->getRowFromModId($l->modification_id)
             );
         }else{
-            Search_Lucene_Db::staticAddOrUpdateMod($this->getRowFromLocation($l));
+            Search_Index_Lucene::staticAddOrUpdateMod($this->getRowFromLocation($l));
         }
     }
 }

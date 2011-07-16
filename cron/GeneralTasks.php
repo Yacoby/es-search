@@ -54,18 +54,15 @@ function getUpdatedDetails($lastUpdateTime, $current, $limit) {
 require '../AppLoader.php';
 $app = createApplication(realpath(dirname(__FILE__) . '/Bootstrap/Bootstrap.php'));
 try{
-    $table = new Search_Table_Sites();
-    $sites = $table->createQuery()
+    //$table = new Search_Table_Sites();
+    //$sites = $table->createQuery()
+    $sites = Doctrine_Query::create()
                    ->select()
+                   ->from('ByteLimitedSource')
                    ->where('bytes_used >= byte_limit')
                    ->andWhere('enabled = 1')
                    ->execute();
 
-    /**
-     * The limit always returns correct...ish data as it calculatees them exactly
-     * when pulled from the database. So all we need to do is save it so the
-     * changes are reflected in the database.
-     */
     foreach ($sites as $site) {
         $details = getUpdatedDetails($site->bytes_last_updated,
                                      $site->bytes_used,

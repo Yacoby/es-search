@@ -1,4 +1,5 @@
 <?php
+
 class FileplanetPage extends Search_Parser_Site_Page {
     /**
      * The only change in the derived function is it only finds links in #main

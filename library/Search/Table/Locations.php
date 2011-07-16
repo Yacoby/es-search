@@ -11,7 +11,7 @@ class Search_Table_Locations extends Search_Table_Abstract {
                         ->select()
                         ->from('Location l')
                         ->innerJoin('l.ModSource s')
-                        ->where('CONCAT(s.mod_url_prefix, l.mod_url_suffix) = ?', (string)$url)
+                        ->where('CONCAT(s.url_prefix, l.url_suffix) = ?', (string)$url)
                         ->fetchOne();
 
         if ( $loc !== false ){

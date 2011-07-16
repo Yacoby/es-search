@@ -14,12 +14,32 @@ class Search_Updater_Xml implements Search_Updater_Interface{
 
         $mods = $this->getXmlFileMods($fileContent);
 
-        $modsOnDisk = $this->getStoredMods($source);
+        $modsOnDisk = $this->getStoredModUrls($source);
 
         //do something like this.
-        $deleting = array_diff($modsOnDisk, $mods);
-        $adding   = array_diff($mods, $modsOnDisk);
+        $deleting   = array_diff($modsOnDisk, $this->getModUrls($mods));
+        $addingUrls = array_diff($this->getModUrls($mods), $modsOnDisk);
 
+        $adding = array();
+        foreach ( $mods as $mod ){
+            if ( in_array($mod['Url'], $addingUrls) ){
+                $adding[] = $mod;
+            }
+        }
+
+        return array(
+            'Source'     => $source,
+            'Deleted'    => $deleting,
+            'NewUpdated' => $adding,
+        );
+    }
+
+    private function getModUrls($mods){
+        $urls = array();
+        foreach ( $mods as $mod ){
+            $urls[] = $mod['Url'];
+        }
+        return $urls;
     }
 
     private function isLocalFile($fname){
@@ -42,7 +62,7 @@ class Search_Updater_Xml implements Search_Updater_Interface{
     private function getXmlFileMods($file){
 
     }
-    private function getStoredMods(){
+    private function getStoredModUrls(){
 
     }
 

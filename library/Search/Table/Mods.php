@@ -31,7 +31,8 @@ class Search_Table_Mods extends Search_Table_Abstract {
                                    $url);
         return $match ? $match->id : null;
     }
-    private function getGameId($game){
+    
+    private function getGameIdFromShortName($game){
         $gameId = Doctrine_Query::create()
                     ->select('g.id')
                     ->from('Game g')
@@ -40,12 +41,14 @@ class Search_Table_Mods extends Search_Table_Abstract {
 
         //Convert to better expcetion class
         if ( $gameId === false ){
-            throw new Exception('No Valid Game');
+            throw new Exception('No valid game found for ' . $game
+                               . ' Have you checked that the database is'
+                               . ' properly populdated');
         }
         return $gameId;
     }
 
-    private function getCategoryId($categoryName){
+    private function getOrCreateCategoryId($categoryName){
         $categories = new Search_Table_Categories();
         $category   = $categories->createQuery('c')
                                   ->select('c.id')
@@ -68,7 +71,10 @@ class Search_Table_Mods extends Search_Table_Abstract {
      * @param Search_Table_Sites $sites
      * @param array $modDetails
      */
-    public function addOrUpdateModFromArray(Search_Table_ModSources $sources, array $modDetails, $sourceId){
+    public function addOrUpdateModFromArray(Search_Table_ModSources $sources,
+                                            array $modDetails,
+                                            $sourceId){
+        
         $this->getConnection()->beginTransaction();
 
         $modId = $this->getModId($modDetails['Name'],
@@ -82,44 +88,38 @@ class Search_Table_Mods extends Search_Table_Abstract {
         $modDetails['Game']     = strtolower($modDetails['Game']);
         $modDetails['Category'] = strtolower($modDetails['Category']);
 
-        $gameId = $this->getGameId($modDetails['Game']);
+        $gameId = $this->getGameIdFromShortName($modDetails['Game']);
 
         $mod = $modId ? $this->findOneById($modId) : $this->create();
         $mod->name           = $modDetails['Name'];
         $mod->author         = $modDetails['Author'];
+        $mod->game_id        = $gameId;
         $mod->replace();
 
-        $gm = new GameMods();
-        $gm->game_id         = $gameId;
-        $gm->modification_id = $mod->id;
-        $gm->replace();
-
-        $url          = $modDetails['Url'];
-        $source       = $sources->findOneById($sourceId);
+        $url    = $modDetails['Url'];
+        $source = $sources->findOneById($sourceId);
         if ( $source === false ){
             throw new Exception('There was no soucre for the given id');
         }
-        $modUrlSuffix = substr((string)$url, strlen($source->mod_url_prefix));
-
+        
+        
         $locations = new Search_Table_Locations();
         $location  = $locations->create();
-
-
-        $categoryId = $this->getCategoryId($modDetails['Category']);
-
-        $location->mod_url_suffix   = $modUrlSuffix;
+        
+        $modUrlSuffix = substr((string)$url, strlen($source->url_prefix));
+        $location->url_suffix   = $modUrlSuffix;
+        
         $location->version          = $modDetails['Version'];
         $location->description      = $modDetails['Description'];
 
+        $categoryId = $this->getOrCreateCategoryId($modDetails['Category']);
         $location->category_id      = $categoryId;
 
         $location->modification_id  = $mod->id;
         $location->mod_source_id    = $source->id;
-
         $location->replace();
 
         $this->getConnection()->commit();
-
     }
 
     /**
@@ -145,8 +145,8 @@ class Search_Table_Mods extends Search_Table_Abstract {
                             ->from('Modification m')
                             ->innerJoin('m.Locations l')
                             ->innerJoin('l.ModSource s')
-                            ->where('CONCAT(s.mod_url_prefix,
-                                            l.mod_url_suffix) = ?', (string)$url)
+                            ->where('CONCAT(s.url_prefix,
+                                            l.url_suffix) = ?', (string)$url)
                             ->fetchOne();
 
         if ( $record !== false ){

@@ -2,6 +2,7 @@ options:
     type: InnoDB
     collate: utf8_general_ci
     charset: utf8
+
 # ##############################################################################
 CookieJar:
     columns:
@@ -25,70 +26,6 @@ Log:
             type: string
         timestamp: timestamp
 
-# ##############################################################################
-Site:
-    columns:
-        id:
-            type: integer
-            autoincrement: true
-            
-        mod_source_id: integer
-
-        #this is to allow looking up sites by host name
-        host:
-            primary: true
-            type: string(255)
-        
-        #this is the string for the base of the url. This should be common
-        #to every
-        #for example: http://yacoby.silgrad.com
-        base_url:
-            type: string
-            notnull: true
-
-        #this is as much as the GET string as possible that is common to every mod
-        #i.e. /mod.php?id=
-        mod_url_prefix:
-            type: string
-            notnull: true
-
-        #The limit in bytes per day that can be used
-        #by the parser. This doesn't include headers
-        byte_limit:
-            type: integer
-            default: 0
-
-        #The number of bytes currently used
-        bytes_used:
-            type: integer
-            default: 0
-            notnull: true
-
-        #the time the bytes were last updated
-        #as it doesn't reset the bytes used at midnight
-        #but rather the bytes used are reduced per at a set amount each second
-        bytes_last_updated:
-            type: integer
-            default: 0
-
-        next_update:
-            type: integer
-            default: 0
-            notnull: true
-
-        #quick way to disable parsing of a site
-        enabled:
-            type: boolean
-            default: true
-            notnull: true
-
-    relations:
-        ModSource:
-            onDelete: CASCADE
-    indexes:
-        id:
-            fields: [id]
-
 # #############################################################################
 Category:
     columns:
@@ -99,22 +36,6 @@ Category:
         name:
             type: string
             notnull: false
-
-
-# #############################################################################
-Modification:
-    columns:
-        id:
-            type: integer
-            primary: true
-            autoincrement: true
-        name:
-            type: string
-            notblank: true
-        author:
-            type: string
-            notblank: true
-
 # #############################################################################
 Game:
     columns:
@@ -131,27 +52,28 @@ Game:
         name:
             type: string
             notblank: true
-
-    relations:
-        Modification:
-            foreignAlias: Games 
-            class: Modification
-            refClass: GameMods
+            
 # #############################################################################
-
-GameMods:
+Modification:
     columns:
-        game_id:
+        id:
             type: integer
             primary: true
-        modification_id:
-            type: integer
-            primary: true
+            autoincrement: true
+        name:
+            type: string
+            notblank: true
+        author:
+            type: string
+            notblank: true
+        game_id: integer
     relations:
-        Modification:
-            foreignAlias: GameMods
         Game:
-            foreignAlias: GameMods
+            foreignAlias: Game
+    indexes:
+        game_id:
+            fields: [game_id]
+
 # #############################################################################
 Location:
     columns:
@@ -159,9 +81,8 @@ Location:
             type: integer
             primary: true
 
-        mod_url_suffix:
+        url_suffix:
             type: string(255)
-            notblank: true
             primary: true
 
         description:
@@ -172,7 +93,6 @@ Location:
 
         int_version:
             type: integer
-        
 
         mod_source_id: integer
         category_id: integer
@@ -181,63 +101,34 @@ Location:
             foreignAlias: Locations
             onDelete: CASCADE
         ModSource:
-            foreignAlias: Locations
+            foreignAlias: Sources
         Category:
             foreignAlias: Locations
-
     indexes:
         modification_id:
             fields: [modification_id]
+        category_id:
+            fields: [category_id]
         #as searching involves searching for int_version == 0
         int_version:
             fields: [int_version]
-# #############################################################################
-Page:
-    columns:
-        site_id:
-            type: integer
-            primary: true
-
-        #this is the whole url path, excluding the value of baseUrl from the
-        #related site. NOTE: By iteslf, this is not primary
-        url_suffix:
-            type: string(255)
-            primary: true
-            notnull: true
-            notblank: true
             
-        last_visited:
-            type: integer
-            notnull: true
-            default: 0
-            
-        revisit: integer
-    indexes:
-        url_suffix:
-            fields: [url_suffix]
-
-    relations:
-        Site:
-            foreignAlias: Pages
-
 # #############################################################################
+# The prefix information for a set of mods
 ModSource:
     columns:
         id:
             type: integer
             primary: true
-            autoincrement: true
+            autoincrement: 1
 
-        mod_url_prefix: string
+        url_prefix: string
 
     relations:
         Modification:
             type: many
             foreignType: one
-        Game:
-            type: many
-            foreignType: one
-
+            
 # #############################################################################
 SearchHistory:
     columns:
@@ -276,3 +167,108 @@ HistoryBanned:
             type: one
             foreign: ip
             local: ip
+
+# #############################################################################
+# Information for a byte limited source, that data can only be retrived from
+# if it is under that limit
+ByteLimitedSource:
+    columns:
+        id:
+            primary: true
+            type: integer
+            autoincrement: true
+
+        mod_source_id: integer
+
+        #this is to allow looking up sites by host name
+        host:
+            type: string(255)
+
+        #this is the string for the base of the url. This should be common
+        #to every item
+        #for example: http://yacoby.silgrad.com
+        base_url:
+            type: string(255)
+            notnull: true
+
+        #this is as much as the GET string as possible that is common to every mod/thread
+        #i.e. /mod.php?id=
+        url_prefix:
+            type: string
+            notnull: true
+
+        #The limit in bytes per day that can be used
+        #by the parser. This doesn't include headers
+        byte_limit:
+            type: integer
+            default: 0
+
+        #The number of bytes currently used
+        bytes_used:
+            type: integer
+            default: 0
+            notnull: true
+
+        #the time the bytes were last updated
+        #as it doesn't reset the bytes used at midnight
+        #but rather the bytes used are reduced per at a set amount each second
+        bytes_last_updated:
+            type: integer
+            default: 0
+
+        next_update:
+            type: integer
+            default: 0
+            notnull: true
+
+        #quick way to disable parsing of a site
+        enabled:
+            type: boolean
+            default: true
+            notnull: true
+
+    relations:
+        ModSource:
+            type: one
+            onDelete: CASCADE
+    indexes:
+        #TODO CHECK THIS. MAY ACTUALLY WANT MORE INDEXES
+        base_url:
+            fields: [base_url]
+        mod_source_id:
+            fields: [mod_source_id]
+
+            
+# #############################################################################
+Page:
+    columns:
+        id:
+            type: integer
+            primary: true
+            autoincrement: true
+            
+        byte_limited_source_id:
+            type: integer
+        
+        #this is the whole url path, excluding the value of baseUrl from the
+        #related site. NOTE: By iteslf, this is not primary
+        url_suffix:
+            type: string(255)
+            notnull: true
+
+        last_visited:
+            type: integer
+            notnull: true
+            default: 0
+
+        revisit: integer
+    indexes:
+        url_suffix:
+            fields: [url_suffix]
+        unique:
+            fields: [byte_limited_source_id, url_suffix]
+            unique: true
+    relations:
+        ByteLimitedSource:
+            onDelete: CASCADE
+# ##############################################################################

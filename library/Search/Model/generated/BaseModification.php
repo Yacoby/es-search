@@ -8,8 +8,8 @@
  * @property integer $id
  * @property string $name
  * @property string $author
- * @property Doctrine_Collection $Games
- * @property Doctrine_Collection $GameMods
+ * @property integer $game_id
+ * @property Game $Game
  * @property Doctrine_Collection $Locations
  * @property ModSource $ModSource
  * 
@@ -36,7 +36,17 @@ abstract class BaseModification extends Doctrine_Record
              'type' => 'string',
              'notblank' => true,
              ));
+        $this->hasColumn('game_id', 'integer', null, array(
+             'type' => 'integer',
+             ));
 
+
+        $this->index('game_id', array(
+             'fields' => 
+             array(
+              0 => 'game_id',
+             ),
+             ));
         $this->option('type', 'InnoDB');
         $this->option('collate', 'utf8_general_ci');
         $this->option('charset', 'utf8');
@@ -45,14 +55,9 @@ abstract class BaseModification extends Doctrine_Record
     public function setUp()
     {
         parent::setUp();
-        $this->hasMany('Game as Games', array(
-             'refClass' => 'GameMods',
-             'local' => 'modification_id',
-             'foreign' => 'game_id'));
-
-        $this->hasMany('GameMods', array(
-             'local' => 'id',
-             'foreign' => 'modification_id'));
+        $this->hasOne('Game', array(
+             'local' => 'game_id',
+             'foreign' => 'id'));
 
         $this->hasMany('Location as Locations', array(
              'local' => 'id',

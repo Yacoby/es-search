@@ -1,5 +1,5 @@
 order deny,allow
 deny from all
 
-#my local IP. For most people it is probably going to be 127.0.0.1
-allow from 127.0.0.1
+#allow from a local ip
+allow from 127.0

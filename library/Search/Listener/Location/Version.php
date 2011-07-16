@@ -31,7 +31,7 @@ class Search_Listener_Location_Version extends Doctrine_Record_Listener{
         $loc = $e->getInvoker();
 
         $rows = Doctrine_Query::create()
-                    ->select('mod_url_suffix, version, int_version')
+                    ->select('url_suffix, version, int_version')
                     ->from('Location')
                     ->where('modification_id = ?', $loc->modification_id)
                     ->fetchArray();
@@ -46,7 +46,7 @@ class Search_Listener_Location_Version extends Doctrine_Record_Listener{
                             ->update('Location')
                             ->set('int_version', $i)
                             ->where('modification_id = ?', $loc->modification_id)
-                            ->andWhere('mod_url_suffix = ?', $row['mod_url_suffix'])
+                            ->andWhere('url_suffix = ?', $row['url_suffix'])
                             ->execute();
             }
         }
