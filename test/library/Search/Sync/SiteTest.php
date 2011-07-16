@@ -41,7 +41,6 @@ INI;
     }
 
     public function tearDown() {
-        print "TEAR\n";
         $this->_sources->createQuery()->delete()->execute();
         $this->_sites->createQuery()->delete()->execute();
         $this->_pages->createQuery()->delete()->execute();
