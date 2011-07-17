@@ -7,7 +7,8 @@
  *
  * All sites implmenetations should go in the library/Search/Site directory
  */
-class Search_Parser_Site extends Search_Parser_Source_Abstract {
+class Search_Parser_Site extends Search_Parser_Source_AbstractSite {
+
 
     public function getLimitBytes() {
         if (!$this->hasOption('limitBytes')){

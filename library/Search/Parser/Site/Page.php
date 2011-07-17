@@ -9,7 +9,7 @@
  * @todo checking if links are valid shouldn't really be in here as it requires
  * construction of a class.
  */
-class Search_Parser_Site_Page extends Search_Parser_Page_Abstract {
+class Search_Parser_Site_Page extends Search_Parser_Location_AbstractPage{
 
     /**
      * @var Search_Url

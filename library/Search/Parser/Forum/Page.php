@@ -1,6 +1,6 @@
 <?php
 
-abstract class Search_Parser_Forum_Page extends Search_Parser_Page_Abstract{
+abstract class Search_Parser_Forum_Page extends Search_Parser_Location_AbstractPage{
 
     public function parsePage($client){
         $this->isThread($this->_url) ? $this->parseThread() : $this->parseIndex();

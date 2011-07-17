@@ -9,7 +9,6 @@
  * @property integer $mod_source_id
  * @property integer $hours_delta
  * @property integer $last_run_time
- * @property string $url_prefix
  * @property boolean $enabled
  * @property ModSource $ModSource
  * 
@@ -36,9 +35,6 @@ abstract class BaseScheduledSource extends Doctrine_Record
              ));
         $this->hasColumn('last_run_time', 'integer', null, array(
              'type' => 'integer',
-             ));
-        $this->hasColumn('url_prefix', 'string', null, array(
-             'type' => 'string',
              ));
         $this->hasColumn('enabled', 'boolean', null, array(
              'type' => 'boolean',

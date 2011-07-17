@@ -10,7 +10,7 @@ class TesNexusTest extends PageTest {
 	public function testGetPageTest_HasLinks() {
 		$url = new Search_Url('http://www.tesnexus.com/downloads/recent.php');
 		$page = $this->getFactory()
-				->getSiteByURL($url)
+				->getSiteByHost($url->getHost())
 				->getPage($url, $this->getClient());
 		$links = $page->links();
 		$this->assertTrue(count($links) > 10);
@@ -19,7 +19,7 @@ class TesNexusTest extends PageTest {
 	public function testGetPageTest_NoMods() {
 		$url = new Search_Url('http://www.tesnexus.com/downloads/recent.php');
 		$page = $this->getFactory()
-				->getSiteByURL($url)
+				->getSiteByHost($url->getHost())
 				->getPage($url, $this->getClient());
 		$this->assertEquals(0, count($page->mods()));
 	}
@@ -27,21 +27,21 @@ class TesNexusTest extends PageTest {
 	public function testGetPageTest_IsUpdate_True() {
 		$url = new Search_Url('http://www.tesnexus.com/downloads/recent.php');
 		$site = $this->getFactory()
-				->getSiteByURL($url);
+				->getSiteByHost($url->getHost());
 		$this->assertTrue($site->isUpdatePage($url));
 	}
 
 	public function testGetPageTest_IsUpdate_False() {
 		$url = new Search_Url('http://www.tesnexus.com/');
 		$site = $this->getFactory()
-				->getSiteByURL($url);
+				->getSiteByHost($url->getHost());
 		$this->assertFalse($site->isUpdatePage($url));
 	}
 
 	public function testLogin() {
 		$url = new Search_Url('http://www.tesnexus.com/downloads/file.php?id=15802');
 		$site = $this->getFactory()
-				->getSiteByURL($url)
+				->getSiteByHost($url->getHost())
 				->getPage($url, $this->getClient());
 
 		$mod = $site->mod(0);
@@ -56,7 +56,7 @@ class TesNexusTest extends PageTest {
 		$url = new Search_Url('http://www.tesnexus.com/downloads/file.php?id=15268');
 		$this->setExpectedException('Search_Parser_Exception_InvalidPage');
 		$site = $this->getFactory()
-				->getSiteByURL($url)
+				->getSiteByHost($url->getHost())
 				->getPage($url, $this->getClient());
 
 	}

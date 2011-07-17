@@ -8,7 +8,7 @@ class PesTest extends PageTest {
     public function testLinkStrip() {
         $factory = $this->getFactory();
         $url     = new Search_Url('http://planetelderscrolls.gamespy.com/View.php?view=Mods.Detail&id=4481');
-        $page    = $factory->getSiteByUrl($url)
+        $page    = $factory->getSiteByHost($url->getHost())
                            ->getPage($url, $this->getClient());
 
         $url1 = new Search_Url('http://planetelderscrolls.gamespy.com/View.php?category_show_all=1&persist_search=57384ddaa04c4881ff66ab8312ea6d27&view=Mods.List&Data_page=2');

@@ -82,7 +82,7 @@ class PageTest extends PHPUnit_Framework_TestCase {
             unset ( $modDetail['Url'] );
             
             $page = $this->_factory
-                         ->getSiteByUrl($url)
+                         ->getSiteByHost($url->getHost())
                          ->getPage($url, $this->_client);
 
 
@@ -105,8 +105,8 @@ class PageTest extends PHPUnit_Framework_TestCase {
 
     public function helpTestModPage(Search_Url $url, $numMods, array $details) {
         $p = $this->_factory
-                ->getSiteByURL($url)
-                ->getPage($url, $this->_client);
+                  ->getSiteByHost($url->getHost())
+                  ->getPage($url, $this->_client);
         //$this->assertTrue($p->isValidModPage());
 
         $mods = $p->mods();
@@ -126,7 +126,7 @@ class PageTest extends PHPUnit_Framework_TestCase {
      */
     public function helpPageHasLinks(Search_Url $url, array $links) {
         $p = $this->_factory
-                  ->getSiteByURL($url)
+                  ->getSiteByHost($url->getHost())
                   ->getPage($url, $this->_client);
         foreach ( $links as $link ) {
             foreach ( $p->links() as $linkOnPage ){
@@ -140,7 +140,7 @@ class PageTest extends PHPUnit_Framework_TestCase {
 
     public function helpPageHasAnyLinkOf(Search_Url $url, array $links){
         $p = $this->_factory
-                  ->getSiteByURL($url)
+                  ->getSiteByHost($url->getHost())
                   ->getPage($url, $this->_client);
         foreach ( $links as $l1 ) {
             foreach ($p->links() as $l2) {
@@ -155,7 +155,7 @@ class PageTest extends PHPUnit_Framework_TestCase {
     public function helpModRemovedPage(Search_Url $url){
         $this->setExpectedException('Search_Parser_Exception_ModRemoved');
         $p = $this->_factory
-                  ->getSiteByURL($url)
+                  ->getSiteByHost($url->getHost())
                   ->getPage($url, $this->_client);
     }
 

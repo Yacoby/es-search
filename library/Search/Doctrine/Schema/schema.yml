@@ -146,12 +146,13 @@ ScheduledSource:
 
         #amount of time, in hours, that must have passed before the
         #scraper is run again
-        hours_delta: integer
+        hours_delta:
+            type: integer
+            default: 0
 
-        last_run_time: integer
-
-        url_prefix:
-            type: string
+        last_run_time:
+            type: integer
+            default: 0
 
         #quick way to disable parsing of a site
         enabled:

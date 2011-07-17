@@ -174,7 +174,7 @@ class Search_Updater_Site extends Search_Observable implements Search_Updater_In
         $page->save();
 
         try{
-            $page = $factory->getSiteByURL($url)
+            $page = $factory->getSiteByHost($url->getHost())
                             ->getPage($url);
             /*
              * TODO We are using an exception when it isn't exceptional. Not good

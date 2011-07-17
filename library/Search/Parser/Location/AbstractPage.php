@@ -1,32 +1,27 @@
 <?php
 
-abstract class Search_Parser_Page_Abstract {
-
-    private $_links = array();
-    private $_mods  = array();
-
-    protected $_url, $_html;
-
+/**
+ * Used to represent something that is closer to the way a site would work
+ * with a mod page having links, html associated with it etc
+ */
+abstract class Search_Parser_Location_AbstractPage extends Search_Parser_Location_Abstract{
+    protected $_html;
     public function __construct($url, $html) {
-        $this->_url  = $url;
+        parent::__construct($url);
         $this->_html = $html;
     }
-
-    public function mods() {
-        return $this->_mods;
-    }
+    // ------------------------------------------------------------------------
+    private $_links = array();
     public function links() {
         return $this->_links;
     }
-
     protected function addLink($link) {
         $this->_links[] = $link;
     }
-    protected function addMod($mod) {
-        $this->_mods[] = $mod;
-    }
+    // ------------------------------------------------------------------------
 
     abstract public function isModNotFoundPage($client);
+
     /**
      * This function is used before parsing and logging in to check that the page is
      * at least roughly valid. A basic check should be done to see if the page at least

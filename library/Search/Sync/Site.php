@@ -61,7 +61,7 @@ class Search_Sync_Site {
      * Checks all the sites that exist as files are on the database
      */
     public function ensureSitesCreated() {
-        foreach ( $this->_factory->getHostsByBaseType('site') as $host ) {
+        foreach ( $this->_factory->getNamesByBaseType('site') as $host ) {
             $site   = $this->_factory->getSiteByHost($host);
             $dbSite = $this->_sites->findOneByHost($host);
             if ( $dbSite === false ){
@@ -82,7 +82,7 @@ class Search_Sync_Site {
      * Ensure that for every site there is a mod source
      */
 	public function ensureModSourcesCreated(){
-        foreach ( $this->_factory->getHostsByBaseType() as $host){
+        foreach ( $this->_factory->getNamesByBaseType('site') as $host){
             $site   = $this->_factory->getSiteByHost($host);
 
             //if not created, create Mod Sources for each site
@@ -121,7 +121,7 @@ class Search_Sync_Site {
      * @todo this really shouldn't be here
      */
     public function updateByteLimits() {
-        foreach ( $this->_factory->getHostsByBaseType('site') as $host){
+        foreach ( $this->_factory->getNamesByBaseType('site') as $host){
             $site   = $this->_factory->getSiteByHost($host);
             $dbSite = $this->_sites->findOneByHost($host);
             $dbSite->byte_limit = $site->getLimitBytes();
@@ -142,7 +142,7 @@ class Search_Sync_Site {
      * copies across the initial pages as listed in the site configuration
      */
     public function copyInitalPages() {
-        foreach ( $this->_factory->getHostsByBaseType('site') as $host ) {
+        foreach ( $this->_factory->getNamesByBaseType('site') as $host ) {
             $site   = $this->_factory->getSiteByHost($host);
             $dbSite = $this->_sites->findOneByHost($host);
 

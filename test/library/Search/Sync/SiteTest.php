@@ -28,7 +28,7 @@ INI;
         $this->_factory   = new Search_Parser_Factory();
         $this->_factory->setIni($ini);
         
-        $this->assertEquals(1, count($this->_factory->getHosts()));
+        $this->assertEquals(1, count($this->_factory->getNames()));
         
         $this->_sites     = new Search_Table_ByteLimitedSources();
         $this->_pages     = new Search_Table_Pages();

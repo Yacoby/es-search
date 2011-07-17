@@ -25,8 +25,11 @@
             function sync(){
                 callAjax('SyncData.php');
             }
-            function update(){
+            function updateSites(){
                 callAjax('UpdateSite.php');
+            }
+            function updateScheduled(){
+                callAjax('UpdateScheduled.php');
             }
             $(document).ready(function(){
                 sync();

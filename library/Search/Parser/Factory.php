@@ -1,11 +1,16 @@
 <?php
 /**
- * This is the class that manages the parsers. It will, given a host, provide
- * the parser class for it
+ * This is the class that manages the parsers. It will, given a indentifier
+ * provide the parser class for it
  */
 class Search_Parser_Factory {
-    private $_iniPath, $_iniDir, $_ini, $_sites;
-    private $_hosts = array();
+    private $_iniPath, $_iniDir, $_ini; 
+    
+    private $_parsers;
+    /**
+     * A list of identifiers for the parsers
+     */
+    private $_names = array();
 
     /**
      * This is an array of the base types of sections in the ini sections mapped
@@ -17,8 +22,9 @@ class Search_Parser_Factory {
      * @var array
      */
     private $_types = array(
-        'forum' => 'Search_Parser_Forum',
-        'site'  => 'Search_Parser_Site',
+        'forum'     => 'Search_Parser_Forum',
+        'site'      => 'Search_Parser_Site',
+        'scheduled' => '',
     );
 
     public function  __construct($defaults = null, $ini = null) {
@@ -35,21 +41,22 @@ class Search_Parser_Factory {
 
     public function setIni(Search_Parser_Ini $ini){
         $this->_ini     = $ini;
-        $this->_sites   = new stdClass();
-        foreach ( $this->_ini->sections() as $host => $site ){
-            if ( isset($site->implementation) && $site->implementation == 1 ){
-                $this->_hosts[]        = $host;
-                $this->_sites->{$host} = $site;
+        $this->_parsers = new stdClass();
+        foreach ( $this->_ini->sections() as $name => $parser){
+            if ( isset($parser->implementation) &&
+                 $parser->implementation == 1 ){
+                $this->_names[]          = $name;
+                $this->_parsers->{$name} = $parser;
             }
         }
     }
 
-    public function getHostsByBaseType($type = null){
+    public function getNamesByBaseType($type = null){
         if ( $type && !is_array($type) ){
             $type = array($type);
         }
         $hosts = array();
-        foreach ( $this->getHosts() as $host ){
+        foreach ( $this->getNames() as $host ){
             if ( !$type || in_array($this->findBaseType($host), $type) ){
                 $hosts[] = $host;
             }
@@ -58,41 +65,22 @@ class Search_Parser_Factory {
     }
 
     /**
-     * Gets an array of string hosts
+     * Gets an array of string parser names 
      *
      * @return array
      */
-    public function getHosts(){
-        return $this->_hosts;
+    public function getNames(){
+        return $this->_names;
     }
 
     /**
      * Returns true if a host exists.
      *
-     * @param string $host
+     * @param string $name
      * @return boolean
      */
-    public function hasSite($host) {
-        return isset($this->_sites->{$host});
-    }
-
-    /**
-     * Returns true if there is a parser for the given Url.
-     *
-     * @param Search_Url $url
-     * @return boolean
-     */
-    public function hasSiteByUrl(Search_Url $url) {
-        return $this->hasSite($url->getHost(),$this->_sites);
-    }
-
-    /**
-     *
-     * @param Search_Url $url
-     * @return Search_Parser_Source_Abstract
-     */
-    public function getSiteByUrl(Search_Url $url) {
-        return $this->getSiteByHost($url->getHost());
+    public function hasParser($name) {
+        return isset($this->_parsers->{$name});
     }
 
     /**
@@ -117,13 +105,33 @@ class Search_Parser_Factory {
         return $this->findBaseType($details->parent);
     }
 
+    public function getScheduledByName($name){
+        if ( $this->hasParser($name) ){
+            $details = $this->_parsers->{$name};
+
+            //setup for the parser
+            if ( isset($details->impl->location) ){
+                require_once $this->_iniDir . $details->impl->location;
+            }
+            $parser = new $details->impl->class();
+            if ( isset($details->option) && isset($details->option->source) ){
+                $parser->setOptions((array)$details->option->source);
+            }
+
+            return $parser;
+        }else{
+            throw new Search_Parser_Exception_ClassNotFound("Class doesn't exist");
+        }
+
+    }
+
     /**
      * @param string $host
      * @return Search_Parser_Source_Abstract
      */
     public function getSiteByHost($host){
-        if ( $this->hasSite($host) ){
-            $details = $this->_sites->{$host};
+        if ( $this->hasParser($host) ){
+            $details = $this->_parsers->{$host};
             $site     = null;
             $baseType = $this->findBaseType($host);
 
@@ -158,5 +166,3 @@ class Search_Parser_Factory {
     }
 
 }
-
-?>

@@ -20,6 +20,9 @@ try{
                                          APPLICATION_PATH . '/parsers/parsers.ini');
     $si = new Search_Sync_Site($factory);
     $si->syncAll();
+
+    $si = new Search_Sync_Scheduled($factory);
+    $si->syncAll();
 }catch(Exception $e){
     Search_Logger::err('Unhandled Exception:' . $e->getMessage());
 }
