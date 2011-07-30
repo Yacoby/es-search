@@ -10,7 +10,8 @@
 class HttpRequestObject{
     private $_url;
     private $_client;
-    private $_limits;//@todo needed?
+
+    private $_parent;
 
     /**
      * The request method. It must be either GET or POST
@@ -46,10 +47,10 @@ class HttpRequestObject{
 
     private $_jar;
 
-    public function __construct($client, $jar, $limits, $cache, $cacheTime){
+    public function __construct($parent, $client, $jar, $cache, $cacheTime){
+        $this->_parent        = $parent
         $this->_client        = $client;
         $this->_jar           = $jar;
-        $this->_limits        = $limits;
         $this->_cacheTime     = $cacheTime;
         $this->_cacheInstance = $cache;
     }
@@ -136,7 +137,7 @@ class HttpRequestObject{
 
         //test the cache to see if the page is already there
         if ( $this->_cacheTime > 0 && $this->_cacheEnabled &&
-             $this->_cacheInstance->test($cid) ) {
+            $this->_cacheInstance->test($cid) ) {
             return $this->_cacheInstance->load($cid);
         }else {
             $this->setRequestCookies();
@@ -144,6 +145,9 @@ class HttpRequestObject{
             //get the page
             $this->_client->setUri($this->_url->toString());
             $req = $this->_client->request($this->_method);
+
+            //used for limits if required
+            $this->_parent->event()->onPageRequst($req)
 
             if ( $req->isRedirect() ) {
                 throw new Search_HTTP_Exception_Redirect(
@@ -155,9 +159,6 @@ class HttpRequestObject{
                     "Invalid return status (". $req->getStatus() . ") when requesting {$this->_url}"
                 );
             } 
-
-            //update the bytes used
-            $this->_limits->addRequesedPage($this->_url, strlen($req->getBody()));
 
             $this->updateDbCookies();
 
@@ -221,15 +222,11 @@ class Search_HTTP_Exception_Redirect extends Exception {
  * cookies for a domain are persistant accross all requests, mimicing a real
  * browser better
  */
-class Search_HTTP_Client {
+class Search_HTTP_Client extends Observable{
     /**
      * @var Zend_Http_Client
      */
     private $_client;
-    /**
-     * @var Search_HTTP_Limits
-     */
-    private $_limits;
 
     /**
      *
@@ -253,7 +250,7 @@ class Search_HTTP_Client {
                  . "Gecko/2008121621 Ubuntu/8.04 (hardy) Firefox/3.0.6";
         }else {
             return "ES Search Bot (search.yacoby.net) Contact Yacoby on "
-                 . "Bethesda Forum if usage to high. Please don't block";
+                 . "Bethesda Forum if usage to high or email Search@JacobEssex.com";
         }
     }
 
@@ -263,19 +260,14 @@ class Search_HTTP_Client {
      *      If not null, this is the client that is used. It is used as it is
      *      so the user agent is NOT SET and SHOULD BE SET
      *
-     * @param Search_HTTP_Limits $limits
-     *      If not null, this is the limits class that is used
-     *
      * @param Search_Table_CookieJar $jar
      *      If not null, this is the class that allows access to the cookies
      *
      */
     public function __construct(
             Zend_Http_Client $client             = null,
-            Search_HTTP_Limits $limits           = null,
             Search_HTTP_CookieJar_Interface $jar = null
     ) {
-        $this->_limits    = $limits ? $limits : new Search_HTTP_Limits();
         $this->_jar       = $jar ? $jar : new Search_Table_CookieJar();
         $this->_cacheTime = APPLICATION_ENV == 'testing' ? 24 : 0;
 
@@ -291,7 +283,7 @@ class Search_HTTP_Client {
 
             $this->_client->setConfig(
                 array(
-                    'maxredirects'  => 0,
+                    'maxredirects'  => 1,
                     'timeout'       => 30,
                     'useragent'     => $this->getUserAgent()
                 )
@@ -328,13 +320,13 @@ class Search_HTTP_Client {
         $this->_cacheEnabled = false;
     }
 
-
     public function request(Search_Url $url){
-        $ro = new HttpRequestObject($this->_client,
-                                $this->_jar,
-                                $this->_limits,
-                                $this->getCacheInstance(),
-                                $this->_cacheTime);
+        $ro = new HttpRequestObject($this, 
+                                    $this->_client,
+                                    $this->_jar,
+                                    $this->_limits,
+                                    $this->getCacheInstance(),
+                                    $this->_cacheTime);
         return $ro->url($url);
     }
 

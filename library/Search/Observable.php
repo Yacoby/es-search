@@ -11,9 +11,12 @@ class _ObservableFunctionCaller {
     public function  __construct(array &$observers) {
         $this->_observers = &$observers;
     }
+    
     public function  __call($name,  $arguments) {
         foreach ( $this->_observers as $observer ) {
-            call_user_func_array(array($observer, $name), $arguments);
+            if ( method_exists($observer, $name) ){
+                call_user_func_array(array($observer, $name), $arguments);
+            }
         }
     }
 }
@@ -23,6 +26,29 @@ class _ObservableFunctionCaller {
  */
 class Search_Observable {
     private $_observers = array();
+
+    public function __construct(){
+        $cls = get_class($this);
+        if ( isset(self::$_alwaysAttachObservers[$cls]) ){
+            foreach ( self::$_alwaysAttachObservers[$cls] as $o ){
+                $this->attach($o);
+            }
+        }
+    }
+
+    static private $_alwaysAttachObservers = array();
+    /**
+     * This adds all the given observer to all new objects of this type
+     *
+     * This does NOT add it to objects that have already been created
+     */
+    public static function alwaysAttach(Search_Observer $observer){
+        $cls = get_class($this);
+        if ( !isset(self::$_alwaysAttachObservers[$cls]) ){
+            self::$_alwaysAttachObservers[$cls] = array();
+        }
+        self::$_alwaysAttachObservers[$cls][] = $observer;
+    }
 
     /**
      * Function to pass the called function onto all events
