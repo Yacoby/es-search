@@ -4,7 +4,7 @@
 # Sphinx helper script to simplify running simple commands on the search tools
 #
 # Usage:
-hlp="$0 {start|stop|index} [dev]"
+hlp="$0 {start|stop|index}"
 # The optional dev argument uses the alternative development configuration
 ###############################################################################
 
@@ -20,10 +20,6 @@ then
 fi
 
 CONFIG="config/sphinx.conf"
-if [ "$2" = "dev" ]
-then
-    CONFIG="config/sphinxdev.conf"
-fi
 
 case "$1" in
         start)
