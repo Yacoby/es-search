@@ -31,7 +31,6 @@ class Search_HTTP_ClientTest extends PHPUnit_Framework_TestCase {
 
         $client = new Search_HTTP_Client(
                 $this->_rawClient,
-                $this->_limits,
                 $this->_jar
         );
 
@@ -55,7 +54,6 @@ class Search_HTTP_ClientTest extends PHPUnit_Framework_TestCase {
 
         $client = new Search_HTTP_Client(
                 null,
-                $this->_limits,
                 $this->_jar
         );
 

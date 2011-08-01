@@ -48,7 +48,7 @@ class HttpRequestObject{
     private $_jar;
 
     public function __construct($parent, $client, $jar, $cache, $cacheTime){
-        $this->_parent        = $parent
+        $this->_parent        = $parent;
         $this->_client        = $client;
         $this->_jar           = $jar;
         $this->_cacheTime     = $cacheTime;
@@ -147,7 +147,7 @@ class HttpRequestObject{
             $req = $this->_client->request($this->_method);
 
             //used for limits if required
-            $this->_parent->event()->onPageRequst($req)
+            $this->_parent->event()->onPageRequst($req);
 
             if ( $req->isRedirect() ) {
                 throw new Search_HTTP_Exception_Redirect(
@@ -222,7 +222,7 @@ class Search_HTTP_Exception_Redirect extends Exception {
  * cookies for a domain are persistant accross all requests, mimicing a real
  * browser better
  */
-class Search_HTTP_Client extends Observable{
+class Search_HTTP_Client extends Search_Observable{
     /**
      * @var Zend_Http_Client
      */
@@ -292,6 +292,10 @@ class Search_HTTP_Client extends Observable{
 
     }
 
+    public function event(){
+        return parent::event();
+    }
+
     /**
      * @return Zend_Cache_Core
      */
@@ -324,23 +328,8 @@ class Search_HTTP_Client extends Observable{
         $ro = new HttpRequestObject($this, 
                                     $this->_client,
                                     $this->_jar,
-                                    $this->_limits,
                                     $this->getCacheInstance(),
                                     $this->_cacheTime);
         return $ro->url($url);
     }
-
-
-    /**
-     * Checks if it is possible to get a url without exceeding the limits even more
-     * It is simply a check based on the host in the url.
-     *
-     * @param Search_Url $url
-     * @return bool
-     */
-    public function canGetWebpage(Search_Url $url) {
-        assert($this->_limits->hasLimits($url));
-        return $this->_limits->canGetPage($url);
-    }
-
 }

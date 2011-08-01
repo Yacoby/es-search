@@ -39,7 +39,6 @@ class PageTest extends PHPUnit_Framework_TestCase {
                 ->method('canGetPage')
                 ->will($this->returnValue(true));
         $this->_client = new Search_HTTP_Client(null,
-                                                $limits,
                                                 Search_HTTP_CookieJar_Memory::getInstance());
 
         $this->_host = $host;
@@ -160,5 +159,3 @@ class PageTest extends PHPUnit_Framework_TestCase {
     }
 
 }
-
-?>
