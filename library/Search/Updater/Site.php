@@ -65,6 +65,9 @@ class Search_Updater_Site extends Search_Observable implements Search_Updater_In
         $this->_factory = $fac;
         $this->_sites   = $ws    ? $ws    : new Search_Table_ByteLimitedSources();
         $this->_pages   = $pages ? $pages : new Search_Table_Pages();
+
+        //always incrase the limits
+        Search_HTTP_Client::alwaysAttach(new Search_Observer_Limits());
     }
 
     public function update(){

@@ -147,7 +147,7 @@ class HttpRequestObject{
             $req = $this->_client->request($this->_method);
 
             //used for limits if required
-            $this->_parent->event()->onPageRequst($req);
+            $this->_parent->event()->onRequstDownloaded($this->_url, $req);
 
             if ( $req->isRedirect() ) {
                 throw new Search_HTTP_Exception_Redirect(
@@ -268,6 +268,8 @@ class Search_HTTP_Client extends Search_Observable{
             Zend_Http_Client $client             = null,
             Search_HTTP_CookieJar_Interface $jar = null
     ) {
+        parent::__construct();
+
         $this->_jar       = $jar ? $jar : new Search_Table_CookieJar();
         $this->_cacheTime = APPLICATION_ENV == 'testing' ? 24 : 0;
 

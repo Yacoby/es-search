@@ -36,14 +36,20 @@ class Search_Observable {
         }
     }
 
-    static private $_alwaysAttachObservers = array();
     /**
-     * This adds all the given observer to all new objects of this type
+     * Dictionay of classes with observers that should be automatically
+     * added
+     */
+    static private $_alwaysAttachObservers = array();
+
+    /**
+     * This adds all the given observer to all new objects of this type when
+     * constructed
      *
      * This does NOT add it to objects that have already been created
      */
     public static function alwaysAttach(Search_Observer $observer){
-        $cls = get_class($this);
+        $cls = get_called_class();
         if ( !isset(self::$_alwaysAttachObservers[$cls]) ){
             self::$_alwaysAttachObservers[$cls] = array();
         }
