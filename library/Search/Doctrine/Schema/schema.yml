@@ -2,6 +2,18 @@ options:
     type: InnoDB
     collate: utf8_general_ci
     charset: utf8
+# ##############################################################################
+# This is used for indexing in Sphinx, it keeps track of which items exist
+# in which index
+SphinxCounter:
+    columns:
+        counter_id:
+            type: integer
+            primary: true
+            notnull: true
+        max_doc_id:
+            type: integer
+            notnull: true
 
 # ##############################################################################
 # Cookie jar simply stores a serialized (php) array of cookies

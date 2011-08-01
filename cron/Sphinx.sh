@@ -4,7 +4,7 @@
 # Sphinx helper script to simplify running simple commands on the search tools
 #
 # Usage:
-hlp="$0 {start|stop|index}"
+hlp="$0 {start|stop|index|indexdelta|merge}"
 # The optional dev argument uses the alternative development configuration
 ###############################################################################
 
@@ -26,6 +26,18 @@ case "$1" in
             sphinx-searchd --config "$CONFIG";;
         stop)
             sphinx-searchd --stop --config "$CONFIG";;
+
+        #fairly cheap, doesn't deal with deleted mods
+        indexdelta)
+            sphinx-indexer --rotate --config "$CONFIG" mods_delta;;
+
+        #less cheap, merges the main and delta indexes, slightly less expensive
+        #than rebuilding everything, but still doesn't take into account deleted
+        #mods
+        merge)
+            sphinx-indexer --merge --rotate --config "$CONFIG" mods mods_delta;;
+
+        #reindex everyting
         index)
             sphinx-indexer --rotate --config "$CONFIG" mods;;
         *)
