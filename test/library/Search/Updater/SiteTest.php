@@ -23,7 +23,7 @@ class Search_Updater_SiteTest extends PHPUnit_Framework_TestCase {
     
 [yacoby.silgrad.com:site]
     implementation                = true
-    option:source:initialPages[]  = "/MW/Mods/index.html"
+    option:source:initialPages[]  = "/MW/Mods/"
     option:source:modUrlPrefix    = '/MW/Mods/'
 
     option:source:updateFrequency = 1
