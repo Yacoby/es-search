@@ -1,39 +1,23 @@
 <h3>About</h3>
 
 <p>
-    Version 1 grew from a small PHP script using a MySQL database and became
-    progressively larger until it became impossible to maintain.
-    Due to the fact that I couldn't search for words under 4 letters in length
-    using MySQLs full text search (the host didn't allow it), I
-    wrote a small and simple search filter to weight results. As you can imagine
-    it was failry inefficiant and so kept running into issues with the amount of
-    load it was putting on the server. (So my account kept getting shutdown).
+    ES Search is a project that grew out of a small PHP script. It has undergone
+    successive re-writes until it is what it is today.
 </p>
 
 <p>
-    Version 2 was a total rewrite, designed from scratch to be faster.
-    It still used PHP and MySQL but for the searching it used a PHP port of
-    <a href="http://en.wikipedia.org/wiki/Lucene" target="_blank">Lucene</a>
-    found in the 
-    <a href="http://framework.zend.com/" target="_blank">Zend Framework</a> to
-    allow me to overcome the issue of the 4 letter minimum on search terms in MySQL<br />
-    For the most part pages are parsed using the
-    <a href="http://simplehtmldom.sourceforge.net/" target="_blank">Simple HTML DOM</a> library.
-    There is one specific case where the 1mb of HTML caused the script to run out
-    of memory so regex was used.
-</p>
-
-<p>
-    Version 2.5 is the result of a code review of version 2, along with various
-    bug fixes. The most major one changing the relationship of Mods to URLs from
-    'many to many' to 'one to many', as the many to many relationship didn't cope
-    with mods names being changed. Also in the works is improved error checking as
-    well as improvements to the general design to make it more robust.
+    It is for legacy reasons written in PHP, but searching is now done using
+    Sphinx as the full text search engine. The code uses the 
+    <a href="http://framework.zend.com/" target="_blank">Zend Framework</a> and
+    (again for legacy reasons) the 
+    <a href="http://simplehtmldom.sourceforge.net/" target="_blank">Simple HTML DOM</a> library
+    for parsing. A move to xpath is now being made give how resource hungry building
+    a dom is in PHP.
 </p>
 
 <p>
     The most recent version (most of the time slightly newer than the online
     versions) is
-    <a href="https://github.com/Yacoby/es-search" target="_blank">hosted at Google
-        Code</a> under the AGPL3 licence. 
+    <a href="https://github.com/Yacoby/es-search" target="_blank">hosted at
+        Github</a> under the AGPL3 licence. 
 </p>
