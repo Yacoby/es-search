@@ -7,7 +7,7 @@
  *
  * Used for byte limited sources
  */
-class Search_Observer_Limits implements Search_Observer{
+class Search_Observer_Limits{
     private $_counter;
 
     function __construct(Search_Table_ByteLimitedSources $b = null) {
