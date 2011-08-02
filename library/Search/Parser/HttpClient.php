@@ -43,6 +43,8 @@ class HttpRequestObject{
      */
     private $_validObject = true;
 
+    private $_ignoreBadStatus = false;
+
     private $_cacheInstance;
 
     private $_jar;
@@ -122,6 +124,15 @@ class HttpRequestObject{
         return $this;
     }
 
+    /**
+     * By default an exception is thrown if a non 200 return status
+     * is returned. This disables that
+     */
+    public function ignoreInvalidHttpStatus($bool = true){
+        $this->_ignoreBadStatus = $bool;
+        return $this;
+    }
+
     /*
      * Processes the request and returns the response
      *
@@ -154,7 +165,7 @@ class HttpRequestObject{
                     $req->getHeader('Location'),
                     "Redirects not supported, but were encountered when retriving $this->_url"
                 );
-            }else if ( !$req->isSuccessful() ) {
+            }else if ( !$req->isSuccessful() and !$this->_ignoreBadStatus ) {
                 throw new HTTPException(
                     "Invalid return status (". $req->getStatus() . ") when requesting {$this->_url}"
                 );
