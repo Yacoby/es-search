@@ -3,7 +3,7 @@
 /**
  * This class is responsible for haneling the request for a page
  *
- * It shoudln't be constructed, except through the Search_HTTP_Client class
+ * It shoudln't be constructed, except through the Search_Parser_HttpClient class
  *
  * It is single use. It cannot be used for multiple requests.
  */
@@ -204,6 +204,7 @@ class Search_HTTP_Exception_Redirect extends Exception {
         parent::__construct($message, $code, $previous);
         $this->_to = $to;
     }
+
     public function to(){
         return $this->_to;
     }
@@ -222,7 +223,7 @@ class Search_HTTP_Exception_Redirect extends Exception {
  * cookies for a domain are persistant accross all requests, mimicing a real
  * browser better
  */
-class Search_HTTP_Client extends Search_Observable{
+class Search_Parser_HttpClient extends Search_Observable{
     /**
      * @var Zend_Http_Client
      */

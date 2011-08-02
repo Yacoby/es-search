@@ -129,9 +129,9 @@ class Search_Parser_Site extends Search_Parser_Source_AbstractSite {
 
     /**
      * Called before the webpage is requested
-     * @param Search_HTTP_Client $ig
+     * @param Search_Parser_HttpClient $ig
      */
-    public function login(Search_HTTP_Client $ig) {
+    public function login(Search_Parser_HttpClient $ig) {
     }
 
 

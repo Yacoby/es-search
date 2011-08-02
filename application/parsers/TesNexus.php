@@ -5,11 +5,11 @@
 final class TesNexus extends Search_Parser_Site {
 
     /**
-     * Gets an page, but if it is an update page doesn't get a Search_Parser_Dom
+     * Gets an page, but if it is an update page doesn't get a Search_Parser_SimpleHtmlDom
      * object but ensures the pageclass uses regex to parse the page
      *
      * @param Search_Url $url
-     * @return string|Search_Parser_Dom
+     * @return string|Search_Parser_SimpleHtmlDom
      */
     public function getPage(Search_Url $url, $client = null) {
         if ( !$this->isUpdatePage($url) ) {
@@ -19,8 +19,7 @@ final class TesNexus extends Search_Parser_Site {
                 return parent::getPage($url, $client);
             }catch(Search_HTTP_Exception_Redirect $e){
                 if ( $e->to() == '/adult.php' ){
-                    
-                    $client = $client ? $client : new Search_HTTP_Client();
+                    $client = $client ? $client : new Search_Parser_HttpClient();
                     $this->login($client);
                     return parent::getPage($url, $client);
                 }
@@ -31,7 +30,7 @@ final class TesNexus extends Search_Parser_Site {
         $cls = $this->getOption('pageClass');
         assert(class_exists($cls));
 
-        $i      = $client ? $client : new Search_HTTP_Client();
+        $i      = $client ? $client : new Search_Parser_HttpClient();
         $result = $i->request($url)
                     ->method('GET')
                     ->exec();
@@ -50,7 +49,7 @@ final class TesNexus extends Search_Parser_Site {
         return $p->isValidModPage();
     }
 
-    public function login(Search_HTTP_Client $ig) {
+    public function login(Search_Parser_HttpClient $ig) {
         //get the cookies for the login page
         $ig->request(new Search_Url('http://www.tesnexus.com/modules/login/index.php?redirect=/'))
                 ->method('GET')
@@ -105,7 +104,7 @@ final class TesNexusPage extends Search_Parser_Site_Page {
     }
 
     public function __construct($url, $html) {
-        if ( $html === null || $html instanceof Search_Parser_Dom ) {
+        if ( $html === null || $html instanceof Search_Parser_SimpleHtmlDom ) {
             parent::__construct($url, $html);
         }else {
             $this->_url = $url;

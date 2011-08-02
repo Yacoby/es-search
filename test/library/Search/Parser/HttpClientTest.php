@@ -1,8 +1,8 @@
 <?php 
 
-class Search_HTTP_ClientTest extends PHPUnit_Framework_TestCase {
+class Search_Parser_HttpClientTest extends PHPUnit_Framework_TestCase {
     /**
-     * @var    Search_HTTP_Client
+     * @var    Search_Parser_HttpClient
      */
     protected $_client;
     protected $_rawClient, $_jar;
@@ -22,7 +22,7 @@ class Search_HTTP_ClientTest extends PHPUnit_Framework_TestCase {
                 ->will($this->returnValue(array()));
 
 
-        $client = new Search_HTTP_Client(
+        $client = new Search_Parser_HttpClient(
                 null,
                 $this->_jar
         );

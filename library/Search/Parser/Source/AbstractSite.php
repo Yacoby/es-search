@@ -2,24 +2,24 @@
 
 class Search_Parser_Source_AbstractSite extends Search_Parser_Source_Abstract{
     
-    protected function getHtml(Search_HTTP_Client $i,
+    protected function getHtml(Search_Parser_HttpClient $i,
                                Search_Url $url,
                                $cache = true) {
         $result = $i->request($url)
-                ->method('GET')
-                ->cacheOutput($cache)
-                ->exec();
+                    ->method('GET')
+                    ->cacheOutput($cache)
+                    ->exec();
         if ( $result->getStatus() != 200 ) {
             throw new Exception("Site status must be 200 and wasn't when requesting {$url}");
         }
-        return new Search_Parser_Dom($result->getBody());
+        return new Search_Parser_SimpleHtmlDom($result->getBody());
     }
 
     public function getPage(Search_Url $url, $client = null) {
         $cls = $this->getPageClass();
         assert(class_exists($cls));
 
-        $i = $client ? $client : new Search_HTTP_Client();
+        $i = $client ? $client : new Search_Parser_HttpClient();
 
         $dom = $this->getHtml($i, $url);
         $obj = new $cls($url, $dom);

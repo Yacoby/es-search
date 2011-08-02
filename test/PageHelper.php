@@ -31,14 +31,7 @@ class PageTest extends PHPUnit_Framework_TestCase {
         $this->_factory = new Search_Parser_Factory(APPLICATION_PATH . '/parsers/defaults.ini',
                                                     APPLICATION_PATH . '/parsers/parsers.ini');
 
-        $limits = $this->getMock('Search_HTTP_Limits', array(), array(), '', false);
-        $limits->expects($this->any())
-                ->method('hasLimits')
-                ->will($this->returnValue(true));
-        $limits->expects($this->any())
-                ->method('canGetPage')
-                ->will($this->returnValue(true));
-        $this->_client = new Search_HTTP_Client(null,
+        $this->_client = new Search_Parser_HttpClient(null,
                                                 Search_HTTP_CookieJar_Memory::getInstance());
 
         $this->_host = $host;

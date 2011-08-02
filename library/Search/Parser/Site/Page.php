@@ -16,14 +16,14 @@ class Search_Parser_Site_Page extends Search_Parser_Location_AbstractPage{
      */
     protected $_url;
     /**
-     * @var Search_Parser_Dom
+     * @var Search_Parser_SimpleHtmlDom
      */
     protected $_html = null;
 
     protected $_isLoggedIn = false;
 
     /**
-     * The Search_Parser_Dom object passsed to this object becomes owned by this
+     * The Search_Parser_SimpleHtmlDom object passsed to this object becomes owned by this
      * object and shouldn't be used after it has been passesed. This is
      * due the fact that the PHP gc works by refrence counting.
      *
@@ -31,7 +31,7 @@ class Search_Parser_Site_Page extends Search_Parser_Location_AbstractPage{
      * means it is impossible to check if we need to login
      *
      * @param Search_Url|null $url
-     * @param Search_Parser_Dom|null $html
+     * @param Search_Parser_SimpleHtmlDom|null $html
      */
     public function __construct($url, $html) {
         parent::__construct($url, $html);
