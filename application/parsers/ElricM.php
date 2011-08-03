@@ -2,6 +2,13 @@
 
 final class ElricMPage extends Search_Parser_Site_Page {
 
+    private $_html;
+    public function __construct($response){
+        parent::__construct($response);
+        $this->_html = $response->simpleHtmlDom();
+    }
+
+
     protected function doIsValidModPage($url) {
         $re = 'http://www\.elricm\.com/nuke/html/modules\.php'
             . '\?op=modload&name=Downloads&file=index&req=viewsdownload&sid=\d+'

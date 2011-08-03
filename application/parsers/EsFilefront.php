@@ -1,6 +1,13 @@
 <?php
 
 class EsFilefrontPage extends Search_Parser_Site_Page {
+
+    private $_html;
+    public function __construct($response){
+        parent::__construct($response);
+        $this->_html = $response->simpleHtmlDom();
+    }
+
     protected function doIsValidModPage($url) {
         return (preg_match("%http://elderscrolls\\.filefront\\.com/file/.*;\\d+$%", $url->toString()) == 1 );
     }

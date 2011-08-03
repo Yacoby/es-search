@@ -1,6 +1,13 @@
 <?php
 
 final class YacobyPage extends Search_Parser_Site_Page {
+
+    private $_html;
+    public function __construct($response){
+        parent::__construct($response);
+        $this->_html = $response->simpleHtmlDom();
+    }
+
 	/**
 	 * Gets data for checking which pages are valid
 	 */

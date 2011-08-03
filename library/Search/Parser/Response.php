@@ -7,38 +7,50 @@
  *
  * This class shouldn't be initated by anything outside this file
  */
-class Dom{
+class DomElem{
     private $_dom;
-    private $_xpath;
 
-    public function __construct($html = null){
-        if ( $html ){
-            $this->loadHtml($html);
-        }
+    public function fromDom($dom){
+        $this->_dom = $dom;
     }
 
-    public function loadHtml($html){
-        $this->_dom = new DOMDocument();
-        $this->_dom->loadHTMLFile($html);
+    public function fromHtml($html){
+        //this stops warnings being spewed everwhere on malformed html
+        libxml_use_internal_errors(true);
 
-        $this->_xpath = new DOMXpath($this->_dom);
+        $this->_dom = new DOMDocument();
+        $this->_dom->loadHTML($html);
+
+    }
+
+    
+    public function __toString(){
+        return (string)$this->_dom->value;
     }
 
     public function xpath($query){
-        $elems = $this->_xpath->query($query)
-        if ( $elms === false ){
-            return false;
+        $xp = new DOMXpath($this->_dom);
+        $elems = $xp->query($query);
+        
+        if ( $elems === false ){
+            return array();
         }
-        return $elems;
+        $domList = array();
+        foreach ( $elems as $elem){
+            $d = new DomElem();
+            $d->fromDom($elem);
+            $domList[] = $d;
+        }
+        return $domList;
     }
 
     /**
      * Gets the first result of an xpath expression or false if there
      * isn't any
      */
-    public function xpathFirst($query){
+    public function xpathOne($query){
         $elms = $this->xpath($query);
-        if ( $elms === false ){
+        if ( !count($elms) ){
             return false;
         }
         return $elms[0];
@@ -48,21 +60,48 @@ class Dom{
 
 class Search_Parser_Response{
     private $_rawResponse;
+    private $_reqUrl;
 
-    public function __construct($rawResponse){
-        $this->_rawResponse = $rawResponse;
+    public function __construct($reqUrl = null, $rawResponse = null){
+        $this->_reqUrl = $reqUrl;
+        if ( $rawResponse ){
+            $this->_rawResponse = $rawResponse;
+        }else{
+            $this->_rawResponse = new Zend_Http_Response(200, array());
+        }
+    }
+
+    /**
+     * This returns the url that the page is on. As redirects may happen
+     * it returns the actual url that the client ended up on
+     */
+    public function url(){
+        $location = $this->_rawResponse->getHeader('Location');
+        if ( $location ){
+            return $location;
+        }
+        return $this->_reqUrl;
+    }
+
+    public function httpStatus(){
+        return $this->_rawResponse->getStatus();
     }
 
     /**
      * Included for compatibility. Use html() and xpath functions
      */
     public function simpleHtmlDom(){
-        return new Search_Parser_SimpleHtmlDom($this->_rawResponse->getBody());
+        if ( $this->_rawResponse->getBody() ){
+            return new Search_Parser_SimpleHtmlDom($this->_rawResponse->getBody());
+        }
+        return new Search_Parser_SimpleHtmlDom('<html></html>');
     }
 
-
     public function html(){
-        return new Dom($this->_rawResponse->getBody());
+        $tidy = tidy_repair_string($this->_rawResponse->getBody());
+        $de = new DomElem();
+        $de->fromHtml($tidy);
+        return $de;
     }
 
     public function text(){

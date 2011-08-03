@@ -5,11 +5,13 @@
  * with a mod page having links, html associated with it etc
  */
 abstract class Search_Parser_Location_AbstractPage extends Search_Parser_Location_Abstract{
-    protected $_html;
-    public function __construct($url, $html) {
-        parent::__construct($url);
-        $this->_html = $html;
+    public function __construct($response) {
+        //TODO hack for testing. Not good
+        if ( $response ){
+            parent::__construct($response->url());
+        }
     }
+
     // ------------------------------------------------------------------------
     private $_links = array();
     public function links() {

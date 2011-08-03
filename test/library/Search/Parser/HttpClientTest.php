@@ -28,9 +28,9 @@ class Search_Parser_HttpClientTest extends PHPUnit_Framework_TestCase {
         );
 
         $result = $client->request($url)->withCache(false)->exec();
-        $this->assertEquals(200, $result->getStatus());
+        $this->assertEquals(200, $result->httpStatus());
 
-        $index = stripos($result->getBody(), "BBC");
+        $index = stripos($result->text(), "BBC");
         $this->assertTrue($index!==false);
     }
 

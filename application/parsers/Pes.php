@@ -1,6 +1,12 @@
 <?php
 
 final class PlanetElderScrollsPage extends Search_Parser_Site_Page {
+
+    private $_html;
+    public function __construct($response){
+        parent::__construct($response);
+        $this->_html = $response->simpleHtmlDom();
+    }
     
     private $_urlSections = '(Oblivion(Mods|Utilities)|Mods|Utilities)';
 

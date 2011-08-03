@@ -11,48 +11,24 @@
  */
 class Search_Parser_Site_Page extends Search_Parser_Location_AbstractPage{
 
-    /**
-     * @var Search_Url
-     */
-    protected $_url;
-    /**
-     * @var Search_Parser_SimpleHtmlDom
-     */
-    protected $_html = null;
+    protected $_isLoggedIn = true;
 
-    protected $_isLoggedIn = false;
+    private $_response; 
+    protected function getResponse(){
+        return $this->_response;
+    }
 
-    /**
-     * The Search_Parser_SimpleHtmlDom object passsed to this object becomes owned by this
-     * object and shouldn't be used after it has been passesed. This is
-     * due the fact that the PHP gc works by refrence counting.
-     *
-     * The page is not parsed in this function as if it fails it throws, which
-     * means it is impossible to check if we need to login
-     *
-     * @param Search_Url|null $url
-     * @param Search_Parser_SimpleHtmlDom|null $html
-     */
-    public function __construct($url, $html) {
-        parent::__construct($url, $html);
-
-        $this->_isLoggedIn = $html !== null ? $this->getLoginStateFromHTML() : true;
+    public function __construct($response) {
+        parent::__construct($response);
+        $this->_response = $response;
+        $this->_isLoggedIn = $this->getLoginStateFromHTML();
     }
 
     /**
-     * Clears the dom objects, this means that the dom object doesn't exist after
-     * this., even if it refrenced elsewhere
-     *
-     * PHP sucks, as its garbage collector is refrence based it doesn't clear html
-     * dom objects. This is basically something I shouldn't have to do
+     * Called before the webpage is requested
+     * @param Search_Parser_HttpClient $ig
      */
-    public function  __destruct() {
-        if ( $this->_html ) {
-            $this->_html->clear();
-            unset($this->_html);
-        }
-    }
-
+    public function login(Search_Parser_HttpClient $ig){ }
 
     /**
      * Returns a mod at a set index
@@ -96,10 +72,6 @@ class Search_Parser_Site_Page extends Search_Parser_Location_AbstractPage{
      * @return bool sucsess
      */
     public function parsePage($client) {
-        if ( !$this->_html ) {
-            return false;
-        }
-
         if ( $this->isValidModPage() ) {
             try {
                 //try parsing
@@ -135,8 +107,9 @@ class Search_Parser_Site_Page extends Search_Parser_Location_AbstractPage{
      * Gets all links in _html and adds them (if they are valid) to _links
      */
     protected function getPageLinks() {
-        foreach( $this->_html->find('a') as $a ) {
-            $url = new Search_Url(html_entity_decode($a->href), $this->_url);
+        $links = $this->getResponse()->html()->xpath('//a/@href');
+        foreach( $links as $href ) {
+            $url = new Search_Url(html_entity_decode((string)$href), $this->_url);
             $url = $this->preAddLink($url);
 
             if ( !$url->isValid() || $url->toString() == $this->_url->toString() ) {

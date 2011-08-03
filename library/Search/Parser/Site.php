@@ -7,7 +7,48 @@
  *
  * All sites implmenetations should go in the library/Search/Site directory
  */
-class Search_Parser_Site extends Search_Parser_Source_AbstractSite {
+class Search_Parser_Site extends Search_Parser_Source_Abstract {
+
+    public function getPage(Search_Url $url, $client = null) {
+        $cls = $this->getPageClass();
+        assert(class_exists($cls));
+
+        $i = $client ? $client : new Search_Parser_HttpClient();
+
+        $response = $i->request($url)
+                      ->method('GET')
+                      ->exec();
+
+        $obj = new $cls($response);
+
+        if ( $obj->isModNotFoundPage($client) ) {
+            throw new Search_Parser_Exception_ModRemoved('The mod was not found');
+        }else if ( !$obj->isValidPageBody($obj) ) {
+            throw new Search_Parser_Exception_InvalidPage(
+            "The mod page at {$url} was found to be invalid"
+            );
+        }
+
+        if ( $this->hasOption('loginRequired') &&
+             $this->getOption('loginRequired') &&
+             !$obj->isLoggedIn()
+        ) {
+            $this->login($i);
+            $response = $i->request($url)
+                          ->method('GET')
+                          ->useCache(false)
+                          ->exec();
+            $obj = new $cls($response);
+
+            if ( !$obj->isLoggedIn() ) {
+                throw new Search_Parser_Exception_Login(
+                "Failed to log in when requesting {$url}"
+                );
+            }
+        }
+        $obj->parsePage($i);
+        return $obj;
+    }
 
 
     public function getLimitBytes() {
@@ -116,23 +157,6 @@ class Search_Parser_Site extends Search_Parser_Source_AbstractSite {
         return $this->getOption('loginRequired');
     }
 
-    /**
-     * If this returns true, then login is called and the current page is re
-     * downloaded
-     *
-     * @param Search_Parser_Page $p
-     * @return bool
-     */
-    public function isLoggedIn(Search_Parser_Page $p) {
-        return $p->isLoggedIn();
-    }
-
-    /**
-     * Called before the webpage is requested
-     * @param Search_Parser_HttpClient $ig
-     */
-    public function login(Search_Parser_HttpClient $ig) {
-    }
 
 
 }

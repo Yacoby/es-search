@@ -148,26 +148,25 @@ class HttpRequestObject{
 
         //test the cache to see if the page is already there
         if ( $this->_cacheTime > 0 && $this->_cacheEnabled &&
-            $this->_cacheInstance->test($cid) ) {
+             $this->_cacheInstance->test($cid) ) {
             return $this->_cacheInstance->load($cid);
         }else {
             $this->setRequestCookies();
 
             //get the page
             $this->_client->setUri($this->_url->toString());
-            $req = $this->_client->request($this->_method);
+
+            $rawResponse = $this->_client->request($this->_method);
+            $response = new Search_Parser_Response($this->_url, $rawResponse);
 
             //used for limits if required
-            $this->_parent->event()->onRequstDownloaded($this->_url, $req);
+            $this->_parent->event()->onRequstDownloaded($response);
 
-            if ( $req->isRedirect() ) {
-                throw new Search_HTTP_Exception_Redirect(
-                    $req->getHeader('Location'),
-                    "Redirects not supported, but were encountered when retriving $this->_url"
-                );
-            }else if ( !$req->isSuccessful() and !$this->_ignoreBadStatus ) {
+
+            if ( !in_array($response->httpStatus(), array(200, 302))
+                  && !$this->_ignoreBadStatus ) {
                 throw new HTTPException(
-                    "Invalid return status (". $req->getStatus() . ") when requesting {$this->_url}"
+                    "Invalid return status (". $rawResponse->getStatus() . ") when requesting {$this->_url}"
                 );
             } 
 
@@ -175,12 +174,12 @@ class HttpRequestObject{
 
             //save the page for future use
             if ( $this->_cacheSaveEnabled && $this->_cacheEnabled ) {
-                $this->_cacheInstance->save($req, $cid);
+                $this->_cacheInstance->save($response, $cid);
                 //TODO WHY SOMETIMES FAIL?
                 //assert($this->_cacheInstance->test($cid));
             }
 
-            return $req;
+            return $response;
         }
     }
 
@@ -209,17 +208,6 @@ class HttpRequestObject{
     }
 }
 class HTTPException extends Exception {}
-class Search_HTTP_Exception_Redirect extends Exception {
-    private $_to;
-    public function  __construct($to, $message = "", $code = 0 , $previous = NULL) {
-        parent::__construct($message, $code, $previous);
-        $this->_to = $to;
-    }
-
-    public function to(){
-        return $this->_to;
-    }
-}
 
 /**
  * This class should be used for accessing webpages so features such as caching
@@ -228,7 +216,7 @@ class Search_HTTP_Exception_Redirect extends Exception {
  * The class is a Facade pattern based wrapper arround the zend http client class,
  * also including the limits class, caching and automatic setting of the user agent.
  *
- * This has a 24 hour page cache time when testing
+ * This has a 1 hour page cache time when testing
  *
  * This class is also now a wrapper arround the Search_Table_CookieJar so that
  * cookies for a domain are persistant accross all requests, mimicing a real
@@ -283,7 +271,7 @@ class Search_Parser_HttpClient extends Search_Observable{
         parent::__construct();
 
         $this->_jar       = $jar ? $jar : new Search_Table_CookieJar();
-        $this->_cacheTime = APPLICATION_ENV == 'testing' ? 24 : 0;
+        $this->_cacheTime = APPLICATION_ENV == 'testing' ? 0 : 0;
 
         /*
          The client can't be set quite as simply as the above as some
@@ -297,7 +285,7 @@ class Search_Parser_HttpClient extends Search_Observable{
 
             $this->_client->setConfig(
                 array(
-                    'maxredirects'  => 1,
+                    'maxredirects'  => 10,
                     'timeout'       => 30,
                     'useragent'     => $this->getUserAgent()
                 )
@@ -306,6 +294,10 @@ class Search_Parser_HttpClient extends Search_Observable{
 
     }
 
+    /**
+     * Allows the request class to push events to listeners attached
+     * to this class
+     */
     public function event(){
         return parent::event();
     }

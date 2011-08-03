@@ -1,52 +1,18 @@
-<?php
-
+<?php 
 /**
+ * Parses the update page using regex as SimpleHTML uses up far to much memory
+ * doing it.
  */
-final class TesNexus extends Search_Parser_Site {
+final class TesNexusPage extends Search_Parser_Site_Page {
 
-    /**
-     * Gets an page, but if it is an update page doesn't get a Search_Parser_SimpleHtmlDom
-     * object but ensures the pageclass uses regex to parse the page
-     *
-     * @param Search_Url $url
-     * @return string|Search_Parser_SimpleHtmlDom
-     */
-    public function getPage(Search_Url $url, $client = null) {
-        if ( !$this->isUpdatePage($url) ) {
-            //if not logged in then the page will be redirected to /adult
-            //this simply logs in and tries again
-            try{
-                return parent::getPage($url, $client);
-            }catch(Search_HTTP_Exception_Redirect $e){
-                if ( $e->to() == '/adult.php' ){
-                    $client = $client ? $client : new Search_Parser_HttpClient();
-                    $this->login($client);
-                    return parent::getPage($url, $client);
-                }
-                throw $e;
-            }
-        }
-
-        $cls = $this->getOption('pageClass');
-        assert(class_exists($cls));
-
-        $i      = $client ? $client : new Search_Parser_HttpClient();
-        $result = $i->request($url)
-                    ->method('GET')
-                    ->exec();
-
-        if ( $result->getStatus() != 200 ) {
-            throw new Exception("Site status must be 200");
-        }
-
-        $body = $result->getBody();
-        $obj = new $cls($url, $body);
-
-        return $obj;
+    private $_html;
+    public function __construct($response) {
+        $this->_html = $response->simpleHtmlDom();
+        parent::__construct($response);
     }
 
-    protected function needsLogin(Search_Parser_Page $p) {
-        return $p->isValidModPage();
+    protected function needsLogin() {
+        return $this->isValidModPage();
     }
 
     public function login(Search_Parser_HttpClient $ig) {
@@ -84,14 +50,6 @@ final class TesNexus extends Search_Parser_Site {
         return false;
     }
 
-}
-
-/**
- * Parses the update page using regex as SimpleHTML uses up far to much memory
- * doing it.
- */
-final class TesNexusPage extends Search_Parser_Site_Page {
-
     protected function getLoginStateFromHTML() {
         $links = $this->_html->find('#menu li a span');
 
@@ -103,14 +61,6 @@ final class TesNexusPage extends Search_Parser_Site_Page {
         return false;
     }
 
-    public function __construct($url, $html) {
-        if ( $html === null || $html instanceof Search_Parser_SimpleHtmlDom ) {
-            parent::__construct($url, $html);
-        }else {
-            $this->_url = $url;
-            $this->parseUpdateLinks($html);
-        }
-    }
 
     protected function parseUpdateLinks($html) {
         preg_match_all ('/<a[^>]+href="([^"]+)"[^"]*>/is',$html, $matches);
@@ -193,7 +143,7 @@ final class TesNexusPage extends Search_Parser_Site_Page {
         $newURL = new Search_Url("http://www.tesnexus.com/downloads/file/description.php?id=".$id);
 
         //get description
-        $str = $client->request($newURL)->exec()->getBody();
+        $str = $client->request($newURL)->exec()->simpleHtmlDom();
         $id = strripos($str, "</h3>");
 
         $str = substr($str, $id + strlen("</h3>") );

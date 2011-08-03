@@ -23,7 +23,7 @@ class PageTest extends PHPUnit_Framework_TestCase {
         $cls = $this->_factory
                     ->getSiteByHost($this->_host)
                     ->getOption('pageClass');
-        return new $cls(null, null);
+        return new $cls(new Search_Parser_Response());
     }
 
 

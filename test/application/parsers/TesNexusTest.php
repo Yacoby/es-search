@@ -24,20 +24,6 @@ class TesNexusTest extends PageTest {
 		$this->assertEquals(0, count($page->mods()));
 	}
 
-	public function testGetPageTest_IsUpdate_True() {
-		$url = new Search_Url('http://www.tesnexus.com/downloads/recent.php');
-		$site = $this->getFactory()
-				->getSiteByHost($url->getHost());
-		$this->assertTrue($site->isUpdatePage($url));
-	}
-
-	public function testGetPageTest_IsUpdate_False() {
-		$url = new Search_Url('http://www.tesnexus.com/');
-		$site = $this->getFactory()
-				->getSiteByHost($url->getHost());
-		$this->assertFalse($site->isUpdatePage($url));
-	}
-
 	public function testLogin() {
 		$url = new Search_Url('http://www.tesnexus.com/downloads/file.php?id=15802');
 		$site = $this->getFactory()

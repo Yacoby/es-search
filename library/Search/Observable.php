@@ -48,7 +48,7 @@ class Search_Observable {
      *
      * This does NOT add it to objects that have already been created
      */
-    public static function alwaysAttach(Search_Observer $observer){
+    public static function alwaysAttach($observer){
         $cls = get_called_class();
         if ( !isset(self::$_alwaysAttachObservers[$cls]) ){
             self::$_alwaysAttachObservers[$cls] = array();
@@ -68,7 +68,7 @@ class Search_Observable {
     /**
      * Attach an observer to the observable object
      */
-    public function attach(Search_Observer $observer) {
+    public function attach($observer) {
         $this->_observers[] = $observer;
     }
 }

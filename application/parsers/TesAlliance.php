@@ -2,6 +2,12 @@
 
 final class TesAlliancePage extends Search_Parser_Site_Page{
 
+    private $_html;
+    public function __construct($response){
+        parent::__construct($response);
+        $this->_html = $response->simpleHtmlDom();
+    }
+
     protected function doIsValidModPage($url) {
         $pages = array(
                 'http://tesalliance\.org/forums/index\.php\?/files/file/[0-9]+.*/'
