@@ -117,7 +117,9 @@ final class TesNexusPage extends Search_Parser_Site_Page {
 
     function getCategory() {
         $html = $this->getResponse()->html();
-        return (string)$html->xpathOne('(//div[@id="left_side"]//h3//a)[2]/text()');
+        $cat = (string)$html->xpathOne('(//div[@id="left_side"]//h3//a)[2]/text()');
+        $cat = str_replace("\n", ' ', $cat);
+        return $cat;
     }
 
     function getName() {
