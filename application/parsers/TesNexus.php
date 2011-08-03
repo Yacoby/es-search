@@ -9,10 +9,6 @@ final class TesNexusPage extends Search_Parser_Site_Page {
         parent::__construct($response);
     }
 
-    public function isLoggedIn() {
-        return $this->isValidModPage();
-    }
-
     public function login(Search_Parser_HttpClient $ig) {
         //get the cookies for the login page
         $ig->request(new Search_Url('http://www.tesnexus.com/modules/login/index.php?redirect=/'))
