@@ -5,13 +5,11 @@
  */
 final class TesNexusPage extends Search_Parser_Site_Page {
 
-    private $_html;
     public function __construct($response) {
-        $this->_html = $response->simpleHtmlDom();
         parent::__construct($response);
     }
 
-    protected function needsLogin() {
+    public function isLoggedIn() {
         return $this->isValidModPage();
     }
 
@@ -51,10 +49,11 @@ final class TesNexusPage extends Search_Parser_Site_Page {
     }
 
     protected function getLoginStateFromHTML() {
-        $links = $this->_html->find('#menu li a span');
+        $html = $this->getResponse()->html();
+        $links = $html->xpath('//*[@id="menu"]//li//a//span/text()');
 
         foreach ( $links as $text ) {
-            if ( trim($text->innertext) == 'LOGOUT' ) {
+            if ( trim($text) == 'LOGOUT' ) {
                 return true;
             }
         }
@@ -78,7 +77,9 @@ final class TesNexusPage extends Search_Parser_Site_Page {
     }
 
     public function isValidPageBody(){
-        return count($this->_html->find('#topbar')) > 0;
+        $html = $this->getResponse()->html();
+        $elems = $html->xpath('//*[@id="topbar"]');
+        return count($elems) > 0;
     }
 
     protected function doIsValidModPage($url) {
@@ -94,18 +95,20 @@ final class TesNexusPage extends Search_Parser_Site_Page {
     }
 
     public function  isModNotFoundPage($client) {
-        return stripos((string)$this->_html,
+        $text = $this->getResponse()->text();
+        return stripos($text,
                        "<script>window.location='/includes/error.php?pop=0&report=0&error=file_exist") === 0;
     }
 
     function getGame() {
-        $find = $this->_html->find("div[id=left_side] h3 a");
+        $html = $this->getResponse()->html();
+        $find = $html->xpath("//div[@id='left_side']//h3//a/text()");
         if ( count($find) === 0 ) {
             return null;
         }
         $find = $find[0];
 
-        switch(trim($find->plaintext)) {
+        switch(trim($find)) {
             case 'Morrowind':   return 'MW';
             case 'Oblivion':    return 'OB';
         }
@@ -113,11 +116,13 @@ final class TesNexusPage extends Search_Parser_Site_Page {
     }
 
     function getCategory() {
-        return $this->_html->find("div[id=left_side] h3 a",1)->plaintext;
+        $html = $this->getResponse()->html();
+        return (string)$html->xpathOne('(//div[@id="left_side"]//h3//a)[2]/text()');
     }
 
     function getName() {
-        return $this->_html->find("div[id=left_side] h2", 0)->plaintext;
+        $html = $this->getResponse()->html();
+        return (string)$html->xpathOne('//div[@id="left_side"]//h2/text()');
     }
 
     function getAuthor() {
@@ -166,7 +171,8 @@ final class TesNexusPage extends Search_Parser_Site_Page {
     * Misc Function
     **********************************************************************/
     function getFileInfo($name) {
-        foreach ( $this->_html->find(".info_box .info") as $fi ) {
+        $html = $this->getResponse()->simpleHtmlDom();
+        foreach ( $html->find(".info_box .info") as $fi ) {
             if ( trim($fi->find(".stattitle", 0)->plaintext) == $name ) {
                 $v = $fi->find(".stats", 0)->plaintext;
                 $v = trim(html_entity_decode($v));

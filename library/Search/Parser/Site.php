@@ -33,10 +33,9 @@ class Search_Parser_Site extends Search_Parser_Source_Abstract {
              $this->getOption('loginRequired') &&
              !$obj->isLoggedIn()
         ) {
-            $this->login($i);
+            $obj->login($i);
             $response = $i->request($url)
                           ->method('GET')
-                          ->useCache(false)
                           ->exec();
             $obj = new $cls($response);
 

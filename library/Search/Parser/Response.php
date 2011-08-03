@@ -23,9 +23,16 @@ class DomElem{
 
     }
 
-    
+    /**
+     * Bit derp. Only DOMAttr has the value attribute
+     */
     public function __toString(){
-        return (string)$this->_dom->value;
+        $c = get_class($this->_dom);
+        switch ($c) {
+            case 'DOMAttr' : return (string)$this->_dom->value; break;
+            case 'DOMText' : return (string)$this->_dom->data; break;
+        }
+        return (string)$this->_dom;
     }
 
     public function xpath($query){
