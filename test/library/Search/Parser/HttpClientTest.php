@@ -17,10 +17,9 @@ class Search_Parser_HttpClientTest extends PHPUnit_Framework_TestCase {
     public function testGetWebpage() {
         $url = new Search_Url('http://www.bbc.co.uk/');
 
-        $this->_jar->expects($this->once())
+        $this->_jar->expects($this->any())
                 ->method('getCookies')
                 ->will($this->returnValue(array()));
-
 
         $client = new Search_Parser_HttpClient(
                 null,

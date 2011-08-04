@@ -56,6 +56,7 @@ class HttpRequestObject{
         $this->_cacheTime     = $cacheTime;
         $this->_cacheInstance = $cache;
     }
+
     /**
      *
      * @param Search_Url $url
@@ -140,6 +141,7 @@ class HttpRequestObject{
     }
 
     protected function hash(){
+        $domain = $this->_url->getHost();
         $data = serialize($this->_header)
               + serialize($this->_post)
               + serialize($this->_jar->getCookies($domain));
