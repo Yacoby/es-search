@@ -103,6 +103,8 @@ class HttpRequestObject{
         $this->_cacheEnabled = $val;
         return $this;
     }
+
+    private $_post = array();
     /**
      *
      * @param string|array $k the key of the paramter
@@ -110,9 +112,12 @@ class HttpRequestObject{
      * @return HttpRequestObject
      */
     public function addPostParameter($k, $v) {
+        $this->_post[$k] = $v;
         $this->_client->setParameterPost($k, $v);
         return $this;
     }
+
+    private $_header = array();
     /**
      *
      * @param <type> $h
@@ -120,6 +125,7 @@ class HttpRequestObject{
      * @return HttpRequestObject
      */
     public function setHeader($h, $v) {
+        $this->_header[$h] = $v;
         $this->_client->setHeaders($h, $v);
         return $this;
     }
@@ -133,6 +139,13 @@ class HttpRequestObject{
         return $this;
     }
 
+    protected function hash(){
+        $data = serialize($this->_header)
+              + serialize($this->_post)
+              + serialize($this->_jar->getCookies($domain));
+        return md5($data);
+    }
+
     /*
      * Processes the request and returns the response
      *
@@ -144,7 +157,7 @@ class HttpRequestObject{
         $this->_validObject = false;
 
         //The cache ID. This is hopefully fairly unqiue...
-        $cid = md5($this->_url->toString());
+        $cid = $this->hash();
 
         //test the cache to see if the page is already there
         if ( $this->_cacheTime > 0 && $this->_cacheEnabled &&
