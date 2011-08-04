@@ -26,7 +26,7 @@ class Search_Table_CookieJar extends Search_Table_Abstract implements Search_HTT
      * @return array
      */
     public function getCookies($domain) {
-        if ( array_key_exist($domain, $this->_cache) ){
+        if ( array_key_exists($domain, $this->_cache) ){
             return $this->_cache[$domain];
         }
         $row = $this->findOneByDomain($domain);
