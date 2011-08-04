@@ -8,31 +8,48 @@
  * This class shouldn't be initated by anything outside this file
  */
 class DomElem{
-    private $_dom;
+    /*
+     * Given that this is mainly a wrapper around xpath (yes, it is) we need
+     * to keep the doc element to use with xpath and the element as a context
+     * for the xpath
+     */
+    private $_elem, $_doc;
 
-    public function fromDom($dom){
-        $this->_dom = $dom;
+    public function fromDom($doc, $elem = null){
+        $this->_elem = $elem;
+        $this->_doc = $doc;
     }
 
     public function fromHtml($html){
         //this stops warnings being spewed everwhere on malformed html
         libxml_use_internal_errors(true);
 
-        $this->_dom = new DOMDocument();
-        $this->_dom->loadHTML($html);
+        $this->_doc = new DOMDocument();
+        $this->_doc->loadHTML($html);
 
     }
 
     /**
-     * Bit derp. Only DOMAttr has the value attribute
+     * This attempts to allow the use of the Dom* attributes. Not sure how
+     * well it works if at all
      */
-    public function __toString(){
-        $c = get_class($this->_dom);
-        switch ($c) {
-            case 'DOMAttr' : return (string)$this->_dom->value; break;
-            case 'DOMText' : return (string)$this->_dom->data; break;
+    public function __get($name){
+        $result = $this->_elem->{$name};
+        if ( $result instanceof DOMNode ){
+            $d = new DomElem();
+            $d->fromDom($this->_doc, $result);
+            return $d;
         }
-        return (string)$this->_dom->textContent;
+        return $result;
+    }
+
+    public function __toString(){
+        $c = get_class($this->_elem);
+        switch ($c) {
+            case 'DOMAttr' : return (string)$this->_elem->value; break;
+            case 'DOMText' : return (string)$this->_elem->data; break;
+        }
+        return (string)$this->_elem->textContent;
     }
 
     /**
@@ -47,8 +64,8 @@ class DomElem{
 
 
     public function xpath($query){
-        $xp = new DOMXpath($this->_dom);
-        $elems = $xp->query($query);
+        $xp = new DOMXpath($this->_doc);
+        $elems = $xp->query($query, $this->_elem);
         
         if ( $elems === false ){
             return array();
@@ -56,7 +73,7 @@ class DomElem{
         $domList = array();
         foreach ( $elems as $elem){
             $d = new DomElem();
-            $d->fromDom($elem);
+            $d->fromDom($this->_doc, $elem);
             $domList[] = $d;
         }
         return $domList;

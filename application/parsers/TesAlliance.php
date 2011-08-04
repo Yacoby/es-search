@@ -2,12 +2,6 @@
 
 final class TesAlliancePage extends Search_Parser_Site_Page{
 
-    private $_html;
-    public function __construct($response){
-        parent::__construct($response);
-        $this->_html = $response->simpleHtmlDom();
-    }
-
     protected function doIsValidModPage($url) {
         $pages = array(
                 'http://tesalliance\.org/forums/index\.php\?/files/file/[0-9]+.*/'
@@ -16,19 +10,22 @@ final class TesAlliancePage extends Search_Parser_Site_Page{
     }
 
     protected function doIsValidPage($url) {
+        $re = 'http://tesalliance\.org/'
+            . 'forums/index\.php\?/files/category/[0-9+].*/';
         $pages = array(
-                'http://tesalliance\.org/forums/index\.php\?/files/category/[0-9+].*/',
-                'http://tesalliance\.org/forums/index.php\?/files/category/[0-9]+.*/page__sort_by__DESC__sort_key__file_submitted__num__10__st__[0-9]+'
+            $re,
+            $re . 'page__sort_by__DESC__sort_key__file_submitted__num__10__st__[0-9]+',
         );
         return $this->isAnyMatch($pages, $url);
     }
 
     public function getGame() {
-        $crumb = $this->_html->find('#breadcrumb li a',2);
-        if ( $crumb === null ){
+        $html = $this->getResponse()->html();
+        $crumb = $html->xpathOne('(//*[@id="breadcrumb"]//li//a)[3]');
+        if ( $crumb == null ){
             return null;
         }
-        $game = trim(str_replace(' Mods', '', $crumb->plaintext));
+        $game = trim(str_replace(' Mods', '', $crumb));
 
         $validGames = array(
             'Oblivion'  => 'OB',
@@ -42,30 +39,28 @@ final class TesAlliancePage extends Search_Parser_Site_Page{
     }
 
     public function getName() {
-        $crumb = $this->_html->find('#breadcrumb',0);
-        if ( $crumb === null ){
+        $html = $this->getResponse()->html();
+        $name = $html->xpathOne('(//*[@id="breadcrumb"]/li)[last()]/text()');
+        if ( $name == null ){
             return null;
         }
-        $name = html_entity_decode($crumb->lastChild()->plaintext);
+        $name = html_entity_decode($name);
         $name = str_replace(0xa0, ' ' , $name);
         return trim($name, '> ');
     }
+
     public function getAuthor() {
-        return trim($this->_html->find('.submitter_name a',0)
-                         ->plaintext);
+        $html = $this->getResponse()->html();
+        return trim($html->xpathOne('//*[@class="submitter_name"]//a/text()'));
 
     }
     public function getCategory() {
-        return trim($this->_html->find('#breadcrumb',0)
-                         ->lastChild()
-                         ->previousSibling()
-                         ->find('a',0)
-                         ->plaintext);
+        $html = $this->getResponse()->html();
+        $xp = '(//*[@id="breadcrumb"]/*)[last()-1]/a/text()';
+        return trim($html->xpathOne($xp));
     }
     public function getDescription() {
-        return trim($this->_html->find('.description',0)
-                           ->plaintext);
+        $html = $this->getResponse()->html();
+        return trim($html->xpathOne('//*[@class="description"]/text()'));
     }
-
-
 }
