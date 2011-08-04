@@ -2,13 +2,6 @@
 
 final class ElricMPage extends Search_Parser_Site_Page {
 
-    private $_html;
-    public function __construct($response){
-        parent::__construct($response);
-        $this->_html = $response->simpleHtmlDom();
-    }
-
-
     protected function doIsValidModPage($url) {
         $re = 'http://www\.elricm\.com/nuke/html/modules\.php'
             . '\?op=modload&name=Downloads&file=index&req=viewsdownload&sid=\d+'
@@ -21,17 +14,17 @@ final class ElricMPage extends Search_Parser_Site_Page {
     }
 
     protected function doParseModPage($client) {
-        $html = $this->_html;
+        $html = $this->getResponse()->html();
 
-        $hdsec = $html->find('div[style=text-align:center] span.pn-title',0);
+        $xp = '//div[@style="text-align:center"]//span[@class="pn-title"]';
+        $hdsec = $html->xpathOne($xp);
         if ( $hdsec == null ) {
             return; //failed to find correct section
         }
 
-        preg_match('%Main / (.*) / (.*)%', $hdsec->plaintext, $regs);
+        preg_match('%Main / (.*) / (.*)%', $hdsec->normalisedString(), $regs);
         $cat = $regs[2];
 
-        $game;
         if ( stripos($regs[1], 'Morrowind') !== false ) {
             $game = 'MW';
         }else if ( stripos($regs[1], 'Oblivion') !== false ) {
@@ -44,21 +37,24 @@ final class ElricMPage extends Search_Parser_Site_Page {
             return ; //failed
         }
 
-        $modSection = $html->find(".module", 0)->children(1)->find("span[class=pn-normal]", 0);
+        $xp = '((//*[@class="module"])[1]/*)[2]//span[class="pn-normal"]';
+        $xp = '(' . $xp . ')//*[@class="pn-title"]';
 
-        foreach ( $modSection->find(".pn-title") as $elem ) {
+        $modSection = $html->xpath($xp);
+
+        foreach ( $modSection as $elem ) {
             $mod = array();
-            $mod['Name'] = $elem->plaintext;
+            $mod['Name'] = (string)$elem;
 
             $mod['Game'] = $game;
             $mod['Category'] = $cat;
 
-            while ( $elem = $elem->next_sibling() ) {
+            while ( $elem = $elem->nextSibling ) {
 
                 if ( $elem->tag != "span" && $elem->tag != "a" ) {
                     continue;
                 }
-                $text = trim($elem->plaintext);
+                $text = trim($elem);
 
                 if ( preg_match("%^Description: (.*)%", $text, $regs) ) {
                     $mod['Description'] = self::getDescriptionText($regs[1]);

@@ -32,8 +32,19 @@ class DomElem{
             case 'DOMAttr' : return (string)$this->_dom->value; break;
             case 'DOMText' : return (string)$this->_dom->data; break;
         }
-        return (string)$this->_dom;
+        return (string)$this->_dom->textContent;
     }
+
+    /**
+     * Returns the text representaion of the dom object, but with new lines
+     * removed and all spaces converted into a single space
+     */
+    public function normalisedString(){
+        $str = (string)$this;
+        $str = str_replace("\n", ' ', $str);
+        return preg_replace('/\s+/', ' ', $str);
+    }
+
 
     public function xpath($query){
         $xp = new DOMXpath($this->_dom);
