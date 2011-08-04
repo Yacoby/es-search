@@ -1,23 +1,15 @@
 <?php
 
 
-class TesNexusTest extends PageTest {
+class WolfloreTest extends PageTest {
 
     public function __construct() {
-        parent::__construct('www.tesnexus.com');
+        parent::__construct('www.wolflore.net');
     }
 
-	public function testGetPageTest_HasLinks() {
-		$url = new Search_Url('http://www.tesnexus.com/downloads/recent.php');
-		$page = $this->getFactory()
-				->getSiteByHost($url->getHost())
-				->getPage($url, $this->getClient());
-		$links = $page->links();
-		$this->assertTrue(count($links) > 10);
-	}
-
 	public function testGetPageTest_NoMods() {
-		$url = new Search_Url('http://www.tesnexus.com/downloads/recent.php');
+        #screenshot thread
+		$url = new Search_Url('http://www.wolflore.net/viewtopic.php?f=73&t=709');
 		$page = $this->getFactory()
 				->getSiteByHost($url->getHost())
 				->getPage($url, $this->getClient());
@@ -25,77 +17,35 @@ class TesNexusTest extends PageTest {
 	}
 
 	public function testLogin() {
-		$url = new Search_Url('http://www.tesnexus.com/downloads/file.php?id=15802');
+		$url = new Search_Url('http://www.wolflore.net/viewtopic.php?f=73&t=762');
 		$site = $this->getFactory()
 				->getSiteByHost($url->getHost())
 				->getPage($url, $this->getClient());
 
 		$mod = $site->mod(0);
 
-		$this->assertEquals(
-                'HG EyeCandy Body',
-				$mod['Name']
-		);
+		$this->assertEquals('Sexy Ice Armour v1.1', $mod['Name']);
 	}
-
-	public function testInvalidPage() {
-		$url = new Search_Url('http://www.tesnexus.com/downloads/file.php?id=15268');
-		$this->setExpectedException('Search_Parser_Exception_InvalidPage');
-		$site = $this->getFactory()
-				->getSiteByHost($url->getHost())
-				->getPage($url, $this->getClient());
-
-	}
-
-    public function testModRemoved(){
-        $this->helpModRemovedPage(
-                new Search_Url('http://www.tesnexus.com/downloads/file.php?id=1')
-        );
-        $this->helpModRemovedPage(
-            new Search_Url('http://www.tesnexus.com/downloads/file.php?id=9999999')
-        );
-    }
 
     public function testMods() {
         $details = array(
             array(
-                'Url'      => 'http://www.tesnexus.com/downloads/file.php?id=22938',
-                'Name'     => 'Pursuit Enhanced',
-                'Category' => 'Gameplay Effects and Changes',
+                'Url'      => 'http://www.wolflore.net/viewtopic.php?f=73&t=762',
+                'Name'     => 'Sexy Ice Armour v1.1',
                 'Game'     => 'MW',
-                'Author'   => 'Yacoby',
-                'Version'  => '1.2.4',
+                'Author'   => 'Cenobite',
             ),
             array(
-                'Url'      => 'http://www.tesnexus.com/downloads/file.php?id=1647',
-                'Name'     => 'Vivec NPC',
-                'Category' => 'NPCs',
+                'Url'      => 'http://www.wolflore.net/viewtopic.php?f=76&t=786',
+                'Name'     => 'Snow Elves',
                 'Game'     => 'MW',
-                'Author'   => 'Arakhor',
+                'Author'   => 'Slaanesh',
             ),
             array(
-                'Url'    => 'http://www.tesnexus.com/downloads/file.php?id=982',
-                'Name'   => 'Clean wooden longbow(s) v 2.01',
-                'Game'   => 'MW',
-                'Author' => 'Unknown',
-            ),
-            array(
-                'Url'    => 'http://www.tesnexus.com/downloads/file.php?id=24160',
-                'Name'   => 'Early Music Addon',
+                'Url'    => 'http://www.wolflore.net/viewtopic.php?f=60&t=660',
+                'Name'   => 'Solf\'s Snow Leopard Race',
                 'Game'   => 'OB',
-                'Author' => 'lord_equinox',
-            ),
-            array(
-                'Url'    => 'http://www.tesnexus.com/downloads/file.php?id=13512',
-                'Name'   => 'UFF Archers Desire',
-                'Game'   => 'OB',
-                'Author' => 'Petrovich',
-            ),
-            array(
-                'Url'    => 'http://www.tesnexus.com/downloads/file.php?id=8623',
-                'Name'   => 'The Sword of Cyrodiil',
-                'Game'   => 'OB',
-                'Author' => 'Jip2',
+                'Author' => 'Solf',
             ),
         );
         $this->helpTestMods($details);
@@ -103,27 +53,14 @@ class TesNexusTest extends PageTest {
 
     public function testModUrls() {
         $valid = array(
-                'http://www.tesnexus.com/downloads/file.php?id=23065',
-                'http://www.tesnexus.com/downloads/file.php?id=23'
+                'http://www.wolflore.net/viewtopic.php?f=60&t=660',
         );
 
         $invalid = array(
-                'http://www.tesnexus.com/downloads/file.php?id=d',
-                'http://www.tesnexus.com/downloads/file.php?id=',
-                'http://www.tesnexus.com/downloads'
+                'http://www.wolflore.net/viewtopic.php?f=60',
         );
 
         $this->helpTestModUrls($valid, $invalid);
-    }
-
-    public function testLinks() {
-        $links = array(
-            'http://www.tesnexus.com/downloads/cat.php?id=15',
-        );
-        $this->helpPageHasLinks(
-            new Search_Url("http://www.tesnexus.com/downloads/file.php?id=23065"),
-            $links
-        );
     }
 
 }
