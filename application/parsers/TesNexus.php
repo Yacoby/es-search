@@ -44,7 +44,7 @@ final class TesNexusPage extends Search_Parser_Site_Page {
         return false;
     }
 
-    protected function isLoggedIn() {
+    public function isLoggedIn() {
         $html = $this->getResponse()->html();
         $links = $html->xpath('//*[@id="menu"]//li//a//span/text()');
 

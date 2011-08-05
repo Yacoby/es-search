@@ -29,10 +29,7 @@ class Search_Parser_Site extends Search_Parser_Source_Abstract {
             );
         }
 
-        if ( $this->hasOption('loginRequired') &&
-             $this->getOption('loginRequired') &&
-             !$obj->isLoggedIn()
-        ) {
+        if ( !$obj->isLoggedIn() ) {
             $obj->login($i);
             $response = $i->request($url)
                           ->method('GET')

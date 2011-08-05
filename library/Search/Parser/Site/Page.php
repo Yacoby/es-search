@@ -15,6 +15,7 @@ class Search_Parser_Site_Page extends Search_Parser_Location_Abstract{
         if ( $response ){
             parent::__construct($response->url());
         }
+        $this->_response = $response;
     }
     // ------------------------------------------------------------------------
     // Commonly things that probably should be overridden
@@ -97,7 +98,8 @@ class Search_Parser_Site_Page extends Search_Parser_Location_Abstract{
      * Called before the webpage is requested
      * @param Search_Parser_HttpClient $ig
      */
-    public function login(Search_Parser_HttpClient $ig){ }
+    public function login(Search_Parser_HttpClient $ig){
+    }
 
     /**
      * This function is used before parsing and logging in to check that the page is
@@ -120,7 +122,7 @@ class Search_Parser_Site_Page extends Search_Parser_Location_Abstract{
      * @return bool true if logged in or the site doesn't require logging in
      */
     public function isLoggedIn() {
-        return true
+        return true;
     }
 
 
