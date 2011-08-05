@@ -9,23 +9,56 @@
  * @todo checking if links are valid shouldn't really be in here as it requires
  * construction of a class.
  */
-class Search_Parser_Site_Page extends Search_Parser_Location_AbstractPage{
-
-    private $_response; 
-    protected function getResponse(){
-        return $this->_response;
-    }
+class Search_Parser_Site_Page extends Search_Parser_Location_Abstract{
 
     public function __construct($response) {
-        parent::__construct($response);
-        $this->_response = $response;
+        if ( $response ){
+            parent::__construct($response->url());
+        }
+    }
+    // ------------------------------------------------------------------------
+    // Commonly things that probably should be overridden
+    
+    /*
+     * Classses inheriting from this class should override this function with
+     * a function for checking if the url is valid
+    */
+    protected function doIsValidModPage($url) {
+        throw new Search_Parser_Exception_Unimplemented('Fucntion '.__FUNCTION__.' not implemented');
     }
 
     /**
-     * Called before the webpage is requested
-     * @param Search_Parser_HttpClient $ig
+     * Classses inheriting from this class should override this function with
+     * a function for checking if the url is valid
+     *
+     * @param Search_Url $url
+     * @return bool true if the $url is a valid page
      */
-    public function login(Search_Parser_HttpClient $ig){ }
+    protected function doIsValidPage($url) {
+        throw new Search_Parser_Exception_Unimplemented('Fucntion '.__FUNCTION__.' not implemented');
+    }
+
+    /**
+     * This is called from getPageLinks. It can be overridden to allow the url
+     * to be modified before being considered for searching
+     *
+     * @param Search_Url $url
+     * @return Search_Url the new url
+     */
+    public function preAddLink(Search_Url $url) {
+        return $url;
+    }
+
+
+    // ------------------------------------------------------------------------
+    // Results data
+    private $_links = array();
+    public function links() {
+        return $this->_links;
+    }
+    protected function addLink($link) {
+        $this->_links[] = $link;
+    }
 
     /**
      * Returns a mod at a set index
@@ -40,6 +73,46 @@ class Search_Parser_Site_Page extends Search_Parser_Location_AbstractPage{
         return $mods[$index];
     }
 
+
+    // ------------------------------------------------------------------------
+    // Response stuff
+    private $_response; 
+    protected function getResponse(){
+        return $this->_response;
+    }
+
+
+    // ------------------------------------------------------------------------
+    // Page validation
+
+    /**
+     * This should return true if the current page is related to a mod not found
+     * or mod no longer exists or whatever.
+     */
+    public function isModNotFoundPage($client) {
+        return false;
+    }
+
+    /**
+     * Called before the webpage is requested
+     * @param Search_Parser_HttpClient $ig
+     */
+    public function login(Search_Parser_HttpClient $ig){ }
+
+    /**
+     * This function is used before parsing and logging in to check that the page is
+     * at least roughly valid. A basic check should be done to see if the page at least
+     * looks correct.
+     *
+     * This was implemented due to tesnexus not returning
+     * 404 when the mod didn't exist, just a plain page saying 'this mod isn't valid'
+     *
+     * @return bool
+     */
+    public function isValidPageBody() {
+        return true;
+    }
+
     /**
      * Gets the logged in status from the html page. If the site requries being
      * logged in, the site should overwrite this function. If not, leave it 
@@ -50,11 +123,16 @@ class Search_Parser_Site_Page extends Search_Parser_Location_AbstractPage{
         return true
     }
 
+
+    // ------------------------------------------------------------------------
+    // Parsing stuff
+
     /**
-     * @return Search_Url The url specified by the page
+     * Classses inheriting from this class should override this function with
+     * a function for parsing the page unless they want to use the helper
      */
-    public function getUrl() {
-        return $this->_url;
+    protected function doParseModPage($client) {
+        return $this->useModParseHelper($client);
     }
 
     /**
@@ -86,15 +164,6 @@ class Search_Parser_Site_Page extends Search_Parser_Location_AbstractPage{
     }
 
     /**
-     *
-     * This should return true if the current page is related to a mod not found
-     * or mod no longer exists or whatever.
-     */
-    public function isModNotFoundPage($client) {
-        return false;
-    }
-
-    /**
      * Gets all links in _html and adds them (if they are valid) to _links
      */
     protected function getPageLinks() {
@@ -113,15 +182,42 @@ class Search_Parser_Site_Page extends Search_Parser_Location_AbstractPage{
         }
     }
 
+
+    // ------------------------------------------------------------------------
+    // Utitity functions
+    
     /**
-     * This is called from getPageLinks. It can be overridden to allow the url
-     * to be modified before being considered for searching
+     * Stipps all none ascii chars from a string
      *
-     * @param Search_Url $url
-     * @return Search_Url the new url
+     * @param string $str the string to strip
+     * @return an ascii string
+     *
+     * @todo This is public due to it needing to be unittestable. Consider
+     *      moving this to a utill class
      */
-    public function preAddLink(Search_Url $url) {
-        return $url;
+    public static function _stripNonAscii($str) {
+        return preg_replace('/[^(\x20-\x7E)\x0A\x0D]*/','', $str);
+    }
+
+    /**
+     * Helper function. Converts html string into plain text string converting
+     * line breaks to \n
+     *
+     * All functions that return more than a single line of html should run the
+     * html through here
+     *
+     * @param $str the string of raw HTML
+     * @return html with the tags stripped
+     *
+     */
+    public static function getDescriptionText($str) {
+        $str = str_replace("\n", "", $str);
+
+        //should match and <BR> <br /> etc
+        $str = preg_replace('%<br[\\s]*[/]??>%is', "\n", $str);
+
+        //strip everthing else
+        return strip_tags($str);
     }
 
     /**
@@ -138,14 +234,6 @@ class Search_Parser_Site_Page extends Search_Parser_Location_AbstractPage{
             }
         }
         return false;
-    }
-
-    /**
-     * Classses inheriting from this class should override this function with
-     * a function for parsing the page unless they want to use the helper
-     */
-    protected function doParseModPage($client) {
-        return $this->useModParseHelper($client);
     }
 
     /**
@@ -198,13 +286,6 @@ class Search_Parser_Site_Page extends Search_Parser_Location_AbstractPage{
         assert($url instanceof Search_Url);
         return $this->doIsValidModPage($url);
     }
-    /*
-     * Classses inheriting from this class should override this function with
-     * a function for checking if the url is valid
-    */
-    protected function doIsValidModPage($url) {
-        throw new Search_Parser_Exception_Unimplemented('Fucntion '.__FUNCTION__.' not implemented');
-    }
 
     /**
      * Is the mod page valid for searching for mods
@@ -222,48 +303,10 @@ class Search_Parser_Site_Page extends Search_Parser_Location_AbstractPage{
     }
 
     /**
-     * Classses inheriting from this class should override this function with
-     * a function for checking if the url is valid
-     *
-     * @param Search_Url $url
-     * @return bool true if the $url is a valid page
+     * @return Search_Url The url specified by the page
      */
-    protected function doIsValidPage($url) {
-        throw new Search_Parser_Exception_Unimplemented('Fucntion '.__FUNCTION__.' not implemented');
-    }
-
-    /**
-     * Stipps all none ascii chars from a string
-     *
-     * @param string $str the string to strip
-     * @return an ascii string
-     *
-     * @todo This is public due to it needing to be unittestable. Consider
-     *      moving this to a utill class
-     */
-    public static function _stripNonAscii($str) {
-        return preg_replace('/[^(\x20-\x7E)\x0A\x0D]*/','', $str);
-    }
-
-    /**
-     * Helper function. Converts html string into plain text string converting
-     * line breaks to \n
-     *
-     * All functions that return more than a single line of html should run the
-     * html through here
-     *
-     * @param $str the string of raw HTML
-     * @return html with the tags stripped
-     *
-     */
-    public static function getDescriptionText($str) {
-        $str = str_replace("\n", "", $str);
-
-        //should match and <BR> <br /> etc
-        $str = preg_replace('%<br[\\s]*[/]??>%is', "\n", $str);
-
-        //strip everthing else
-        return strip_tags($str);
+    public function getUrl() {
+        return $this->_url;
     }
 
 }
