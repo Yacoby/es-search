@@ -2,10 +2,8 @@
 
 class HouseFliggTest{
     public function testMods(){
-        new 
-
         $factory = new Search_Parser_Factory(APPLICATION_PATH . '/parsers/defaults.ini',
-                                                    APPLICATION_PATH . '/parsers/parsers.ini');
+                                             APPLICATION_PATH . '/parsers/parsers.ini');
 
     }
 
