@@ -11,8 +11,6 @@
  */
 class Search_Parser_Site_Page extends Search_Parser_Location_AbstractPage{
 
-    protected $_isLoggedIn = true;
-
     private $_response; 
     protected function getResponse(){
         return $this->_response;
@@ -21,7 +19,6 @@ class Search_Parser_Site_Page extends Search_Parser_Location_AbstractPage{
     public function __construct($response) {
         parent::__construct($response);
         $this->_response = $response;
-        $this->_isLoggedIn = $this->getLoginStateFromHTML();
     }
 
     /**
@@ -45,18 +42,12 @@ class Search_Parser_Site_Page extends Search_Parser_Location_AbstractPage{
 
     /**
      * Gets the logged in status from the html page. If the site requries being
-     * logged in, the site should overwrite this function
+     * logged in, the site should overwrite this function. If not, leave it 
      *
-     * @todo rename to something like _getIsLoggedInFromHTML
-     *
-     * @return bool true if logged in
+     * @return bool true if logged in or the site doesn't require logging in
      */
-    protected function getLoginStateFromHTML() {
-        return false;
-    }
-
     public function isLoggedIn() {
-        return $this->_isLoggedIn;
+        return true
     }
 
     /**

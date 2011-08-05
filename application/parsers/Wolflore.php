@@ -40,7 +40,7 @@ class WolflorePage extends Search_Parser_Site_Page {
                ->exec();
     }
 
-    public function getLoginStateFromHTML(){
+    public function isLoggedIn(){
         $xp = '//title/text()';
         $content = $this->getResponse()->html()->xpathOne($xp);
 
