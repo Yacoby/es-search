@@ -24,14 +24,14 @@ class WolfloreTest extends PageTest {
 
 		$mod = $site->mod(0);
 
-		$this->assertEquals('Sexy Ice Armour v1.1', $mod['Name']);
+		$this->assertEquals($mod['Name'], 'Sexy Ice Armor v1.1');
 	}
 
     public function testMods() {
         $details = array(
             array(
                 'Url'      => 'http://www.wolflore.net/viewtopic.php?f=73&t=762',
-                'Name'     => 'Sexy Ice Armour v1.1',
+                'Name'     => 'Sexy Ice Armor v1.1',
                 'Game'     => 'MW',
                 'Author'   => 'Cenobite',
             ),
@@ -43,9 +43,9 @@ class WolfloreTest extends PageTest {
             ),
             array(
                 'Url'    => 'http://www.wolflore.net/viewtopic.php?f=60&t=660',
-                'Name'   => 'Solf\'s Snow Leopard Race',
+                'Name'   => 'Slof\'s Snow Leopard Race',
                 'Game'   => 'OB',
-                'Author' => 'Solf',
+                'Author' => 'Slof',
             ),
         );
         $this->helpTestMods($details);

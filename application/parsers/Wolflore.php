@@ -18,10 +18,12 @@ class WolflorePage extends Search_Parser_Site_Page {
     public function login(Search_Parser_HttpClient $client){
         //get the cookies for the login page
         $loginPage = 'http://www.wolflore.net/ucp.php?mode=login';
-        $client->request(new Search_Url($loginPage))
-               ->method('GET')
-               ->cacheOutput(false)
-               ->exec();
+        $result = $client->request(new Search_Url($loginPage))
+                         ->method('GET')
+                         ->cacheOutput(false)
+                         ->exec();
+
+        $sid = $result->html()->xpath('//input[@name="sid"]/@value');
 
         //send the request for the login page
         $client->request( new Search_Url($loginPage) )
@@ -30,6 +32,8 @@ class WolflorePage extends Search_Parser_Site_Page {
                ->addPostParameter('username', 'ES_Search')
                ->addPostParameter('password', 'SearchBot1')
                ->addPostParameter('submit', 'Login')
+               ->addPostParameter('login', 'Login')
+               ->addPostParameter('sid', $sid)
                ->setHeader('Referer', $loginPage)
                ->method('POST')
                ->cacheOutput(false)
@@ -37,10 +41,10 @@ class WolflorePage extends Search_Parser_Site_Page {
     }
 
     public function getLoginStateFromHTML(){
-        $xp = '//div[@class="content"]/h2/text()';
+        $xp = '//title/text()';
         $content = $this->getResponse()->html()->xpathOne($xp);
 
-        $notLoggedIn = 'The board requires you to be registered and logged in to view this forum.';
+        $notLoggedIn = 'Wolflore • Login';
         return (string)$content != $notLoggedIn;
     }
 
@@ -63,7 +67,7 @@ class WolflorePage extends Search_Parser_Site_Page {
 
     private function getRawName(){
         $html = $this->getResponse()->html();
-        return trim((string) $this->xpathOne('//h2/a/text()'));
+        return trim($html->xpathOne('//h2/a')->normalisedString());
     }
 
     /**
@@ -72,18 +76,24 @@ class WolflorePage extends Search_Parser_Site_Page {
      */
     public function hasDownloads(){
         //the count must exceed 0
-        $xp = '(//div[@class="postbody"])[1]//div[@class="inline-attachment" or @class="attachbox"]';
+        $xp = '(//div[@class="postbody"])[1]//dl[@class="inline-attachment" or @class="attachbox"]';
+        
+        if ( count($this->getResponse()->html()->xpath($xp)) > 0 ){
+            return true;
+        }
+
+        //now we look to see if there are any wolflore downloads.
+        //this is desinged to also pickup things from wolflore.fliggerty.com
+        $xp = '(//div[@class="postbody"])[1]//a[contains(@href, "wolflore.")]';
+
         return count($this->getResponse()->html()->xpath($xp)) > 0;
+
     }
 
     /**
      * Gets the raw name of the thread and tries to strip out some common things
      */
 	public function getName() {
-        if ( !$this->hasDownloads() ){
-            return null;
-        }
-
         $name = $this->getRawName();
         $patterns = array(
             '/^\[WIPz?\]/i',
@@ -93,17 +103,26 @@ class WolflorePage extends Search_Parser_Site_Page {
         return trim(preg_replace($patterns, '', $name));
 	}
 
+    protected function doParseModPage($client) {
+        if ( $this->hasDownloads() ){
+            return $this->useModParseHelper($client);
+        }
+        return array();
+    }
+
 
     /**
      * This attempts to guess the author, we can't use the author of the post
      * as in many cases mods are posted by a random user
      */
 	public function getAuthor() {
-        $xp = '(//li[@class="icon-home"])[1]/a[last()]/text()';
-        $forumName = $this->getResponse()->html()->xpathOne($xp);
+        $xp = '(//li[@class="icon-home"])[1]/a/text()';
+        $crumbs = $this->getResponse()->html()->xpath($xp);
 
-        if ( preg_match('([\d\w\s]+)\'s Mods', $forumName, $matches) ){
-            return $matches[1];
+        foreach ( $crumbs as $crumb ){
+            if ( preg_match('/^([\d\w\s]+)\'s/i', trim($crumb), $matches) ){
+                return $matches[1];
+            }
         }
 
         $name = $this->getRawName();
@@ -118,7 +137,7 @@ class WolflorePage extends Search_Parser_Site_Page {
 
 	public function getDescription() {
         $xp = '(//div[@class="postbody"])[1]/div[@class="content"]/text()';
-        return trim((string) $this->xpathOne($xp));
+        return trim((string) $this->getResponse()->html()->xpathOne($xp));
 	}
 }
 
