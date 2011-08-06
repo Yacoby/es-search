@@ -2,16 +2,9 @@
 
 class HouseFligg extends Search_Parser_AbstractScraper{
 
-    private $_mods = array();
-    public function mods(){
-        return $this->_mods;
-    }
-
-    public function addMod(array $mod){
-        $this->_mods[] = $mod;
-    }
-
     public function scrape(){
+        $result = new Search_Parser_ScrapeResult();
+
         $url = 'http://www.fliggerty.com/ghf_hosted_mods.xml';
         $client = new Search_Parser_HttpClient();
 
@@ -21,14 +14,13 @@ class HouseFligg extends Search_Parser_AbstractScraper{
 
         $xml = new SimpleXMLElement($response->text());
         foreach ( $xml->mods->mod as $mod ){
-            $this->addMod(array(
-                        'Name'        => $mod['title'],
-                        'Author'      => $mod['author'],
-                        'Description' => $mod['description'],
-                        'Game'        => $mod['game'],
-                        'Version'     => $mod['version'],
-                        'Url'         => $mod['url'],
-             ));
+            $result->addMod(array('Name'        => $mod['title'],
+                                  'Author'      => $mod['author'],
+                                  'Description' => $mod['description'],
+                                  'Game'        => $mod['game'],
+                                  'Version'     => $mod['version'],
+                                  'Url'         => $mod['url'],));
         }
+        return $result;
     }
 }
