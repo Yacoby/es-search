@@ -1,5 +1,8 @@
 <?php
 
+class Search_Sync_Parser extends Search_Parser_Site{
+}
+
 class Search_Sync_SiteTest extends PHPUnit_Framework_TestCase {
         private $_sites;
         private $_pages;
@@ -17,10 +20,11 @@ class Search_Sync_SiteTest extends PHPUnit_Framework_TestCase {
     
 [example.com:site]
     implementation                = true
-    option:source:initialPages[]  = "/something.php"
-    option:source:modUrlPrefix    = '/prefix'
+    option:initialPages[]  = "/something.php"
+    option:modUrlPrefix    = '/prefix'
     
-    page:class             = "NOT_DEFINED"
+    option:host = example.com
+    class             = "Search_Sync_Parser"
 INI;
 
         $ini = new Search_Parser_Ini($string);

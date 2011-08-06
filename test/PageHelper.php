@@ -20,9 +20,16 @@ class PageTest extends PHPUnit_Framework_TestCase {
     }
 
     protected function getEmptyPage(){
-        $cls = $this->_factory
-                    ->getSiteByHost($this->_host)
-                    ->getOption('pageClass');
+        $parser = $this->_factory
+                       ->getSiteByHost($this->_host);
+        
+        $cls = $parser->getOption('pageClass');
+        if ( !class_exists($cls, false) ) {
+            require_once $parser->getOption('pageLocation');
+        }
+        if ( !class_exists($cls, false) ) {
+            throw new Exception("Couldn't load the parser class {$cls}");
+        }
         return new $cls(new Search_Parser_Response());
     }
 

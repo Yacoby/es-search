@@ -1,17 +1,24 @@
 <?php
 
 /**
- * Superclass for a site, all sites should inherit from this class, else they
- * will not get picked up by the factory and will not implement all the required
- * functionality
- *
- * All sites implmenetations should go in the library/Search/Site directory
+ * This is a helper class for parsing simple mod sites and make some
+ * of the implementation slightly nicer. Or something
  */
-class Search_Parser_Site extends Search_Parser_Source_Abstract {
+class Search_Parser_Site extends Search_Parser_AbstractScraper {
+
+    /**
+     * Entry pont
+     */
+    public function scrape(){
+        return $this->getPage();
+    }
 
     public function getPage(Search_Url $url, $client = null) {
-        $cls = $this->getPageClass();
-        assert(class_exists($cls));
+        $cls = $this->getOption('pageClass');
+        if ( !class_exists($cls, false) ){
+            require_once $this->getOption('pageLocation');
+        }
+        assert(class_exists($cls, false));
 
         $i = $client ? $client : new Search_Parser_HttpClient();
 
@@ -118,6 +125,7 @@ class Search_Parser_Site extends Search_Parser_Source_Abstract {
         }
         return $this->convertUrlSuffixes($this->getOption('updateUrl'));
     }
+
     /**
      * Gets the pages that should be used as a seed for finding the mods that
      * have already been added so won't be found in the update pages.

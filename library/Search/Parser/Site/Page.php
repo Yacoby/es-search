@@ -9,13 +9,13 @@
  * @todo checking if links are valid shouldn't really be in here as it requires
  * construction of a class.
  */
-class Search_Parser_Site_Page extends Search_Parser_Location_Abstract{
+class Search_Parser_Site_Page extends Search_Parser_ScrapeResult{
+
+    protected $_url;
 
     public function __construct($response) {
-        if ( $response ){
-            parent::__construct($response->url());
-        }
         $this->_response = $response;
+        $this->_url = $response->url();
     }
     // ------------------------------------------------------------------------
     // Commonly things that probably should be overridden

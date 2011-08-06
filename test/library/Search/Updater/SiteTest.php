@@ -1,5 +1,11 @@
 <?php
 
+class Search_Updater_Parser extends Search_Parser_Site{
+    public function scrape(){
+        return new Search_Updater_ExamplePage();
+    }
+}
+
 class Search_Updater_ExamplePage extends Search_Parser_Site_Page{
     
     public function mods(){
@@ -23,14 +29,17 @@ class Search_Updater_SiteTest extends PHPUnit_Framework_TestCase {
     
 [yacoby.silgrad.com:site]
     implementation                = true
-    option:source:initialPages[]  = "/MW/Mods/"
-    option:source:modUrlPrefix    = '/MW/Mods/'
+    option:initialPages[]  = "/MW/Mods/"
+    option:modUrlPrefix    = '/MW/Mods/'
 
-    option:source:updateFrequency = 1
-    option:source:updateFrequency = 31
-    option:source:limitBytes      = 100100
+    option:updateFrequency = 1
+    option:updateFrequency = 31
+    option:limitBytes      = 100100
     
-    page:class             = "Search_Updater_ExamplePage"
+    option:host = yacoby.silgrad.com
+    option:pageClass             = "Search_Updater_ExamplePage"
+
+    class = "Search_Updater_Parser"
 INI;
         
         $ini = new Search_Parser_Ini($string);

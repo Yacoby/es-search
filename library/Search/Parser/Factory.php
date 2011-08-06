@@ -4,7 +4,7 @@
  * provide the parser class for it
  */
 class Search_Parser_Factory {
-    private $_iniPath, $_iniDir, $_ini; 
+    private $_iniDir, $_ini; 
     
     private $_parsers;
     /**
@@ -34,8 +34,13 @@ class Search_Parser_Factory {
     }
 
     public function parseIni($defaults, $ini){
-        $this->_iniPath = $ini;
-        $this->_iniDir  = dirname($ini) . '/';
+        $this->_iniDir  = dirname($ini);
+
+        //TODO this is an ugly ugly hack
+        $incPath = get_include_path();
+        if ( stripos($incPath, $this->_iniDir) === false ){
+            set_include_path($incPath . PATH_SEPARATOR . $this->_iniDir);
+        }
         $this->setIni(new Search_Parser_Ini($defaults, $ini));
     }
 
@@ -111,11 +116,11 @@ class Search_Parser_Factory {
 
             //setup for the parser
             if ( isset($details->impl->location) ){
-                require_once $this->_iniDir . $details->impl->location;
+                require_once $this->_iniDir . PATH_SEPARATOR . $details->impl->location;
             }
             $parser = new $details->impl->class();
-            if ( isset($details->option) && isset($details->option->source) ){
-                $parser->setOptions((array)$details->option->source);
+            if ( isset($details->option) ){
+                $parser->setOptions((array)$details->option);
             }
 
             return $parser;
@@ -132,32 +137,17 @@ class Search_Parser_Factory {
     public function getSiteByHost($host){
         if ( $this->hasParser($host) ){
             $details = $this->_parsers->{$host};
-            $site     = null;
             $baseType = $this->findBaseType($host);
 
             //check if we have a special site class
-            if ( isset($details->site->class) && $details->site->class != ''){
-                //load the new site class
-                require_once $this->_iniDir . $details->site->location;
-                $site = new $details->site->class();
-            }else if ( $baseType !== null ) {
-                //check its parent. if it has one use that as the search class
-                $site = new $this->_types[$baseType]();
-            }else{
-                throw new Search_Parser_Exception_ClassNotFound(
-                                    "No class for type {$details->parent}"
-                );
+            if ( isset($details->location) && $details->location != '' ){
+                require_once $this->_iniDir . PATH_SEPARATOR . $details->location;
             }
-            if ( isset($details->option) && isset($details->option->source) ){
-                $site->setOptions((array)$details->option->source);
-            }
+            $site = new $details->class();
 
-            //now setup for the page
-            if ( isset($details->page->location) ){
-                require_once $this->_iniDir . $details->page->location;
+            if ( isset($details->option) && isset($details->option) ){
+                $site->setOptions((array)$details->option);
             }
-            $site->setOption('pageClass', $details->page->class);
-            $site->setOption('host', $host);
 
             return $site;
         }else{

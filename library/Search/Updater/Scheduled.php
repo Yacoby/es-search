@@ -29,7 +29,7 @@ class Search_Updater_Scheduled implements Search_Updater_Interface{
         $parser = $this->_factory
                        ->getScheduledByName($name);
 
-        $parser->parse();
+        $parser->scrape();
 
         return array(
             'Source'     => $source,

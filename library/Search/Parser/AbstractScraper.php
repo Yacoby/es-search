@@ -1,12 +1,14 @@
 <?php
 
-abstract class Search_Parser_Source_Abstract {
+/**
+ * The basic layout of how the scraper should look
+ *
+ * The key function here is the scrape function, which should be overridden
+ * in subclasses
+ */
+abstract class Search_Parser_AbstractScraper {
 
     private $_options = array();
-
-    public function getPageClass() {
-        return $this->getOption('pageClass');
-    }
 
     public function setOptions(array $options) {
         foreach ( $options as $key => $value ) {
@@ -22,5 +24,10 @@ abstract class Search_Parser_Source_Abstract {
     public function hasOption($key){
         return array_key_exists($key, $this->_options);
     }
+
+    /**
+     * This is the entry point to your scraper
+     */
+    public abstract function scrape();
 
 }
