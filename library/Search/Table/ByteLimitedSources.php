@@ -21,7 +21,7 @@ class Search_Table_ByteLimitedSources extends Search_Table_Abstract {
                     ->select()
                     ->where('next_update < ?', time())
                     ->andWhere('bytes_used < byte_limit')
-                    ->andWhere('enabled = 1')
+                    ->andWhere('enabled = ?', true)
                     ->orderBy('next_update ASC')
                     ->limit(1)
                     ->fetchOne();
