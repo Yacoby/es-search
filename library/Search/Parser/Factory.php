@@ -115,10 +115,10 @@ class Search_Parser_Factory {
             $details = $this->_parsers->{$name};
 
             //setup for the parser
-            if ( isset($details->impl->location) ){
-                require_once $this->_iniDir . PATH_SEPARATOR . $details->impl->location;
+            if ( isset($details->location) ){
+                require_once $this->_iniDir . '/' . $details->location;
             }
-            $parser = new $details->impl->class();
+            $parser = new $details->class();
             if ( isset($details->option) ){
                 $parser->setOptions((array)$details->option);
             }
@@ -141,7 +141,7 @@ class Search_Parser_Factory {
 
             //check if we have a special site class
             if ( isset($details->location) && $details->location != '' ){
-                require_once $this->_iniDir . PATH_SEPARATOR . $details->location;
+                require_once $this->_iniDir . '/' . $details->location;
             }
             $site = new $details->class();
 
