@@ -86,9 +86,6 @@ abstract class BaseByteLimitedSource extends Doctrine_Record
               0 => 'mod_source_id',
              ),
              ));
-        $this->option('type', 'InnoDB');
-        $this->option('collate', 'utf8_general_ci');
-        $this->option('charset', 'utf8');
     }
 
     public function setUp()

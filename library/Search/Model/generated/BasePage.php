@@ -51,7 +51,7 @@ abstract class BasePage extends Doctrine_Record
               0 => 'url_suffix',
              ),
              ));
-        $this->index('unique', array(
+        $this->index('ensure_unique', array(
              'fields' => 
              array(
               0 => 'byte_limited_source_id',
@@ -59,9 +59,6 @@ abstract class BasePage extends Doctrine_Record
              ),
              'unique' => true,
              ));
-        $this->option('type', 'InnoDB');
-        $this->option('collate', 'utf8_general_ci');
-        $this->option('charset', 'utf8');
     }
 
     public function setUp()

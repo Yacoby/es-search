@@ -32,9 +32,11 @@ abstract class BaseScheduledSource extends Doctrine_Record
              ));
         $this->hasColumn('hours_delta', 'integer', null, array(
              'type' => 'integer',
+             'default' => 0,
              ));
         $this->hasColumn('last_run_time', 'integer', null, array(
              'type' => 'integer',
+             'default' => 0,
              ));
         $this->hasColumn('enabled', 'boolean', null, array(
              'type' => 'boolean',
@@ -43,15 +45,12 @@ abstract class BaseScheduledSource extends Doctrine_Record
              ));
 
 
-        $this->index('mod_source_id', array(
+        $this->index('mod_source_id_idx', array(
              'fields' => 
              array(
               0 => 'mod_source_id',
              ),
              ));
-        $this->option('type', 'InnoDB');
-        $this->option('collate', 'utf8_general_ci');
-        $this->option('charset', 'utf8');
     }
 
     public function setUp()

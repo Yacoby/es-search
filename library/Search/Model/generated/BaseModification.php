@@ -47,9 +47,6 @@ abstract class BaseModification extends Doctrine_Record
               0 => 'game_id',
              ),
              ));
-        $this->option('type', 'InnoDB');
-        $this->option('collate', 'utf8_general_ci');
-        $this->option('charset', 'utf8');
     }
 
     public function setUp()

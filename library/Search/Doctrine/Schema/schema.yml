@@ -1,7 +1,3 @@
-options:
-    type: InnoDB
-    collate: utf8_general_ci
-    charset: utf8
 # ##############################################################################
 # This is used for indexing in Sphinx, it keeps track of which items exist
 # in which index
@@ -176,7 +172,7 @@ ScheduledSource:
             type: one
             onDelete: CASCADE
     indexes:
-        mod_source_id:
+        mod_source_id_idx:
             fields: [mod_source_id]
 
 # #############################################################################
@@ -280,7 +276,7 @@ Page:
     indexes:
         url_suffix:
             fields: [url_suffix]
-        unique:
+        ensure_unique:
             fields: [byte_limited_source_id, url_suffix]
             unique: true
     relations:
