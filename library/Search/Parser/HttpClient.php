@@ -192,6 +192,7 @@ class HttpRequestObject{
                 $this->_cacheInstance->save($response, $cid);
                 //TODO WHY SOMETIMES FAIL?
                 //assert($this->_cacheInstance->test($cid));
+                $response->setCache($this->_cacheInstance, $cid);
             }
 
             return $response;

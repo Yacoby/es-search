@@ -97,12 +97,28 @@ class Search_Parser_Response{
     private $_rawResponse;
     private $_reqUrl;
 
+
     public function __construct($reqUrl = null, $rawResponse = null){
         $this->_reqUrl = $reqUrl;
         if ( $rawResponse ){
             $this->_rawResponse = $rawResponse;
         }else{
             $this->_rawResponse = new Zend_Http_Response(200, array());
+        }
+    }
+
+    private $_cache, $_cacheId;
+    /**
+     * Sets the cache and the id of the cached item. The cache must
+     * have a remove method
+     */
+    public function setCache($cache, $id){
+        $this->_cache = $cache;
+        $this->_cacheId = $id;
+    }
+    public function removeFromCache(){
+        if ( $this->_cache && $this->_cacheId ){
+            $this->_cache->remove($this->_cacheId);
         }
     }
 

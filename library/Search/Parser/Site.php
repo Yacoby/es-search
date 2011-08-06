@@ -38,6 +38,12 @@ class Search_Parser_Site extends Search_Parser_AbstractScraper {
 
         if ( !$obj->isLoggedIn() ) {
             $obj->login($i);
+
+            //we found an invalid page, we need to delete it from the cache
+            //so we don't need to get it again. This is mainly for helping
+            //testing.
+            $response->removeFromCache();
+
             $response = $i->request($url)
                           ->method('GET')
                           ->exec();
