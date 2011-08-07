@@ -7,7 +7,7 @@
 class Search_Parser_Site extends Search_Parser_AbstractScraper {
 
     /**
-     * Entry pont
+     * Entry pont to the scraper
      */
     public function scrape(){
         return $this->getPage();
@@ -59,6 +59,8 @@ class Search_Parser_Site extends Search_Parser_AbstractScraper {
         return $obj;
     }
 
+    // ------------------------------------------------------------------------
+    // Options
 
     public function getLimitBytes() {
         if (!$this->hasOption('limitBytes')){
@@ -162,10 +164,7 @@ class Search_Parser_Site extends Search_Parser_AbstractScraper {
         return $urls;
     }
 
-
-    protected function needsLogin(Search_Parser_Page $p) {
-        return $this->getOption('loginRequired');
-    }
+    // ------------------------------------------------------------------------
 
 
 
