@@ -12,7 +12,7 @@ class HouseFligg extends Search_Parser_AbstractScraper{
                            ->method('GET')
                            ->exec();
 
-        $xml = new SimpleXMLElement($response->text());
+        $xml = simplexml_load_string($response->text());
         foreach ( $xml->mods->mod as $mod ){
             $result->addMod(array('Name'        => $mod['title'],
                                   'Author'      => $mod['author'],
