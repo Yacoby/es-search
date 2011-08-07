@@ -9,7 +9,7 @@ class Search_Parser_ScrapeResult {
     public function mods() {
         return $this->_mods;
     }
-    protected function addMod($mod) {
+    public function addMod($mod) {
         $this->_mods[] = $mod;
     }
 
