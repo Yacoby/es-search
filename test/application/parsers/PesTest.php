@@ -59,6 +59,12 @@ class PesTest extends PageTest {
                 'Game'      => 'OB',
                 'Category'  => 'Miscellaneous',
             ),
+            #This requires login or more post data
+            array(
+                'Url'       => 'http://planetelderscrolls.gamespy.com/View.php?view=Mods.Detail&id=8291',
+                'Name'      => 'Azurian Race - Comp',
+                'Game'      => 'MW',
+            ),
         );
         $this->helpTestMods($details);
     }

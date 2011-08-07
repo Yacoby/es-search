@@ -7,6 +7,29 @@ final class PlanetElderScrollsPage extends Search_Parser_Site_Page {
         parent::__construct($response);
         $this->_html = $response->simpleHtmlDom();
     }
+
+    public function isLoggedIn(){
+        return $this->_html->find('input[name=age_gate]') == false;
+    }
+
+    /**
+     * @todo
+     * This does at least one request more than it should as 
+     * due to the method logging in uses, the result is thrown away
+     * and the SAME page is then got again
+     */
+    public function login(Search_Parser_HttpClient $client){
+        $url = $this->getResponse()->url();
+
+        $client->request($url)
+               ->method('POST')
+               ->addPostParameter('age_gate', '1')
+               ->addPostParameter('Profile_BirthdayMonth', '1')
+               ->addPostParameter('Profile_BirthdayDay', '1')
+               ->addPostParameter('Profile_BirthdayDay', '1')
+               ->addPostParameter('Profile_BirthdayYear', '1985')
+               ->exec();
+    }
     
     private $_urlSections = '(Oblivion(Mods|Utilities)|Mods|Utilities)';
 
