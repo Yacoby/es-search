@@ -9,7 +9,6 @@
  * @property integer $mod_source_id
  * @property integer $hours_delta
  * @property integer $last_run_time
- * @property boolean $enabled
  * @property ModSource $ModSource
  * 
  * @package    ##PACKAGE##
@@ -37,11 +36,6 @@ abstract class BaseScheduledSource extends Doctrine_Record
         $this->hasColumn('last_run_time', 'integer', null, array(
              'type' => 'integer',
              'default' => 0,
-             ));
-        $this->hasColumn('enabled', 'boolean', null, array(
-             'type' => 'boolean',
-             'default' => true,
-             'notnull' => true,
              ));
 
 

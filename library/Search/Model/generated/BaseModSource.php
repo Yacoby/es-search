@@ -7,6 +7,8 @@
  * 
  * @property integer $id
  * @property string $url_prefix
+ * @property boolean $search
+ * @property boolean $scrape
  * @property Doctrine_Collection $Modification
  * @property Doctrine_Collection $Sources
  * @property Doctrine_Collection $ScheduledSource
@@ -29,6 +31,16 @@ abstract class BaseModSource extends Doctrine_Record
              ));
         $this->hasColumn('url_prefix', 'string', null, array(
              'type' => 'string',
+             ));
+        $this->hasColumn('search', 'boolean', null, array(
+             'type' => 'boolean',
+             'default' => true,
+             'notnull' => true,
+             ));
+        $this->hasColumn('scrape', 'boolean', null, array(
+             'type' => 'boolean',
+             'default' => false,
+             'notnull' => true,
              ));
     }
 

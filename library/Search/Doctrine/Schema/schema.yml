@@ -134,6 +134,20 @@ ModSource:
         #it can be concatenated to provide the full url
         url_prefix: string
 
+        
+        #do we index the site in our searches. Note, disabling this will
+        #take ages to take effect
+        search:
+            type: boolean
+            default: true
+            notnull: true
+
+        #do we scrape the site
+        scrape:
+            type: boolean
+            default: false
+            notnull: true
+
     relations:
         Modification:
             type: many
@@ -162,11 +176,6 @@ ScheduledSource:
             type: integer
             default: 0
 
-        #quick way to disable parsing of a site
-        enabled:
-            type: boolean
-            default: true
-            notnull: true
     relations:
         ModSource:
             type: one

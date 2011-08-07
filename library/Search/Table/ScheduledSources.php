@@ -18,9 +18,11 @@ class Search_Table_ScheduledSources extends Search_Table_Abstract {
 
     public function findOneByUpdateRequired(){
         return $this->createQuery()
-                    ->select()
+                    ->select('s.*')
+                    ->from('ScheduledSource s')
+                    ->innerJoin('s.ModSource ms')
                     ->where('(last_run_time + hours_delta) < ?', time())
-                    ->andWhere('enabled = 1')
+                    ->andWhere('ms.scrape = ?', true)
                     ->orderBy('(last_run_time + hours_delta) ASC')
                     ->limit(1)
                     ->fetchOne();

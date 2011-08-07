@@ -18,10 +18,12 @@ class Search_Table_ByteLimitedSources extends Search_Table_Abstract {
 
     public function findOneByUpdateRequired(){
         return $this->createQuery()
-                    ->select()
+                    ->select('s.*')
+                    ->from('ByteLimitedSource s')
+                    ->innerJoin('s.ModSource ms')
                     ->where('next_update < ?', time())
                     ->andWhere('bytes_used < byte_limit')
-                    ->andWhere('enabled = ?', true)
+                    ->andWhere('ms.scrape = ?', true)
                     ->orderBy('next_update ASC')
                     ->limit(1)
                     ->fetchOne();
