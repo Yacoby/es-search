@@ -1,7 +1,7 @@
 <?php
 /**
- * This is the class that manages the parsers. It will, given a indentifier
- * provide the parser class for it
+ * This class is used to create parser classes from the defintions in the 
+ * ini. 
  */
 class Search_Parser_Factory {
     private $_iniDir, $_ini; 
@@ -110,12 +110,29 @@ class Search_Parser_Factory {
         return $this->findBaseType($details->parent);
     }
 
+    /**
+     * @deprecated
+     */
     public function getScheduledByName($name){
+        return $this->getByName($name);
+    }
+
+    /**
+     * @deprecated
+     */
+    public function getSiteByHost($host){
+        return $this->getByName($host);
+    }
+
+    /**
+     * Gets a parser as defined in the ini by its name
+     */
+    public function getByName($name){
         if ( $this->hasParser($name) ){
             $details = $this->_parsers->{$name};
 
             //setup for the parser
-            if ( isset($details->location) ){
+            if ( isset($details->location) && trim($details->location) != '' ){
                 require_once $this->_iniDir . '/' . $details->location;
             }
             $parser = new $details->class();
@@ -127,32 +144,7 @@ class Search_Parser_Factory {
         }else{
             throw new Search_Parser_Exception_ClassNotFound("Class doesn't exist");
         }
-
     }
 
-    /**
-     * @param string $host
-     * @return Search_Parser_Source_Abstract
-     */
-    public function getSiteByHost($host){
-        if ( $this->hasParser($host) ){
-            $details = $this->_parsers->{$host};
-            $baseType = $this->findBaseType($host);
-
-            //check if we have a special site class
-            if ( isset($details->location) && $details->location != '' ){
-                require_once $this->_iniDir . '/' . $details->location;
-            }
-            $site = new $details->class();
-
-            if ( isset($details->option) && isset($details->option) ){
-                $site->setOptions((array)$details->option);
-            }
-
-            return $site;
-        }else{
-            throw new Search_Parser_Exception_ClassNotFound("Class doesn't exist");
-        }
-    }
 
 }
