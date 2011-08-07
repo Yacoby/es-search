@@ -36,6 +36,8 @@ class Search_Observable {
         }
     }
 
+    // ------------------------------------------------------------------------
+
     /**
      * Dictionay of classes with observers that should be automatically
      * added
@@ -44,18 +46,27 @@ class Search_Observable {
 
     /**
      * This adds all the given observer to all new objects of this type when
-     * constructed
+     * constructed. This really requires PHP 5.3.0 but the second parameter
+     * (cls) has been implemented for compaibility
      *
      * This does NOT add it to objects that have already been created
      */
-    public static function alwaysAttach($observer){
-        $cls = get_called_class();
+    public static function alwaysAttach($observer, $cls = null){
+        if ( $cls == null ){
+            if ( version_compare(PHP_VERSION, '5.3.0') >= 0 ){
+                $cls = get_called_class();
+            }else{
+                throw new Exception('As you are using PHP < 5.3.0 you must pass a class to always attach to');
+            }
+        }
+
         if ( !isset(self::$_alwaysAttachObservers[$cls]) ){
             self::$_alwaysAttachObservers[$cls] = array();
         }
         self::$_alwaysAttachObservers[$cls][] = $observer;
     }
 
+    // ------------------------------------------------------------------------
     /**
      * Function to pass the called function onto all events
 	 *

@@ -67,7 +67,8 @@ class Search_Updater_Site extends Search_Observable implements Search_Updater_In
         $this->_pages   = $pages ? $pages : new Search_Table_Pages();
 
         //always incrase the limits
-        Search_Parser_HttpClient::alwaysAttach(new Search_Observer_Limits());
+        Search_Parser_HttpClient::alwaysAttach(new Search_Observer_Limits(),
+                                               'Search_Parser_HttpClient');
     }
 
     public function update(){
