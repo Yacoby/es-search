@@ -17,13 +17,6 @@ set_include_path(implode(PATH_SEPARATOR, array(
         get_include_path(),
 )));
 
-//Zend, doctrine etc directory
-set_include_path(implode(PATH_SEPARATOR, array(
-        realpath(dirname(__FILE__) . '/../php'),
-        get_include_path(),
-)));
-
-
 //Setup app wide constants
 define('ROOT_PATH', realpath(dirname(__FILE__)));
 define('APPLICATION_PATH', ROOT_PATH . '/application');
