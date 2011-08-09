@@ -34,7 +34,7 @@ class Search_Log_Writer_Doctrine  extends Zend_Log_Writer_Abstract {
      * @return  void
      * @throws  Zend_Log_Exception
      */
-    public function setFormatter($formatter) {
+    public function setFormatter(Zend_Log_Formatter_Interface $formatter) {
         throw new Zend_Log_Exception('Formatting is not supported.');
     }
 
@@ -58,5 +58,9 @@ class Search_Log_Writer_Doctrine  extends Zend_Log_Writer_Abstract {
         $entry = new $this->_modelClass();
         $entry->fromArray($dataToInsert);
         $entry->save();
+    }
+
+    static public function factory($config){
+        throw new Zend_Log_Exception('Constructing via factory not supported.');
     }
 }
