@@ -45,4 +45,8 @@ $cache->start();
 
 $application = createApplication();
 
+if ( $application->getOption('pagecache') != 1 ){
+    $cache->cancel()
+}
+
 $application->run();
