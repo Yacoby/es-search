@@ -10,7 +10,6 @@ class Search_Index_Sphinx extends Search_Observable implements Search_Index_Abst
     private $_client;
     
     private function setDefaults(){
-        $this->_client->setServer("localhost", 6712);
         $this->_client->setMatchMode(SPH_MATCH_EXTENDED);
         $this->_client->setMaxQueryTime(3);
         $this->_client->setServer("localhost", 9312);
