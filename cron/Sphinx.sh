@@ -4,7 +4,7 @@
 # Sphinx helper script to simplify running simple commands on the search tools
 #
 # Usage:
-hlp="$0 {start|stop|index|indexdelta|merge}"
+hlp="$0 {start|stop|index|indexdelta|merge} [cmdprefix]"
 # The optional dev argument uses the alternative development configuration
 ###############################################################################
 
@@ -22,11 +22,12 @@ fi
 
 CONFIG="config/sphinx.conf"
 
-#two diffrenent names for the sphinx tools
-PREFIX="sphinx-"
-if [! hash "$PREFIX"searchd 2>&- ]
+#two diffrenent names for the sphinx tools, sometimes with a prefix of 
+#sphinx-
+PREFIX=""
+if [ -z "$2" ]
 then
-    PREFIX=""
+    PREFIX="$2"
 fi
 
 case "$1" in
