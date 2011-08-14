@@ -19,27 +19,35 @@ then
     exit
 fi
 
+
 CONFIG="config/sphinx.conf"
+
+#two diffrenent names for the sphinx tools
+PREFIX="sphinx-"
+if [! hash foo 2>&- ]
+then
+    PREFIX=""
+fi
 
 case "$1" in
         start)
-            sphinx-searchd --config "$CONFIG";;
+            "$PREFIX"searchd --config "$CONFIG";;
         stop)
-            sphinx-searchd --stop --config "$CONFIG";;
+            "$PREFIX"searchd --stop --config "$CONFIG";;
 
         #fairly cheap, doesn't deal with deleted mods
         indexdelta)
-            sphinx-indexer --rotate --config "$CONFIG" mods_delta;;
+            "$PREFIX"indexer --rotate --config "$CONFIG" mods_delta;;
 
         #less cheap, merges the main and delta indexes, slightly less expensive
         #than rebuilding everything, but still doesn't take into account deleted
         #mods
         merge)
-            sphinx-indexer --merge --rotate --config "$CONFIG" mods mods_delta;;
+            "$PREFIX"indexer --merge --rotate --config "$CONFIG" mods mods_delta;;
 
         #reindex everyting
         index)
-            sphinx-indexer --rotate --config "$CONFIG" mods;;
+            "$PREFIX"indexer --rotate --config "$CONFIG" mods;;
         *)
             echo "$hlp";;
 esac
