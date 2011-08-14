@@ -24,7 +24,7 @@ CONFIG="config/sphinx.conf"
 
 #two diffrenent names for the sphinx tools
 PREFIX="sphinx-"
-if [! hash foo 2>&- ]
+if [! hash "$PREFIX"searchd 2>&- ]
 then
     PREFIX=""
 fi
