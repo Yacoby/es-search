@@ -37,11 +37,11 @@ class Search_Table_Pages extends Search_Table_Abstract {
     public function findOneByUpdateRequired(){
         return Doctrine_Query::create()
                 ->select('p.*, s.*')
-                ->from("Page p, p.ByteLimitedSource s")
+                ->from("Page p, p.ByteLimitedSource s, s.ModSource m")
                 ->where('s.bytes_used < s.byte_limit')
                 ->andWhere('p.revisit < ?', time())
                 ->andWhere('p.revisit != 0')
-                ->andWhere('s.enabled = 1')
+                ->andWhere('m.scrape = ?', true)
                 ->orderBy('p.revisit ASC')
                 ->limit(1)
                 ->fetchOne();
