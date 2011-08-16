@@ -241,12 +241,6 @@ ByteLimitedSource:
             default: 0
             notnull: true
 
-        #quick way to disable parsing of a site
-        enabled:
-            type: boolean
-            default: true
-            notnull: true
-
     relations:
         ModSource:
             type: one

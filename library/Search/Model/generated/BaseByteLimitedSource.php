@@ -14,7 +14,6 @@
  * @property integer $bytes_used
  * @property integer $bytes_last_updated
  * @property integer $next_update
- * @property boolean $enabled
  * @property ModSource $ModSource
  * @property Doctrine_Collection $Page
  * 
@@ -65,11 +64,6 @@ abstract class BaseByteLimitedSource extends Doctrine_Record
         $this->hasColumn('next_update', 'integer', null, array(
              'type' => 'integer',
              'default' => 0,
-             'notnull' => true,
-             ));
-        $this->hasColumn('enabled', 'boolean', null, array(
-             'type' => 'boolean',
-             'default' => true,
              'notnull' => true,
              ));
 
