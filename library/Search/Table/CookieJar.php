@@ -14,11 +14,12 @@ class Search_Table_CookieJar extends Search_Table_Abstract implements Search_HTT
             }
         }
 
-        $cookies         = $this->create();
-        $cookies->domain = $domain;
-        $cookies->data   = serialize($cookiePacket);
+        $cookies          = $this->create();
+        $cookies->domain  = $domain;
+        $cookies->cookies = serialize($cookiePacket);
         $cookies->replace();
     }
+
     /**
      * @todo Not very efficiant
      * 
@@ -30,7 +31,11 @@ class Search_Table_CookieJar extends Search_Table_Abstract implements Search_HTT
             return $this->_cache[$domain];
         }
         $row = $this->findOneByDomain($domain);
-        $this->_cache[$domain] = $row ? unserialize($row->data) : array();
+        $cookiePacket = $row ? unserialize(stream_get_contents($row->cookies)) : array();
+        if ( $cookiePacket === false ){
+            $cookiePacket = array();
+        }
+        $this->_cache[$domain] = $cookiePacket;
         return $this->_cache[$domain]; 
     }
 
