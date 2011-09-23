@@ -25,7 +25,7 @@ final class TesAlliancePage extends Search_Parser_Site_Page{
         if ( $crumb == null ){
             return null;
         }
-        $game = trim(str_replace(' Mods', '', $crumb));
+        $game = trim(str_replace(' Mods', '', $crumb->toString()->getAscii()));
 
         $validGames = array(
             'Oblivion'  => 'OB',
@@ -44,23 +44,29 @@ final class TesAlliancePage extends Search_Parser_Site_Page{
         if ( $name == null ){
             return null;
         }
-        $name = html_entity_decode($name);
-        $name = str_replace(0xa0, ' ' , $name);
-        return trim($name, '> ');
+        $name = $name->toString();
+        $name->htmlEntityDecode();
+        $name->replace(0xa0, ' ');
+        $name->trim(' >');
+        return $name;
     }
 
     public function getAuthor() {
         $html = $this->getResponse()->html();
-        return trim($html->xpathOne('//*[@class="submitter_name"]//a/text()'));
-
+        $name = $html->xpathOne('//*[@class="submitter_name"]//a/text()')->toString();
+        $name->trim();
+        return $name;
     }
+
     public function getCategory() {
         $html = $this->getResponse()->html();
         $xp = '(//*[@id="breadcrumb"]/*)[last()-1]/a/text()';
-        return trim($html->xpathOne($xp));
+        return trim($html->xpathOne($xp)->toString()->getAscii());
     }
+
     public function getDescription() {
         $html = $this->getResponse()->html();
-        return trim($html->xpathOne('//*[@class="description"]/text()'));
+        $text = $html->xpathOne('//*[@class="description"]/text()');
+        return $text->toString();
     }
 }

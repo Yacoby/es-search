@@ -1,7 +1,7 @@
 <?php
 
 abstract class Super_Wiwland_page extends Search_Parser_Site_Page {
-    protected $_sub, $_conv = array();
+    protected $_sub;
 
     private $_html;
 
@@ -9,10 +9,6 @@ abstract class Super_Wiwland_page extends Search_Parser_Site_Page {
         parent::__construct($response);
         $this->_html = $response->simpleHtmlDom();
         $this->_sub = $sub;
-
-        for( $i = 32; $i <= 255; $i++ ) {
-            $this->_conv[chr($i)] = utf8_encode(chr($i));
-        }
     }
 
     protected function doIsValidModPage($url) {
@@ -28,22 +24,18 @@ abstract class Super_Wiwland_page extends Search_Parser_Site_Page {
     }
 
     /**
-     * Decodes a string from html with utf-8 entities to a latin-1 string
-     *
+     * Decodes a string from html with utf-8 entities to a utf-8 string
      *
      * @param string $str html input
      * @return string an latin-1 string
      */
     private function decode($str) {
-
-        $str = str_replace('&#8217;', '\'', $str); //doesn't covert this
+        //$str = str_replace('&#8217;', '\'', $str); //doesn't covert this
         $str = str_replace('&nbsp;', ' ', $str); //and nbsp != sp
+        $str = iconv('ISO-8859-1', 'UTF-8//TRANSLIT//IGNORE', $str);
         $str = html_entity_decode($str, ENT_QUOTES, 'UTF-8');
-        
-        foreach( $this->_conv as $key => $val ) {
-            $str = str_replace($key, $val, $str);
-        }
-        return $str;
+
+        return new Search_Unicode($str);
     }
 
     abstract function getGame();
@@ -55,26 +47,27 @@ abstract class Super_Wiwland_page extends Search_Parser_Site_Page {
         }
         return null;
     }
-    function getAuthor() {
 
+    function getAuthor() {
         $r = $this->_html->find(".soustitre", 0);
         if ( !isset($r->plaintext) ) {
             return null;
         }
 
-        $r = $this->decode($r->plaintext);
-
-        if ( stripos($r, 'Par') === 0 ) {
-            $r = substr($r, strlen('Par'));
+        if ( stripos($r, 'par') === 0 ) {
+            $r = substr($r, strlen('par'));
         }
-        return trim($r);
+        $r = $this->decode($r->plaintext);
+        $r->trim();
+        return $r;
     }
+
     function getDescription() {
         $r = $this->_html->find("div[class=texte entry-content]", 0);
         if ( !isset($r->plaintext) ) {
             return null;
         }
-        return self::getDescriptionText($this->decode($r->innertext));
+        return $this->decode($r->innertext);
     }
 }
 

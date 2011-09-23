@@ -27,6 +27,10 @@ abstract class BaseHistoryBanned extends Doctrine_Record
         $this->hasColumn('banned_time', 'integer', null, array(
              'type' => 'integer',
              ));
+
+        $this->option('encoding', 'utf8');
+        $this->option('charset', 'utf8');
+        $this->option('collate', 'utf8_unicode_ci');
     }
 
     public function setUp()

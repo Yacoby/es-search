@@ -42,6 +42,10 @@ abstract class BaseModSource extends Doctrine_Record
              'default' => false,
              'notnull' => true,
              ));
+
+        $this->option('encoding', 'utf8');
+        $this->option('charset', 'utf8');
+        $this->option('collate', 'utf8_unicode_ci');
     }
 
     public function setUp()

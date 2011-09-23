@@ -76,7 +76,6 @@ INI;
         $site->next_update = time() - 1;
         $site->byte_limit  = 1;
         $site->bytes_used  = 0;
-        $site->enabled     = 1;
         $site->save();
 
         $this->_updater->update();

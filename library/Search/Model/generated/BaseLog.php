@@ -40,6 +40,10 @@ abstract class BaseLog extends Doctrine_Record
         $this->hasColumn('timestamp', 'timestamp', null, array(
              'type' => 'timestamp',
              ));
+
+        $this->option('encoding', 'utf8');
+        $this->option('charset', 'utf8');
+        $this->option('collate', 'utf8_unicode_ci');
     }
 
     public function setUp()

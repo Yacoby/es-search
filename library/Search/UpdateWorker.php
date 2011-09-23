@@ -68,7 +68,7 @@ class Search_UpdateWorker{
         //there is a transaction in this function, so we don't need one here
         $this->_mods->addOrUpdateModFromArray($this->_sources, $modArray, $source);
 
-        Search_Logger::info("Added Mod: {$modArray['Name']}");
+        Search_Logger::info("Added Mod: {$modArray['Name']->getAscii()}");
     }
     private function removeLocation(Search_Url $url){
             $this->_locations->deleteByUrl($url);

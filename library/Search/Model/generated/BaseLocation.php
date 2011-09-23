@@ -70,6 +70,9 @@ abstract class BaseLocation extends Doctrine_Record
               0 => 'int_version',
              ),
              ));
+        $this->option('encoding', 'utf8');
+        $this->option('charset', 'utf8');
+        $this->option('collate', 'utf8_unicode_ci');
     }
 
     public function setUp()

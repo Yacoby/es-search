@@ -171,7 +171,8 @@ class Search_Parser_Site_Page extends Search_Parser_ScrapeResult{
     protected function getPageLinks() {
         $links = $this->getResponse()->html()->xpath('//a/@href');
         foreach( $links as $href ) {
-            $url = new Search_Url(html_entity_decode((string)$href), $this->_url);
+            $href = $href->toString()->getAscii(); //only copes with ascii urls
+            $url = new Search_Url(html_entity_decode($href), $this->_url);
             $url = $this->preAddLink($url);
 
             if ( !$url->isValid() || $url->toString() == $this->_url->toString() ) {
@@ -213,13 +214,13 @@ class Search_Parser_Site_Page extends Search_Parser_ScrapeResult{
      *
      */
     public static function getDescriptionText($str) {
-        $str = str_replace("\n", "", $str);
+        //$str = str_replace("\n", "", $str);
 
         //should match and <BR> <br /> etc
-        $str = preg_replace('%<br[\\s]*[/]??>%is', "\n", $str);
+        $str = preg_replace('%<br[\\s]*[/]??>%ius', "\n", $str);
 
         //strip everthing else
-        return strip_tags($str);
+        return $str;//strip_tags($str);
     }
 
     /**
@@ -266,7 +267,8 @@ class Search_Parser_Site_Page extends Search_Parser_ScrapeResult{
                     "Failed to parse {$p} when parsing {$this->_url}"
                     );
                 }
-                $mod[$p] = trim($result);
+                #$mod[$p] = trim($result);
+                $mod[$p] = $result;
             }
         }
 

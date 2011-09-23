@@ -28,6 +28,10 @@ abstract class BaseCategory extends Doctrine_Record
              'type' => 'string',
              'notnull' => false,
              ));
+
+        $this->option('encoding', 'utf8');
+        $this->option('charset', 'utf8');
+        $this->option('collate', 'utf8_unicode_ci');
     }
 
     public function setUp()

@@ -59,6 +59,9 @@ abstract class BasePage extends Doctrine_Record
              ),
              'unique' => true,
              ));
+        $this->option('encoding', 'utf8');
+        $this->option('charset', 'utf8');
+        $this->option('collate', 'utf8_unicode_ci');
     }
 
     public function setUp()

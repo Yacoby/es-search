@@ -23,7 +23,7 @@ class WolflorePage extends Search_Parser_Site_Page {
                          ->cacheOutput(false)
                          ->exec();
 
-        $sid = $result->html()->xpath('//input[@name="sid"]/@value');
+        $sid = $result->html()->xpathOne('//input[@name="sid"]/@value');
 
         //send the request for the login page
         $client->request( new Search_Url($loginPage) )
@@ -33,7 +33,7 @@ class WolflorePage extends Search_Parser_Site_Page {
                ->addPostParameter('password', 'SearchBot1')
                ->addPostParameter('submit', 'Login')
                ->addPostParameter('login', 'Login')
-               ->addPostParameter('sid', $sid)
+               ->addPostParameter('sid', $sid->toString())
                ->setHeader('Referer', $loginPage)
                ->method('POST')
                ->cacheOutput(false)
@@ -42,10 +42,9 @@ class WolflorePage extends Search_Parser_Site_Page {
 
     public function isLoggedIn(){
         $xp = '//title/text()';
-        $content = $this->getResponse()->html()->xpathOne($xp);
-
-        $notLoggedIn = 'Wolflore • Login';
-        return (string)$content != $notLoggedIn;
+        $content = $this->getResponse()->html()->xpathOne($xp)->toString();
+        $notLoggedIn = 'Wolflore ? Login';
+        return $content->getAscii() != $notLoggedIn;
     }
 
     /**
@@ -56,6 +55,7 @@ class WolflorePage extends Search_Parser_Site_Page {
         $xp = '(//li[@class="icon-home"])[1]/a/text()';
         $crumbs = $this->getResponse()->html()->xpath($xp);
         foreach ( $crumbs as $crumb ){
+            $crumb = $crumb->toString()->getAscii();
             if ( stripos($crumb, 'morrowind') !== false ){
                 return 'MW';
             }elseif ( stripos($crumb, 'oblivion') !== false ){
@@ -67,7 +67,7 @@ class WolflorePage extends Search_Parser_Site_Page {
 
     private function getRawName(){
         $html = $this->getResponse()->html();
-        return trim($html->xpathOne('//h2/a')->normalisedString());
+        return trim($html->xpathOne('//h2/a')->normalisedString()->getAscii());
     }
 
     /**
@@ -120,6 +120,7 @@ class WolflorePage extends Search_Parser_Site_Page {
         $crumbs = $this->getResponse()->html()->xpath($xp);
 
         foreach ( $crumbs as $crumb ){
+            $crumb = $crumb->toString()->getAscii();
             if ( preg_match('/^([\d\w\s]+)\'s/i', trim($crumb), $matches) ){
                 return $matches[1];
             }
@@ -137,7 +138,7 @@ class WolflorePage extends Search_Parser_Site_Page {
 
 	public function getDescription() {
         $xp = '(//div[@class="postbody"])[1]/div[@class="content"]/text()';
-        return trim((string) $this->getResponse()->html()->xpathOne($xp));
+        return $this->getResponse()->html()->xpathOne($xp)->toString();
 	}
 }
 

@@ -9,7 +9,7 @@ class WiwilandMwTest extends PageTest {
         $details = array(
             array(
                 'Url'    => 'http://morromods.wiwiland.net/spip.php?article181',
-                'Name'   => 'Adventurer Wakim\'s',
+                'Name'   => html_entity_decode('Adventurer Wakim&#8217;s', ENT_QUOTES, 'UTF-8'),
                 'Author' => 'Ethaniel'
             ),
             array(

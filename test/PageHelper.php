@@ -95,6 +95,9 @@ class PageTest extends PHPUnit_Framework_TestCase {
             $mod  = array_shift($mods);
 
             foreach ( $modDetail as $key => $val ) {
+                if ( $mod[$key] instanceof Search_Unicode ){
+                    $val = new Search_Unicode($val);
+                }
                 $this->assertEquals($val,
                                     $mod[$key],
                                     "Failed asserting that {$key} is equal with mod from {$url}");

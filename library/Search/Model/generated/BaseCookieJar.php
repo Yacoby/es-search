@@ -26,6 +26,10 @@ abstract class BaseCookieJar extends Doctrine_Record
         $this->hasColumn('cookies', 'blob', null, array(
              'type' => 'blob',
              ));
+
+        $this->option('encoding', 'utf8');
+        $this->option('charset', 'utf8');
+        $this->option('collate', 'utf8_unicode_ci');
     }
 
     public function setUp()

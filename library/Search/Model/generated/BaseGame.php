@@ -34,6 +34,10 @@ abstract class BaseGame extends Doctrine_Record
              'type' => 'string',
              'notblank' => true,
              ));
+
+        $this->option('encoding', 'utf8');
+        $this->option('charset', 'utf8');
+        $this->option('collate', 'utf8_unicode_ci');
     }
 
     public function setUp()

@@ -6,21 +6,21 @@ class Search_Table_Mods extends Search_Table_Abstract {
     }
 
     private function stripText($text){
-       if ( mb_check_encoding($text) == "UTF-8" ) {
-            $text = html_entity_decode($text, ENT_QUOTES, 'UTF-8');
-            $text = mb_convert_encoding($text, 'ISO-8859-1', 'UTF-8');
+       //if ( mb_check_encoding($text) == "UTF-8" ) {
+            //$text = html_entity_decode($text, ENT_QUOTES, 'UTF-8');
+            //$text = mb_convert_encoding($text, 'ISO-8859-1', 'UTF-8');
             //$text = iconv("UTF-8", "ISO-8859-1//IGNORE", $text);
-        }else {
-            $text = html_entity_decode($text, ENT_QUOTES);
-        }
+        //}else {
+        //    $text = html_entity_decode($text, ENT_QUOTES);
+        //}
 
         //strips non breaking spaces and replaces them with spaces
         $text = str_replace("\xa0", "\x20", $text);
 
         //we don't need (or want) links, etc. Also deals with html comments
-        $text = strip_tags($text);
+        //$text = strip_tags($text);
 
-        $text = trim($text);
+        //$text = trim($text);
 
         return $text;
     }
@@ -75,14 +75,14 @@ class Search_Table_Mods extends Search_Table_Abstract {
                                             array $modDetails,
                                             $sourceId){
         
-        $this->getConnection()->beginTransaction();
+        //$this->getConnection()->beginTransaction();
 
-        $modId = $this->getModId($modDetails['Name'],
-                                 $modDetails['Author'],
+        $modId = $this->getModId($modDetails['Name']->getBytes(),
+                                 $modDetails['Author']->getBytes(),
                                  $modDetails['Url']);
 
         foreach ( array('Name', 'Author', 'Category', 'Description') as $key ){
-            $modDetails[$key] = $this->stripText($modDetails[$key]);
+            #$modDetails[$key] = $this->stripText($modDetails[$key]);
         }
 
         $modDetails['Game']     = strtolower($modDetails['Game']);
@@ -91,8 +91,8 @@ class Search_Table_Mods extends Search_Table_Abstract {
         $gameId = $this->getGameIdFromShortName($modDetails['Game']);
 
         $mod = $modId ? $this->findOneById($modId) : $this->create();
-        $mod->name           = $modDetails['Name'];
-        $mod->author         = $modDetails['Author'];
+        $mod->name           = $modDetails['Name']->getBytes();
+        $mod->author         = $modDetails['Author']->getBytes();
         $mod->game_id        = $gameId;
         $mod->replace();
 
@@ -110,7 +110,7 @@ class Search_Table_Mods extends Search_Table_Abstract {
         $location->url_suffix   = $modUrlSuffix;
         
         $location->version          = $modDetails['Version'];
-        $location->description      = $modDetails['Description'];
+        $location->description      = $modDetails['Description']->getBytes();
 
         $categoryId = $this->getOrCreateCategoryId($modDetails['Category']);
         $location->category_id      = $categoryId;
@@ -119,7 +119,7 @@ class Search_Table_Mods extends Search_Table_Abstract {
         $location->mod_source_id    = $source->id;
         $location->replace();
 
-        $this->getConnection()->commit();
+        //$this->getConnection()->commit();
     }
 
     /**

@@ -1,3 +1,7 @@
+options:
+    encoding: utf8
+    charset: utf8
+    collate: utf8_unicode_ci
 # ##############################################################################
 # This is used for indexing in Sphinx, it keeps track of which items exist
 # in which index

@@ -43,13 +43,13 @@ class DomElem{
         return $result;
     }
 
-    public function __toString(){
+    public function toString(){
         $c = get_class($this->_elem);
         switch ($c) {
-            case 'DOMAttr' : return (string)$this->_elem->value; break;
-            case 'DOMText' : return (string)$this->_elem->data; break;
+            case 'DOMAttr' : return new Search_Unicode($this->_elem->value); break;
+            case 'DOMText' : return new Search_Unicode($this->_elem->data); break;
         }
-        return (string)$this->_elem->textContent;
+        return new Search_Unicode($this->_elem->textContent);
     }
 
     /**
@@ -57,9 +57,10 @@ class DomElem{
      * removed and all spaces converted into a single space
      */
     public function normalisedString(){
-        $str = (string)$this;
-        $str = str_replace("\n", ' ', $str);
-        return preg_replace('/\s+/', ' ', $str);
+        $str = $this->toString();
+        $str->replace("\n", ' ');
+        $str->pregReplace('/\s+/u', ' ');
+        return $str;
     }
 
 

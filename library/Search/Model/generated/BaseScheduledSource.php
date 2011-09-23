@@ -45,6 +45,9 @@ abstract class BaseScheduledSource extends Doctrine_Record
               0 => 'mod_source_id',
              ),
              ));
+        $this->option('encoding', 'utf8');
+        $this->option('charset', 'utf8');
+        $this->option('collate', 'utf8_unicode_ci');
     }
 
     public function setUp()
