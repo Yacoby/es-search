@@ -52,7 +52,7 @@ class EsFilefrontPage extends Search_Parser_Site_Page {
             if ( preg_match('%Downloads > Modifications > ([0-9a-zA-Z ]*):$%', $txt, $regs) ||
                  preg_match('%Downloads > (Utilities):$%', $txt, $regs) ||
                  preg_match('%Downloads > (Modifications):$%', $txt, $regs) ) {
-                return trim($regs[1]);
+                return new Search_Unicode(trim($regs[1]));
             }
         }
         return '';
@@ -80,7 +80,7 @@ class EsFilefrontPage extends Search_Parser_Site_Page {
         foreach ( $this->_html->find("b") as $b  ) {
             $txt = $b->plaintext;
             if ( preg_match($regex, $txt, $regs) == 1 ) {
-                return trim($regs[1]);
+                return new Search_Unicode(trim($regs[1]));
             }
         }
         return null;
@@ -96,7 +96,7 @@ class EsFilefrontPage extends Search_Parser_Site_Page {
             if ( $i1 !== false && $i2 !== false ) {
                 $txt = substr($txt, $i1+$l, $i2 - $l);
                 $i2 = stripos($txt, "E-Mail to Friend");
-                return substr($txt, 0, $i2);
+                return new Search_Unicode(substr($txt, 0, $i2));
             }
         }
         return null;
@@ -107,7 +107,7 @@ class EsFilefrontPage extends Search_Parser_Site_Page {
             $txt = $b->plaintext;
             $url = $b->href;
             if ( preg_match("%/developer/[0-9a-zA-Z _]*;\\d+%", $url) == 1 ) {
-                return $txt;
+                return new Search_Unicode($txt);
             }
         }
         return null;

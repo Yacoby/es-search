@@ -253,6 +253,8 @@ class Search_Parser_Site_Page extends Search_Parser_ScrapeResult{
                 "Version"
         );
 
+        $unicodeReq = array('Name', 'Author', 'Description', 'Category');
+
         /*
          * Checks for every method contained in the above array and if possible
          * calls it
@@ -267,7 +269,18 @@ class Search_Parser_Site_Page extends Search_Parser_ScrapeResult{
                     "Failed to parse {$p} when parsing {$this->_url}"
                     );
                 }
-                #$mod[$p] = trim($result);
+                if ( $result instanceof Search_Unicode ){
+                    $result->trim();
+                    if ( !in_array($p, $unicodeReq) ){
+                        //version and game shouldn't be unicode
+                        $result = $result->getAscii();
+                    }
+                }else{
+                    if ( in_array($p, $unicodeReq) ){
+                        throw new Exception('Expected unicode, didn\'t recive when trying to parse ' . $p);
+                    }
+                    $result = trim($result);
+                }
                 $mod[$p] = $result;
             }
         }

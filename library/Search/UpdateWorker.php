@@ -60,8 +60,8 @@ class Search_UpdateWorker{
         //merge mod with default values
         $defualts = array(
                 'Version'     => '',
-                'Category'    => '',
-                'Description' => '',
+                'Category'    => new Search_Unicode(''),
+                'Description' => new Search_Unicode(''),
         );
         $modArray = array_merge($defualts, $modArray);
 

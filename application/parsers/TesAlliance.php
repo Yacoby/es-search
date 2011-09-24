@@ -44,24 +44,24 @@ final class TesAlliancePage extends Search_Parser_Site_Page{
         if ( $name == null ){
             return null;
         }
-        $name = $name->toString();
-        $name->htmlEntityDecode();
-        $name->replace(0xa0, ' ');
-        $name->trim(' >');
+        $name = $name->toString()
+                     ->htmlEntityDecode()
+                     ->replace(0xa0, ' ')
+                     ->trim(' >');
         return $name;
     }
 
     public function getAuthor() {
         $html = $this->getResponse()->html();
-        $name = $html->xpathOne('//*[@class="submitter_name"]//a/text()')->toString();
-        $name->trim();
-        return $name;
+        return $html->xpathOne('//*[@class="submitter_name"]//a/text()')
+                    ->toString()
+                    ->trim();
     }
 
     public function getCategory() {
         $html = $this->getResponse()->html();
         $xp = '(//*[@id="breadcrumb"]/*)[last()-1]/a/text()';
-        return trim($html->xpathOne($xp)->toString()->getAscii());
+        return $html->xpathOne($xp)->toString()->trim();
     }
 
     public function getDescription() {

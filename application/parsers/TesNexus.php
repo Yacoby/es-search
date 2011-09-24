@@ -119,7 +119,7 @@ final class TesNexusPage extends Search_Parser_Site_Page {
         if ( count($find) === 0 ) {
             return null;
         }
-        return $find[count($find)-1]->normalisedString()->getAscii();
+        return $find[count($find)-1]->normalisedString();
     }
 
     function getName() {
@@ -144,7 +144,7 @@ final class TesNexusPage extends Search_Parser_Site_Page {
                 return $str;
             }
         }
-        return 'Unknown';
+        return new Search_Unicode('Unknown');
     }
 
     function getDescription($client) {

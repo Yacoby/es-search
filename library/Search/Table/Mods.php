@@ -6,21 +6,14 @@ class Search_Table_Mods extends Search_Table_Abstract {
     }
 
     private function stripText($text){
-       //if ( mb_check_encoding($text) == "UTF-8" ) {
-            //$text = html_entity_decode($text, ENT_QUOTES, 'UTF-8');
-            //$text = mb_convert_encoding($text, 'ISO-8859-1', 'UTF-8');
-            //$text = iconv("UTF-8", "ISO-8859-1//IGNORE", $text);
-        //}else {
-        //    $text = html_entity_decode($text, ENT_QUOTES);
-        //}
-
         //strips non breaking spaces and replaces them with spaces
-        $text = str_replace("\xa0", "\x20", $text);
+        $nbs = html_entity_decode('&#00A0', ENT_COMPAT, 'UTF-8');
+        $text->replace($nbs, "\x20");
 
         //we don't need (or want) links, etc. Also deals with html comments
-        //$text = strip_tags($text);
+        $text->stripTags($text);
 
-        //$text = trim($text);
+        $text->trim();
 
         return $text;
     }
@@ -76,14 +69,15 @@ class Search_Table_Mods extends Search_Table_Abstract {
                                             $sourceId){
         
         //$this->getConnection()->beginTransaction();
+                                                
+        foreach ( array('Name', 'Author', 'Category', 'Description') as $key ){
+            $modDetails[$key] = $this->stripText($modDetails[$key])->getBytes();
+        }
 
-        $modId = $this->getModId($modDetails['Name']->getBytes(),
-                                 $modDetails['Author']->getBytes(),
+        $modId = $this->getModId($modDetails['Name'],
+                                 $modDetails['Author'],
                                  $modDetails['Url']);
 
-        foreach ( array('Name', 'Author', 'Category', 'Description') as $key ){
-            #$modDetails[$key] = $this->stripText($modDetails[$key]);
-        }
 
         $modDetails['Game']     = strtolower($modDetails['Game']);
         $modDetails['Category'] = strtolower($modDetails['Category']);
@@ -91,8 +85,8 @@ class Search_Table_Mods extends Search_Table_Abstract {
         $gameId = $this->getGameIdFromShortName($modDetails['Game']);
 
         $mod = $modId ? $this->findOneById($modId) : $this->create();
-        $mod->name           = $modDetails['Name']->getBytes();
-        $mod->author         = $modDetails['Author']->getBytes();
+        $mod->name           = $modDetails['Name'];
+        $mod->author         = $modDetails['Author'];
         $mod->game_id        = $gameId;
         $mod->replace();
 
@@ -110,7 +104,7 @@ class Search_Table_Mods extends Search_Table_Abstract {
         $location->url_suffix   = $modUrlSuffix;
         
         $location->version          = $modDetails['Version'];
-        $location->description      = $modDetails['Description']->getBytes();
+        $location->description      = $modDetails['Description'];
 
         $categoryId = $this->getOrCreateCategoryId($modDetails['Category']);
         $location->category_id      = $categoryId;

@@ -24,7 +24,7 @@ class WolfloreTest extends PageTest {
 
 		$mod = $site->mod(0);
 
-		$this->assertEquals($mod['Name'], 'Sexy Ice Armor v1.1');
+		$this->assertEquals($mod['Name'], new Search_Unicode('Sexy Ice Armor v1.1'));
 	}
 
     public function testMods() {

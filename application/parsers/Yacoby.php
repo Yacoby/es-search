@@ -28,19 +28,19 @@ final class YacobyPage extends Search_Parser_Site_Page {
 	public function getName() {
 		$r = $this->_html->find(".modTitle", 0);
 		if ( isset($r->plaintext) ){
-			return $r->plaintext;
+			return new Search_Unicode($r->plaintext);
 		}
 		return null;
 	}
 	public function getAuthor() {
-		return "Yacoby";
+		return new Search_Unicode("Yacoby");
 	}
 	public function getDescription() {
 		$d = "";
 		foreach ( $this->_html->find(".content p") as $p ){
 			$d .= $p->innertext;
 		}
-		return self::getDescriptionText($d);
+		return new Search_Unicode(self::getDescriptionText($d));
 	}
 
 }

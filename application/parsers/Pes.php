@@ -110,8 +110,9 @@ final class PlanetElderScrollsPage extends Search_Parser_Site_Page {
             $val = trim(htmlspecialchars_decode($val[0]->plaintext));
             $key = trim(htmlspecialchars_decode($tr->children(0)->plaintext));
 
-            if ( substr($key, 0, 4) == "Name" )
-                return $val;
+            if ( substr($key, 0, 4) == "Name" ){
+                return new Search_Unicode($val);
+            }
         }
         return null;
     }
@@ -132,10 +133,11 @@ final class PlanetElderScrollsPage extends Search_Parser_Site_Page {
             }
             $key = trim(htmlspecialchars_decode($tr->children(0)->plaintext));
             if ( substr($key, 0, strlen("Description")) == "Description" ) {
-                return self::getDescriptionText(
+                $d = self::getDescriptionText(
                         trim(htmlspecialchars_decode($tr->next_sibling()->children(0)->innertext)
                         )
                 );
+                return new Search_Unicode($d);
             }
         }
         return null;
@@ -151,7 +153,7 @@ final class PlanetElderScrollsPage extends Search_Parser_Site_Page {
             $key = trim(htmlspecialchars_decode($tr->children(0)->plaintext));
 
             if ( substr($key, 0, strlen($string)) == $string ) {
-                return $val;
+                return new Search_Unicode($val);
             }
         }
         return null;

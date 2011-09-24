@@ -65,7 +65,8 @@ class FileplanetPage extends Search_Parser_Site_Page {
 
     function getCategory() {
         foreach ( $this->_html->find('.col-24 .smaller') as $e ) {
-            return $e->lastChild()->plaintext;
+            return new Search_Unicode($e->lastChild()->plaintext,
+                                      'ISO-8859-1');
         }
         return null;
     }
@@ -73,7 +74,8 @@ class FileplanetPage extends Search_Parser_Site_Page {
     function getName() {
         foreach ( $this->_html->find('h2.section-title') as $e ) {
             if ( preg_match('%File Info:.*-(.*)%', $e->plaintext, $regs) == 1 ) {
-                return trim($regs[1]);
+                return new Search_Unicode(trim($regs[1]),
+                                          'ISO-8859-1');
             }
         }
         return null;
@@ -82,7 +84,8 @@ class FileplanetPage extends Search_Parser_Site_Page {
     function getAuthor() {
         foreach ( $this->_html->find('.alpha') as $e ) {
             if ( $e->plaintext == 'Author:' ) {
-                return $e->nextSibling()->plaintext;
+                return new Search_Unicode($e->nextSibling()->plaintext,
+                                          'ISO-8859-1');
             }
         }
         return null;
@@ -91,8 +94,9 @@ class FileplanetPage extends Search_Parser_Site_Page {
     function getDescription() {
         foreach ( $this->_html->find('h2.section-title') as $e ) {
             if ( strpos($e->plaintext, 'Description:') !== false ) {
-                return substr($e->parent()->plaintext,
-                    strlen($e->plaintext));
+                return new Search_Unicode(substr($e->parent()->plaintext,
+                                                 strlen($e->plaintext)),
+                                          'ISO-8859-1' );
             }
         }
         return null;

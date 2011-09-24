@@ -100,7 +100,7 @@ class WolflorePage extends Search_Parser_Site_Page {
             '/^\[RELz?\]/i',
             '/by [\w\s\d]+$/i',
         );
-        return trim(preg_replace($patterns, '', $name));
+        return new Search_Unicode(trim(preg_replace($patterns, '', $name)));
 	}
 
     protected function doParseModPage($client) {
@@ -122,18 +122,18 @@ class WolflorePage extends Search_Parser_Site_Page {
         foreach ( $crumbs as $crumb ){
             $crumb = $crumb->toString()->getAscii();
             if ( preg_match('/^([\d\w\s]+)\'s/i', trim($crumb), $matches) ){
-                return $matches[1];
+                return new Search_Unicode($matches[1]);
             }
         }
 
         $name = $this->getRawName();
         foreach ( array('/by ([\w\s\d]+)$/i') as $re ){
             if ( preg_match($re, $name, $matches) ){
-                return $matches[1];
+                return new Search_Unicode($matches[1]);
             }
         }
 
-		return "Unknown";
+		return new Search_Unicode("Unknown");
 	}
 
 	public function getDescription() {

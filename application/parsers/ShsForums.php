@@ -28,8 +28,6 @@ final class ShsForumsPage extends Search_Parser_Site_Page {
         return new Search_Url(preg_replace('/s=[0-9a-zA-Z]*&/i', '', $url->toString()));
     }
 
-
-
     function getGame() {
         return "OB";
     }
@@ -39,7 +37,7 @@ final class ShsForumsPage extends Search_Parser_Site_Page {
         foreach ($elems as $e){
             if ( isset($e->width) ){
                 if ( $e->width == "100%" ){
-                    return $e->plaintext;
+                    return new Search_Unicode($e->plaintext, 'ISO-8859-1');
                 }
             }
         }
@@ -49,21 +47,22 @@ final class ShsForumsPage extends Search_Parser_Site_Page {
     function getAuthor() {
         $elem = $this->_html->find(".pformright a", 0);
         if ( $elem->parent()->prev_sibling()->plaintext == "File Name" ){
-            return $elem->plaintext;
+            return new Search_Unicode($elem->plaintext, 'ISO-8859-1');
         }
-        return "";
+        return Search_Unicode('');
     }
+
     function getDescription() {
         $elems = $this->_html->find(".divpad");
         if ( !count($elems) ){
             return null;
         }
-        return $elems[0]->plaintext;
+        return new Search_Unicode($elems[0]->plaintext, 'ISO-8859-1');
     }
+    
     function getCategory() {
         $elems = $this->_html->find("div[id=navstrip] a");
-        return $elems[count($elems)-1]->plaintext;
+        return new Search_Unicode($elems[count($elems)-1]->plaintext, 'ISO-8859-1');
     }
 
 }
-
