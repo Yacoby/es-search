@@ -33,7 +33,7 @@ class TesNexusTest extends PageTest {
 		$mod = $site->mod(0);
 
 		$this->assertEquals(
-                'HG EyeCandy Body',
+                new Search_Unicode('HG EyeCandy Body'),
 				$mod['Name']
 		);
 	}

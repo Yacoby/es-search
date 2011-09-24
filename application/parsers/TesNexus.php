@@ -46,10 +46,11 @@ final class TesNexusPage extends Search_Parser_Site_Page {
 
     public function isLoggedIn() {
         $html = $this->getResponse()->html();
-        $links = $html->xpath('//*[@id="menu"]//li//a//span/text()');
+        $links = $html->xpath('//div[@class="user"]//a/text()');
 
         foreach ( $links as $text ) {
-            if ( trim($text) == 'LOGOUT' ) {
+            $text = $text->toString()->getAscii();
+            if ( trim($text) == 'Log out' ) {
                 return true;
             }
         }
@@ -74,8 +75,9 @@ final class TesNexusPage extends Search_Parser_Site_Page {
 
     public function isValidPageBody(){
         $html = $this->getResponse()->html();
-        $elems = $html->xpath('//*[@id="topbar"]');
-        return count($elems) > 0;
+        $elem = $html->xpathOne('//div[@class="header"]/h1/text()');
+        $text = $elem->toString()->getAscii();
+        return $text != 'Site Error';
     }
 
     protected function doIsValidModPage($url) {
@@ -98,11 +100,11 @@ final class TesNexusPage extends Search_Parser_Site_Page {
 
     function getGame() {
         $html = $this->getResponse()->html();
-        $find = $html->xpath("//div[@id='left_side']//h3//a/text()");
+        $find = $html->xpath('//div[@class="header"]//div[@class="right"]/a/text()');
         if ( count($find) === 0 ) {
             return null;
         }
-        $find = $find[0];
+        $find = $find[0]->toString()->getAscii();
 
         switch(trim($find)) {
             case 'Morrowind':   return 'MW';
@@ -113,21 +115,33 @@ final class TesNexusPage extends Search_Parser_Site_Page {
 
     function getCategory() {
         $html = $this->getResponse()->html();
-        $cat = (string)$html->xpathOne('(//div[@id="left_side"]//h3//a)[2]/text()');
-        $cat = str_replace("\n", ' ', $cat);
-        return $cat;
+        $find = $html->xpath('//div[@class="header"]//div[@class="right"]/a/text()');
+        if ( count($find) === 0 ) {
+            return null;
+        }
+        return $find[count($find)-1]->normalisedString()->getAscii();
     }
 
     function getName() {
         $html = $this->getResponse()->html();
-        return (string)$html->xpathOne('//div[@id="left_side"]//h2/text()');
+        $str = $html->xpathOne('//div[@class="header"]/h1/text()')->toString();
+        $str->trim();
+        return $str;
     }
 
     function getAuthor() {
-        foreach ( array('Author', 'Uploader') as $key) {
-            $value = $this->getFileInfo($key);
-            if ( $value !== null && trim($value) != '' ) {
-                return $value;
+        $html = $this->getResponse()->html();
+        $str = $html->xpathOne('//div[@class="header"]/h1/span/strong/text()');
+        if ( $str ){
+            $str = $str->toString();
+            $str->trim();
+            return $str;
+        }else{
+            $str = $html->xpathOne('//li[@class="uploader"]/a/text()');
+            if ( $str ){
+                $str = $str->toString();
+                $str->trim();
+                return $str;
             }
         }
         return 'Unknown';
@@ -146,39 +160,14 @@ final class TesNexusPage extends Search_Parser_Site_Page {
         $newURL = new Search_Url("http://www.tesnexus.com/downloads/file/description.php?id=".$id);
 
         //get description
-        $str = $client->request($newURL)->exec()->simpleHtmlDom();
-        $id = strripos($str, "</h3>");
-
-        $str = substr($str, $id + strlen("</h3>") );
-        $html = new simple_html_dom();
-        $html->load($str);
-
-        $text = self::getDescriptionText($html->innertext);
-
-        $html->clear();
-        unset($html);
-
-        return $text;
+        $html = $client->request($newURL)->exec()->html();
+        return $html->xpathOne('//div[@class="bb-content"]/text()')->toString();
     }
 
     function getVersion() {
-        return $this->getFileInfo("Version");
-    }
-
-    /**********************************************************************
-    * Misc Function
-    **********************************************************************/
-    function getFileInfo($name) {
-        $html = $this->getResponse()->simpleHtmlDom();
-        foreach ( $html->find(".info_box .info") as $fi ) {
-            if ( trim($fi->find(".stattitle", 0)->plaintext) == $name ) {
-                $v = $fi->find(".stats", 0)->plaintext;
-                $v = trim(html_entity_decode($v));
-                $v =  $this->_stripNonAscii($v);
-                return trim($v);
-            }
-        }
-        return null;
+        $html = $this->getResponse()->html();
+        $version = $html->xpathOne('//*[@class="file-version"]/strong/text()');
+        return $version->toString()->getAscii();
     }
 
 }
