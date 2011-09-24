@@ -19,7 +19,7 @@ class WiwilandObTest extends PageTest {
             ),
             array(
                 'Url'    => 'http://oblimods.wiwiland.net/spip.php?article343',
-                'Name'   => 'De l\'eau pour le Peuple !',
+                'Name'   => html_entity_decode('De l&#8217;eau pour le Peuple !', ENT_QUOTES, 'UTF-8'),
                 'Author' => 'Khornate et Qazaaq, traduction de Mag1c Wind0w',
             ),
             array(

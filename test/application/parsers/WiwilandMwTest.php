@@ -14,12 +14,12 @@ class WiwilandMwTest extends PageTest {
             ),
             array(
                 'Url'    => 'http://morromods.wiwiland.net/spip.php?article994',
-                'Name'   => 'Remplacement d\'Almalexia',
+                'Name'   => html_entity_decode('Remplacement d&#8217;Almalexia', ENT_QUOTES, 'UTF-8'),
                 'Author' => 'Westly, cam de Not Quite Dead.',
             ),
             array(
                 'Url'    => 'http://morromods.wiwiland.net/spip.php?article643',
-                'Name'   => 'Chute d\'eau',
+                'Name'   => html_entity_decode('Chute d&#8217;eau', ENT_QUOTES, 'UTF-8'),
                 'Author' => 'de Heremod Production - Camembérisé par Zunder',
             ),
         );

@@ -43,7 +43,9 @@ abstract class Super_Wiwland_page extends Search_Parser_Site_Page {
     function getName() {
         $r = $this->_html->find(".entry-title", 0);
         if ( isset($r->plaintext) ) {
-            return $this->decode($r->plaintext);
+            $str = $this->decode($r->plaintext);
+            $str->trim();
+            return $str;
         }
         return null;
     }
@@ -54,10 +56,11 @@ abstract class Super_Wiwland_page extends Search_Parser_Site_Page {
             return null;
         }
 
+        $r = trim($r->plaintext);
         if ( stripos($r, 'par') === 0 ) {
             $r = substr($r, strlen('par'));
         }
-        $r = $this->decode($r->plaintext);
+        $r = $this->decode($r);
         $r->trim();
         return $r;
     }
