@@ -1,6 +1,6 @@
 <?php
 
-require '../AppLoader.php';
+require realpath(dirname(__FILE__).'/../AppLoader.php');
 $app = createApplication(realpath(dirname(__FILE__).'/Bootstrap/Bootstrap.php'));
 
 try{

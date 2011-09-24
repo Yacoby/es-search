@@ -51,7 +51,8 @@ function getUpdatedDetails($lastUpdateTime, $current, $limit) {
 
 
 
-require '../AppLoader.php';
+require realpath(dirname(__FILE__).'/../AppLoader.php');
+
 $app = createApplication(realpath(dirname(__FILE__) . '/Bootstrap/Bootstrap.php'));
 try{
     //$table = new Search_Table_Sites();

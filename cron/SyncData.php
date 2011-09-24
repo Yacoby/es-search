@@ -4,7 +4,7 @@
  * the files and the database are synced
  */
 
-require '../AppLoader.php';
+require realpath(dirname(__FILE__).'/../AppLoader.php');
 
 
 createApplication(realpath(dirname(__FILE__).'/Bootstrap/Bootstrap.php'));
