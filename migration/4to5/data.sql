@@ -1,5 +1,5 @@
---This is written for mysql, it doesn't totally conver the data but it puts
---it into a format that can be exported and then reinserted (this is fine
+-- This is written for mysql, it doesn't totally conver the data but it puts
+-- it into a format that can be exported and then reinserted (this is fine
 -- as I am moving to pgsql)
 
 -- -----------------------------------------------------------------------------
@@ -19,10 +19,10 @@ SET
 DROP TABLE `game_mods`;
 
 -- These can be recreated as the data is not imporatnt
-DROP TABLE `history_banned`
+DROP TABLE `history_banned`;
 DROP TABLE `error_log`;
-DROP TABLE `search_history`
-DROP TABLE `aditional_mods`
+DROP TABLE `search_history`;
+DROP TABLE `aditional_mods`;
 
 -- ----------------------------------------------------------------------------
 -- Create a mod source table from the sites table
