@@ -67,6 +67,10 @@ ALTER TABLE  `page`
   ADD  `id` INT NOT NULL;
 
 UPDATE `page` SET `id`=`site_id`;
+ALTER TABLE  `page` DROP  `id`
+ALTER TABLE  `page` DROP PRIMARY KEY
+ALTER TABLE  `page` ADD  `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY FIRST
+
 
 ALTER TABLE  `page`
   CHANGE  `site_id`  `byte_limited_source_id` BIGINT( 20 ) NOT NULL DEFAULT  '0';
