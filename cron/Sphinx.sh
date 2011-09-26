@@ -4,7 +4,7 @@
 # Sphinx helper script to simplify running simple commands on the search tools
 #
 # Usage:
-hlp="$0 {start|stop|index|indexdelta|merge} [cmdprefix]"
+hlp="$0 {start|stop|firstindex|index|indexdelta|merge} [cmdprefix]"
 # The optional dev argument uses the alternative development configuration
 ###############################################################################
 
@@ -49,6 +49,10 @@ case "$1" in
         #reindex everyting
         index)
             "$PREFIX"indexer --rotate --config "$CONFIG" mods;;
+
+        #index without rotating
+        firstindex)
+            "$PREFIX"indexer --config "$CONFIG" mods;;
         *)
             echo "$hlp";;
 esac
