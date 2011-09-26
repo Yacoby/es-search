@@ -46,13 +46,13 @@ class EsFilefrontPage extends Search_Parser_Site_Page {
 
     function getCategory() {
         foreach ( $this->_html->find("b") as $b  ) {
-            $txt = html_entity_decode($b->plaintext);
+            $txt = html_entity_decode($b->plaintext, EN_COMPAT, 'UTF-8');
             //This will intentionally fail downloads not in the modifications or
             //utilities category
-            if ( preg_match('%Downloads > Modifications > ([0-9a-zA-Z ]*):$%', $txt, $regs) ||
-                 preg_match('%Downloads > (Utilities):$%', $txt, $regs) ||
-                 preg_match('%Downloads > (Modifications):$%', $txt, $regs) ) {
-                return new Search_Unicode(trim($regs[1]));
+            if ( preg_match('%Downloads > Modifications > ([0-9a-zA-Z ]*):$%u', $txt, $regs) ||
+                 preg_match('%Downloads > (Utilities):$u%', $txt, $regs) ||
+                 preg_match('%Downloads > (Modifications):$u%', $txt, $regs) ) {
+                return new Search_Unicode(trim($regs[1]), 'ISO-8859-1');
             }
         }
         return '';
@@ -80,7 +80,7 @@ class EsFilefrontPage extends Search_Parser_Site_Page {
         foreach ( $this->_html->find("b") as $b  ) {
             $txt = $b->plaintext;
             if ( preg_match($regex, $txt, $regs) == 1 ) {
-                return new Search_Unicode(trim($regs[1]));
+                return new Search_Unicode(trim($regs[1]), 'ISO-8859-1');
             }
         }
         return null;
@@ -96,7 +96,7 @@ class EsFilefrontPage extends Search_Parser_Site_Page {
             if ( $i1 !== false && $i2 !== false ) {
                 $txt = substr($txt, $i1+$l, $i2 - $l);
                 $i2 = stripos($txt, "E-Mail to Friend");
-                return new Search_Unicode(substr($txt, 0, $i2));
+                return new Search_Unicode(substr($txt, 0, $i2), 'ISO-8859-1');
             }
         }
         return null;
@@ -107,7 +107,7 @@ class EsFilefrontPage extends Search_Parser_Site_Page {
             $txt = $b->plaintext;
             $url = $b->href;
             if ( preg_match("%/developer/[0-9a-zA-Z _]*;\\d+%", $url) == 1 ) {
-                return new Search_Unicode($txt);
+                return new Search_Unicode($txt, 'ISO-8859-1');
             }
         }
         return null;
