@@ -55,7 +55,7 @@ class Default_Model_Mod {
         $sql = 'SELECT
                     m.id, m.name, m.author, l.description, l.version,
                     c.name as category,
-                    CONCAT(s.url_prefix, l.url_suffix) as url
+                    (s.url_prefix || l.url_suffix) as url
                 FROM modification m
                 INNER JOIN location l   ON l.modification_id = m.id
                 INNER JOIN mod_source s ON l.mod_source_id   = s.id

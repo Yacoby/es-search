@@ -32,7 +32,6 @@ class Default_Model_Search {
                         ->innerJoin('l.ModSource s')
                         ->whereIn('m.id', $modIds)
                         ->andWhere('l.int_version = 0')
-                        ->groupBy('m.id')
                         ->fetchArray();
 
             foreach ( $mods as &$mod ){
