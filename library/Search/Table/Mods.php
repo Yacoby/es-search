@@ -68,7 +68,7 @@ class Search_Table_Mods extends Search_Table_Abstract {
                                             array $modDetails,
                                             $sourceId){
         
-        //$this->getConnection()->beginTransaction();
+        $this->getConnection()->beginTransaction();
                                                 
         foreach ( array('Name', 'Author', 'Category', 'Description') as $key ){
             $modDetails[$key] = $this->stripText($modDetails[$key])->getBytes();
@@ -113,7 +113,7 @@ class Search_Table_Mods extends Search_Table_Abstract {
         $location->mod_source_id    = $source->id;
         $location->replace();
 
-        //$this->getConnection()->commit();
+        $this->getConnection()->commit();
     }
 
     /**
