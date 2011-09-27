@@ -27,6 +27,9 @@ class Search_Index_Sphinx extends Search_Observable implements Search_Index_Abst
     public function searchSimple($query, $offset, $limit) {
         $this->event()->searchSimple($this->_game, $query);
         $this->_client->setLimits($offset, $limit);
+
+        $query .= " @game {$this->_game}"
+
         return $this->parseResult($this->_client->query($query));
     }
     
@@ -34,16 +37,16 @@ class Search_Index_Sphinx extends Search_Observable implements Search_Index_Abst
         $this->event()->searchAdvanced($this->_game, $name, $author, $description);
         $this->_client->setLimits($offset, $limit);
         
-        $query = '';
+        $query = "@game {$this->_game} ";
         
         if ( $name ){
-            $query .= "@name {$name}";
+            $query .= "@name {$name} ";
         }
         if ( $author ){
-            $query .= "@author {$author}";
+            $query .= "@author {$author} ";
         }
         if ( $description ){
-            $query .= "@description {$author}";
+            $query .= "@description {$author} ";
         }
         
         return $this->parseResult($this->_client->query($query));
