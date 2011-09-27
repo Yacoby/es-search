@@ -3,10 +3,10 @@
 class Zend_View_Helper_Stats{
     public function stats(){
         $rows = Doctrine_Query::create()
-                    ->select('id, game_id, COUNT(id) as count')
+                    ->select('game_id, COUNT(*) as count')
                     ->from('Modification')
-                    ->groupBy('game_id, id')
-                    ->execute();
+                    ->groupBy('game_id')
+                    ->execute(Doctrine::HYDRATE_ARRAY);
 
         $games = array(3 => 0, 4 => 0, 5 => 0);
         foreach ( $rows as $row ){
