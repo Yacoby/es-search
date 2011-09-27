@@ -28,7 +28,7 @@ class Search_Index_Sphinx extends Search_Observable implements Search_Index_Abst
         $this->event()->searchSimple($this->_game, $query);
         $this->_client->setLimits($offset, $limit);
 
-        $query .= " @game {$this->_game}"
+        $query .= " @game {$this->_game}";
 
         return $this->parseResult($this->_client->query($query));
     }
@@ -63,7 +63,6 @@ class Search_Index_Sphinx extends Search_Observable implements Search_Index_Abst
                 );
             }
         }
-        //var_dump($parsedResults);
         return new Search_Index_Results($parsedResults, $results['total_found']);
     }
 
