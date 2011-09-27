@@ -212,15 +212,18 @@ class Search_Parser_Site_Page extends Search_Parser_ScrapeResult{
      * @param $str the string of raw HTML
      * @return html with the tags stripped
      *
+     * @TODO this works on strings, it should only work on the unicode objects
+     * howerver it isn't the biggest of issues with the functions being
+     * used
      */
     public static function getDescriptionText($str) {
-        //$str = str_replace("\n", "", $str);
+        $str = str_replace("\n", "", $str);
 
         //should match and <BR> <br /> etc
         $str = preg_replace('%<br[\\s]*[/]??>%ius', "\n", $str);
 
         //strip everthing else
-        return $str;//strip_tags($str);
+        return strip_tags($str);
     }
 
     /**
