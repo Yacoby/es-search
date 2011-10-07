@@ -1,6 +1,5 @@
 #!/usr/bin/env php
 <?php
-define('APPLICATION_ENV', 'development');
 /**
  * CLI Script
  */

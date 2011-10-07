@@ -17,13 +17,17 @@ set_include_path(implode(PATH_SEPARATOR, array(
         get_include_path(),
 )));
 
+
 //Setup app wide constants
+if ( getenv('TESSEARCH_ENV') !== False ){
+    define('APPLICATION_ENV', getenv('TESSEARCH_ENV'))
+}elseif ( !defined('APPLICATION_ENV') ){
+    define('APPLICATION_ENV', 'development');
+}
 define('ROOT_PATH', realpath(dirname(__FILE__)));
 define('APPLICATION_PATH', ROOT_PATH . '/application');
 define('CONFIG_PATH', ROOT_PATH.'/config');
-if ( !defined('APPLICATION_ENV') ){
-    define('APPLICATION_ENV', 'development');
-}
+
 require_once 'Zend/Loader/Autoloader.php';
 $loader = Zend_Loader_Autoloader::getInstance();
 //work around for a issue with Doctrine:
