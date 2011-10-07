@@ -26,7 +26,7 @@ class Bootstrap extends Search_Bootstrap_Abstract {
         $this->bootstrap('view');
         $view = $this->getResource('view');
         $view->doctype('XHTML1_STRICT');
-
+        $view->setEncoding('UTF-8');
         $view->addHelperPath('Helper/View', 'Helper_View');
     }
 
