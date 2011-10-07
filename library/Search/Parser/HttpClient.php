@@ -265,7 +265,7 @@ class Search_Parser_HttpClient extends Search_Observable{
             return "Mozilla/5.0 (X11; U; Linux i686; en-GB; rv:1.9.0.5) "
                  . "Gecko/2008121621 Ubuntu/8.04 (hardy) Firefox/3.0.6";
         }else {
-            return "ES Search Bot (search.yacoby.net) Contact Yacoby on "
+            return "TES Search Bot (search.yacoby.net) Contact Yacoby on "
                  . "Bethesda Forum if usage to high or email Search@JacobEssex.com";
         }
     }

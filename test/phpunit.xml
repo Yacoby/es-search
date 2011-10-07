@@ -1,5 +1,5 @@
 <phpunit bootstrap="./bootstrap.php">
-    <testsuite name="ES Search Test Suite">
+    <testsuite name="TES Search Test Suite">
         <directory>./</directory>
     </testsuite>
 

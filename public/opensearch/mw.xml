@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/">
-    <ShortName>ES Search: MW</ShortName>
-    <Description>Searches ES Search for Morrowind Mods</Description>
+    <ShortName>TES Search: MW</ShortName>
+    <Description>Searches TES Search for Morrowind Mods</Description>
     <Url type="text/html"
         template="http://search.yacoby.net/?page=1&game=3&general={searchTerms}&source=opensearch"/>
 
