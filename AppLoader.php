@@ -20,7 +20,7 @@ set_include_path(implode(PATH_SEPARATOR, array(
 
 //Setup app wide constants
 if ( getenv('TESSEARCH_ENV') !== False ){
-    define('APPLICATION_ENV', getenv('TESSEARCH_ENV'))
+    define('APPLICATION_ENV', getenv('TESSEARCH_ENV'));
 }elseif ( !defined('APPLICATION_ENV') ){
     define('APPLICATION_ENV', 'development');
 }
