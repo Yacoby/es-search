@@ -41,12 +41,12 @@ $cache = Zend_Cache::factory(
         $frontendOptions,
         array('cache_dir' => ROOT_PATH.'/cache/page')
 );
-$cache->start();
+//$cache->start();
 
 $application = createApplication();
 
-if ( $application->getOption('pagecache') != 1 ){
-    $cache->cancel();
-}
+//if ( $application->getOption('pagecache') != 1 ){
+//    $cache->cancel();
+//}
 
 $application->run();
