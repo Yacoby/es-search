@@ -17,6 +17,7 @@ class Search_Index_Sphinx extends Search_Observable implements Search_Index_Abst
 
     public function __construct($game) {
         $this->attach(new Search_Observer_Search());
+        $this->_game = $game;
         
         $this->_client = new SphinxClient();
         $this->_client->SetFilter('game', array($game));
