@@ -58,6 +58,8 @@ class Search_Log_Writer_Doctrine  extends Zend_Log_Writer_Abstract {
         $entry = new $this->_modelClass();
         $entry->fromArray($dataToInsert);
         $entry->save();
+        $entry->free(true);
+        unset($entry);
     }
 
     static public function factory($config){

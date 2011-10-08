@@ -16,11 +16,29 @@ class ModdingHistory extends Search_Parser_AbstractScraper{
         foreach ( $xml->mod as $mod ){
             $attrs = $mod->attributes();
 
-            $result->addMod(array('Name'        => $attrs['title'],
-                                  'Author'      => $mod->author,
-                                  'Description' => $mod->description,
+            #when it doubt, decode everything. God knows how it was encoded
+            $sname = urldecode((string)$attrs['title']);
+            $sname = html_entity_decode($sname, ENT_COMPAT, 'UTF-8');
+            $sname = stripslashes($sname);
+
+            #some things seem to end in -209820482 or simalar
+            $sname = preg_replace('/-\d+$/u', '', $sname);
+
+            $name   = new Search_Unicode($sname);
+            $author = new Search_Unicode((string)$mod->author);
+            $description = new Search_Unicode((string)$mod->description);
+            $url = new Search_Url((string)$mod->url);
+
+            if ( $author->getAscii() == '' ){
+                continue;
+            }
+
+            $result->addMod(array('Name'        => $name, 
+                                  'Author'      => $author,
+                                  'Description' => $description,
                                   'Game'        => 'MW',
-                                  'Url'         => $mod->url,));
+                                  'Url'         => $url,
+                            ));
         }
         return $result;
     }

@@ -36,7 +36,6 @@ class Search_Bootstrap_Abstract extends Zend_Application_Bootstrap_Bootstrap {
             $conn = Doctrine_Manager::connection("{$dbtype}://{$user}:{$pass}@{$host}/{$dbnm}");
         }
         $conn->setCharset('utf8');
-
     }
 
     public function _initValidation(){

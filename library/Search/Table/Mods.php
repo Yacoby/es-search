@@ -96,7 +96,6 @@ class Search_Table_Mods extends Search_Table_Abstract {
             throw new Exception('There was no soucre for the given id');
         }
         
-        
         $locations = new Search_Table_Locations();
         $location  = $locations->create();
         
@@ -112,6 +111,10 @@ class Search_Table_Mods extends Search_Table_Abstract {
         $location->modification_id  = $mod->id;
         $location->mod_source_id    = $source->id;
         $location->replace();
+
+        $location->free(true);
+        $source->free(true);
+        $mod->free(true);
 
         $this->getConnection()->commit();
     }
