@@ -46,7 +46,7 @@ class EsFilefrontPage extends Search_Parser_Site_Page {
 
     function getCategory() {
         foreach ( $this->_html->find("b") as $b  ) {
-            $txt = html_entity_decode($b->plaintext, EN_COMPAT, 'UTF-8');
+            $txt = html_entity_decode($b->plaintext, ENT_COMPAT, 'UTF-8');
             //This will intentionally fail downloads not in the modifications or
             //utilities category
             if ( preg_match('%Downloads > Modifications > ([0-9a-zA-Z ]*):$%u', $txt, $regs) ||
@@ -55,7 +55,7 @@ class EsFilefrontPage extends Search_Parser_Site_Page {
                 return new Search_Unicode(trim($regs[1]), 'ISO-8859-1');
             }
         }
-        return '';
+        return new Search_Unicode('');
     }
 
     function getVersion() {
