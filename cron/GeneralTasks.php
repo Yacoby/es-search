@@ -59,9 +59,9 @@ try{
     //$sites = $table->createQuery()
     $sites = Doctrine_Query::create()
                    ->select()
-                   ->from('ByteLimitedSource')
-                   ->where('bytes_used >= byte_limit')
-                   ->andWhere('enabled = 1')
+                   ->from('ByteLimitedSource b, b.ModSource s')
+                   ->where('b.bytes_used >= b.byte_limit')
+                   ->andWhere('s.scrape = True')
                    ->execute();
 
     foreach ($sites as $site) {
@@ -96,7 +96,7 @@ try{
     Doctrine_Query::create()
                 ->delete()
                 ->from('Log')
-                ->where('timestamp < now() - interval 1 day')
+                ->where('timestamp < now() - interval \'1 day\'')
                 ->andWhere('level>=6')
                 ->execute();
 
