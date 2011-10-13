@@ -28,6 +28,17 @@
     <div class="paginationControl">
         <ul id="icon" >
 
+           <li title="First Page">
+                <?php if (isset($this->previous)): ?>
+                    <a href="<?php echo getParametersAsQuery(1); ?>"
+                       rel="nofollow">
+                        First
+                    </a>
+                <?php else: ?>
+                    <span>First</span>
+                <?php endif ?>
+            </li>
+
             <li title="Previous Page">
                 <?php if (isset($this->previous)): ?>
                     <a href="<?php echo getParametersAsQuery($this->previous); ?>"
@@ -62,6 +73,18 @@
                     <span>Next</span>
                 <?php endif; ?>
             </li>
+
+            <li title="Last Page">
+                <?php if (isset($this->next)): ?>
+                    <a href="<?php echo getParametersAsQuery($this->last); ?>"
+                       rel="nofollow">
+                        Last
+                    </a>
+                <?php else: ?>
+                    <span>Last</span>
+                <?php endif; ?>
+            </li>
+
 
         </ul>
     </div>
