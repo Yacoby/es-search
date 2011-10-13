@@ -18,11 +18,9 @@ class HouseFligg extends Search_Parser_AbstractScraper{
 
             #when it doubt, decode everything. God knows how it was encoded
             $sname = urldecode((string)$attrs['title']);
+            $sname = Search_Parser_Util::html_entity_decode_numeric($sname);
             $sname = html_entity_decode($sname, ENT_COMPAT, 'UTF-8');
             $sname = stripslashes($sname);
-
-            #some things seem to end in -209820482 or simalar
-            $sname = preg_replace('/-\d+$/u', '', $sname);
 
             $name   = new Search_Unicode($sname);
             $author = new Search_Unicode((string)$mod->author);

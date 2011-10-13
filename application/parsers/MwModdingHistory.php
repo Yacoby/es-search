@@ -1,5 +1,6 @@
 <?php
 
+
 class ModdingHistory extends Search_Parser_AbstractScraper{
 
     public function scrape(){
@@ -19,6 +20,7 @@ class ModdingHistory extends Search_Parser_AbstractScraper{
             #when it doubt, decode everything. God knows how it was encoded
             $sname = urldecode((string)$attrs['title']);
             $sname = html_entity_decode($sname, ENT_COMPAT, 'UTF-8');
+            $sname = Search_Parser_Util::html_entity_decode_numeric($sname);
             $sname = stripslashes($sname);
 
             #some things seem to end in -209820482 or simalar
