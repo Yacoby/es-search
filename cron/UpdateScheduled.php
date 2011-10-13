@@ -6,6 +6,10 @@ $app = createApplication(realpath(dirname(__FILE__).'/Bootstrap/Bootstrap.php'))
 //scheduled needs a far longer time limit
 set_time_limit(60*60);
 
+//this is not a fix. It needs looking into. But basically imho it is because
+//the mw modding history has a huge number of mods
+ini_set('memory_limit', '128M');
+
 try{
     $uw      = new Search_UpdateWorker();
     $parserPath = APPLICATION_PATH . '/parsers/';
