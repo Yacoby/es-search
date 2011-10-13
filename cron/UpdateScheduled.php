@@ -4,7 +4,7 @@ require realpath(dirname(__FILE__).'/../AppLoader.php');
 $app = createApplication(realpath(dirname(__FILE__).'/Bootstrap/Bootstrap.php'));
 
 //scheduled needs a far longer time limit
-set_time_limit(60*10);
+set_time_limit(60*60);
 
 try{
     $uw      = new Search_UpdateWorker();
