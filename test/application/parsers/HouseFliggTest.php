@@ -11,32 +11,40 @@ class HouseFliggTest extends PHPUnit_Framework_TestCase{
 
         $mods = array(
             array(
-                'Name' => 'Blasphemous Revenants',
+                'Name' => new Search_Unicode('Blasphemous Revenants'),
                 'Game' => 'MW',
-                'Version' => '2.3',
-                'Author' => 'Fliggerty and Friends',
+                'Author' => new Search_Unicode('Fliggerty and Friends'),
             ),
         );
 
-        $this->modsContains($parser->mods(), $mods);
+        $this->modsContains($result->mods(), $mods);
 
     }
-
 
 
     private function modsContains($mods, $needles){
         foreach ( $needles as $needle ){
+            $found = false;
             foreach ( $mods as $mod ){
-                foreach ( $neelde as $key => $value ){
-                    if ( $mod[$key] != $value ){
-                        continue 2;
-                    }
+                if ( $this->modIsMatch($mod, $needle) ){
+                    $found = true;
+                    break;
                 }
-                continue 2;
             }
-            $this->fail("Couldn't find mod {$needle}");
+            if ( !$found ){
+                $this->fail("Couldn't find mod {$needle['Name']->getAscii()}");
+            }
         }
     }
 
+
+    private function modIsMatch($mod, $needle){
+        foreach ( $needle as $key => $value ){
+            if ( !isset($mod[$key]) || $mod[$key] != $value ){
+                return false;
+            }
+        }
+        return true;
+    }
 
 }
