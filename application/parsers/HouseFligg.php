@@ -5,6 +5,7 @@ class HouseFligg extends Search_Parser_AbstractScraper{
     private function normalise($str){
         #when it doubt, decode everything. God knows how it was encoded
         $str = urldecode($str);
+        $str = str_replace('&apos;', '&#039;', $str);
         $str = html_entity_decode($str, ENT_QUOTES, 'UTF-8');
         $str = Search_Parser_Util::html_entity_decode_numeric($str);
         return stripslashes($str);
