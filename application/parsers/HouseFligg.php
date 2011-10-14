@@ -24,7 +24,7 @@ class HouseFligg extends Search_Parser_AbstractScraper{
         foreach ( $xml->mod as $mod ){
             $attrs = $mod->attributes();
 
-            $name = new Search_Unicode($this->normalise((string)$attrs['title']))
+            $name = new Search_Unicode($this->normalise((string)$attrs['title']));
             $author = new Search_Unicode($this->normalise((string)$mod->author));
             $description = new Search_Unicode($this->normalise((string)$mod->description));
 
