@@ -25,6 +25,7 @@ class Default_Form_Advanced extends Zend_Form {
         $e = $this->createElement('select', 'game')
                   ->addMultiOption('3', 'Morrowind')
                   ->addMultiOption('4', 'Oblivion')
+                  ->addMultiOption('5', 'Skyrim')
                   ->setLabel('Game:')
                   ->setRequired(true);
         if ( isset($_COOKIE['SelectedGame']) ) {
