@@ -15,5 +15,5 @@ try{
 }catch(Search_Parser_Exception_Parse $e){
     Search_Logger::warn('Parser Error: ' . $e->getMessage());
 }catch(Exception $e){
-    Search_Logger::err('Unhandled Exception: ' . $e->getMessage());
+    Search_Logger::err('Unhandled Exception: ' . $e->getMessage() . "\nStackTrace: " . $e->getTrace());
 }

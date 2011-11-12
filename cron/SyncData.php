@@ -24,5 +24,5 @@ try{
     $si = new Search_Sync_Scheduled($factory);
     $si->syncAll();
 }catch(Exception $e){
-    Search_Logger::err('Unhandled Exception:' . $e->getMessage());
+    Search_Logger::err('Unhandled Exception: ' . $e->getMessage() . "\nStackTrace: " . $e->getTrace());
 }
