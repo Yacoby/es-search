@@ -9,13 +9,13 @@ class EsFilefrontPage extends Search_Parser_Site_Page {
     }
 
     protected function doIsValidModPage($url) {
-        return (preg_match("%http://elderscrolls\\.filefront\\.com/file/.*;\\d+$%", $url->toString()) == 1 );
+        return (preg_match('%http://elderscrolls\.filefront\.com/file/.*;\d+$%', $url->toString()) == 1 );
     }
 
     protected function doIsValidPage($url) {
-        $startMW = 'http://elderscrolls\\.filefront\\.com/files/The_Elder_Scrolls_III_Morrowind/Modifications/.*/;\\d+';
-        $startOB = 'http://elderscrolls\\.filefront\\.com/files/The_Elder_Scrolls_IV_Oblivion/Modifications/.*;\\d+';
-        $end     = '\\?start=\\d+&sort=name&name_direction=asc&limit=\\d+&descriptions_in=0&summary_in=0&show_screenshot_in=0#files';
+        $startMW = 'http://elderscrolls\.filefront\.com/files/The_Elder_Scrolls_III_Morrowind/Modifications/.*/;\d+';
+        $startOB = 'http://elderscrolls\.filefront\.com/files/The_Elder_Scrolls_IV_Oblivion/Modifications/.*;\d+';
+        $end     = '\?start=\d+&sort=name&name_direction=asc&limit=\d+&descriptions_in=0&summary_in=0&show_screenshot_in=0#files';
 
         $pages = array(
             $startOB,
@@ -50,8 +50,8 @@ class EsFilefrontPage extends Search_Parser_Site_Page {
             //This will intentionally fail downloads not in the modifications or
             //utilities category
             if ( preg_match('%Downloads > Modifications > ([0-9a-zA-Z ]*):$%u', $txt, $regs) ||
-                 preg_match('%Downloads > (Utilities):$u%', $txt, $regs) ||
-                 preg_match('%Downloads > (Modifications):$u%', $txt, $regs) ) {
+                 preg_match('%Downloads > (Utilities):$%u', $txt, $regs) ||
+                 preg_match('%Downloads > (Modifications):$%u', $txt, $regs) ) {
                 return new Search_Unicode(trim($regs[1]), 'ISO-8859-1');
             }
         }
