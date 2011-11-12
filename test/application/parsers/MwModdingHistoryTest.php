@@ -11,22 +11,21 @@ class ModdingHistoryTest extends PHPUnit_Framework_TestCase{
 
         $mods = array(
             array(
-                'Name' => 'Black Heart Armor',
-                'Game' => 'MW',
-                'Url' => 'http://mw.modhistory.com/download-1',
-                'Author' => 'TheSiriusSnape',
+                'Name'   => new Search_Unicode('Black Heart Armor'),
+                'Game'   => 'MW',
+                'Url'    => new Search_Url('http://mw.modhistory.com/download-4-1'),
+                'Author' => new Search_Unicode('TheSiriusSnape'),
             ),
             array(
-                'Name' => '4 Glass Weapons',
-                'Game' => 'MW',
-                'Url' => 'http://mw.modhistory.com/download-22',
-                'Description' =>'4 Glass Weapons',
-                'Author' => 'Unknown',
+                'Name'        => new Search_Unicode('4 Glass Weapons'),
+                'Game'        => 'MW',
+                'Url'         => new Search_Url('http://mw.modhistory.com/download-98-22'),
+                'Description' => new Search_Unicode('4 Glass Weapons'),
+                'Author'      => new Search_Unicode('Unknown'),
             ),
         );
 
         $this->modsContains($result->mods(), $mods);
-
     }
 
 
@@ -40,7 +39,7 @@ class ModdingHistoryTest extends PHPUnit_Framework_TestCase{
                 }
             }
             if ( !$found ){
-                $this->fail("Couldn't find mod {$needle['Name']}");
+                $this->fail("Couldn't find mod {$needle['Name']->getAscii()}");
             }
         }
     }

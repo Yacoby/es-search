@@ -2,7 +2,6 @@
 
 error_reporting(E_ALL | E_STRICT);
 ini_set("display_errors", 1);
-ini_set('memory_limit','128M');
 
 define('APPLICATION_ENV', 'testing');
 //used to define a db resource
@@ -32,4 +31,4 @@ try {
     echo $e->getMessage();
 }
 
-ini_set('memory_limit','128M');
+ini_set('memory_limit','256M');
