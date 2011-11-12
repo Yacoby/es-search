@@ -22,7 +22,7 @@ final class ElricMPage extends Search_Parser_Site_Page {
             return; //failed to find correct section
         }
 
-        preg_match('%Main / (.*) / (.*)%', $hdsec->normalisedString(), $regs);
+        preg_match('%Main / (.*) / (.*)%u', $hdsec->normalisedString()->getBytes(), $regs);
         $cat = $regs[2];
 
         if ( stripos($regs[1], 'Morrowind') !== false ) {
