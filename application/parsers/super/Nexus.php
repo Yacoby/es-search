@@ -84,7 +84,7 @@ class NexusPage extends Search_Parser_Site_Page {
     }
 
     protected function doIsValidModPage($url) {
-        return (preg_match('%' . $this->_nexusRegexUrl . '/downloads/file\.php\?id=\d+%', $url->toString()) == 1 );
+        return (preg_match('%^' . $this->_nexusRegexUrl . '/downloads/file\.php\?id=\d+$%', $url->toString()) == 1 );
     }
 
     protected function doIsValidPage($url) {
