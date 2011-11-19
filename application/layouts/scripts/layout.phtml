@@ -43,11 +43,17 @@
         ?>
 
         <script type="text/javascript">
-            $(document).ready(function(){
-                var _gaq = _gaq || [];
-                _gaq.push(['_setAccount', 'UA-21602422-1']);
-                _gaq.push(['_trackPageview']);
+            var _gaq = _gaq || [];
+            _gaq.push(['_setAccount', 'UA-21602422-1']);
 
+            (function() {
+                var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+                ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+                var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+            })();
+
+            //checking for adblock requires that the page is loaded
+            $(document).ready(function(){
                 var ad = $('.ad');
                 if ( ad.length ){ 
                     if ( ad.height() == 0 ){
@@ -67,13 +73,16 @@
                                    1]);
                     }
                 }
+                //this script has run, so we are using scripts
+                _gaq.push(['_setCustomVar',
+                           2,
+                           'NoScript',
+                           'False',
+                           1]);
 
-                (function() {
-                    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-                    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-                    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-                })();
-
+                //this actually makes the call to ga, so this needs to be pushed
+                //last
+                _gaq.push(['_trackPageview']);
             });
         </script>
     </head>
@@ -165,7 +174,7 @@
                        //'utmcs'  => ,//encoding
                        'utmdt'  => $this->headTitle() ,//page title
                        'utmr'   => isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '',
-                       'utme'   => '5(NoScript*(\'2\'1)', //extensible paramter
+                       'utme'   => '8(NoScript)9(True)11(1)', //extensible paramter
                        'utmhn'  => 'tessearch.com', //hostname
                        'utmhid' => rand(),
                        //'utmul'  => , //language
