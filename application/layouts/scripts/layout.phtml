@@ -43,15 +43,38 @@
         ?>
 
         <script type="text/javascript">
-            var _gaq = _gaq || [];
-            _gaq.push(['_setAccount', 'UA-21602422-1']);
-            _gaq.push(['_trackPageview']);
+            $(document).ready(function(){
+                var _gaq = _gaq || [];
+                _gaq.push(['_setAccount', 'UA-21602422-1']);
+                _gaq.push(['_trackPageview']);
 
-            (function() {
-                var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-                ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-                var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-            })();
+                var ad = $('.ad');
+                if ( ad.length ){ 
+                    if ( ad.height() == 0 ){
+                        try{
+                            _gaq.push(['_setCustomVar',
+                                       1,
+                                       'AdblockDetected',
+                                       'True',
+                                       1]);
+                        }catch(err){
+                        }
+                    }else{
+                        _gaq.push(['_setCustomVar',
+                                   1,
+                                   'AdblockDetected',
+                                   'False',
+                                   1]);
+                    }
+                }
+
+                (function() {
+                    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+                    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+                    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+                })();
+
+            });
         </script>
     </head>
 
@@ -130,6 +153,30 @@
             </div>
         </div>
 
+
+    <noscript> 
+    <?php 
+        //tracks in a fairly basic way when javascript is disabled
+        //disabled until I can work out formats
+                
+        //http://code.google.com/apis/analytics/docs/concepts/gaConceptsOverview.html
+        $query = array('utmac'  => 'UA-21602422-1', //account string
+                       //'utmcc'  => ,//cookie values
+                       //'utmcs'  => ,//encoding
+                       'utmdt'  => $this->headTitle() ,//page title
+                       'utmr'   => isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '',
+                       'utme'   => '5(NoScript*(\'2\'1)', //extensible paramter
+                       'utmhn'  => 'tessearch.com', //hostname
+                       'utmhid' => rand(),
+                       //'utmul'  => , //language
+                       'utmp'   => $_SERVER['REQUEST_URI'], //page request
+                   );
+        $queryStr = http_build_query($query);
+        $url = 'http://www.google-analytics.com/__utm.gif?' . $queryStr;
+
+        echo '<!-- <img src="'. $url .'" border="0" /> -->'; 
+    ?> 
+    </ noscript>
 
     </body>
 
