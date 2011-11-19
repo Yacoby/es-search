@@ -165,8 +165,8 @@
 
     <noscript> 
     <?php 
-        //tracks in a fairly basic way when javascript is disabled
-        //disabled until I can work out formats
+        //some fairly basic code to track people who have JavaScript disabled
+        //and so the more detailed ga.js can't be used.
                 
         //http://code.google.com/apis/analytics/docs/concepts/gaConceptsOverview.html
         $query = array('utmac'  => 'UA-21602422-1', //account string
@@ -175,7 +175,7 @@
                        'utmdt'  => $this->headTitle() ,//page title
                        'utmr'   => isset($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '',
                        'utme'   => '8(NoScript)9(True)11(1)', //extensible paramter
-                       'utmhn'  => 'tessearch.com', //hostname
+                       'utmhn'  => $_SERVER['HTTP_HOST'], //hostname
                        'utmhid' => rand(),
                        //'utmul'  => , //language
                        'utmp'   => $_SERVER['REQUEST_URI'], //page request
@@ -183,7 +183,7 @@
         $queryStr = http_build_query($query);
         $url = 'http://www.google-analytics.com/__utm.gif?' . $queryStr;
 
-        echo '<!-- <img src="'. $url .'" border="0" /> -->'; 
+        echo '<img src="'. $url .'" border="0" />'; 
     ?> 
     </ noscript>
 
