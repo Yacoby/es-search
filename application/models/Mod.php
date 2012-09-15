@@ -91,6 +91,29 @@ class Default_Model_Mod {
         );
     }
 
+    public function isAdult(){
+        $adultKeywords = array(
+            'cock',
+            'adult',
+            'boob',
+            'penis',
+            'balls',
+            'hermaphrodite',
+            'futanari',
+        );
+        $locations = $this->getLocations();
+        foreach ( $locations as $location ){
+            $description = $location->getDescription();
+
+            foreach ( $adultKeywords as $keyword ){
+                if ( stripos($description, $keyword) !== false ){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     public function getName() {
         return $this->_mod['name'];
     }
@@ -115,7 +138,7 @@ class Default_Model_Mod {
         return $a[$this->getGame()];
     }
 
-        public function getLocation($index){
+    public function getLocation($index){
         return $this->_location[$index];
     }
     

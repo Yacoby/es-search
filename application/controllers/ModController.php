@@ -62,6 +62,7 @@ class ModController extends Zend_Controller_Action {
 
         $this->view->Name = $this->view->title = $mod->getName();
         $this->view->Author = $mod->getAuthor();
+        $this->view->IsAdult = $mod->isAdult();
 
         $this->view->Locations = $mod->getLocations();
     }
